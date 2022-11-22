@@ -23,7 +23,6 @@ public class Ship : MonoBehaviour
             Debug.Log(lookDirection);
             if (lookDirection == Vector2.zero)
                 move = false;
-            //shipRb.AddForce(speed * Time.deltaTime * lookDirection);
             transform.Translate(speed * Time.deltaTime * lookDirection);
         }
     }

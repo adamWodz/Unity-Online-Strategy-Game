@@ -29,6 +29,5 @@ public class BuildPath : MonoBehaviour
             paths[i].material.color = Color.blue;
             gameManager.SpawnShips(objects[i+1]);
         }
-        gameManager.spawn = true;
     }
 }

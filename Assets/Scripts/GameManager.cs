@@ -5,12 +5,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject ship;
-    public bool spawn = false;
+    public GameObject shipGameObject;
 
     private List<GameObject> shipList = new();
     private List<Transform> shipTransformList = new();
-    private float speed = 20.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -26,9 +24,9 @@ public class GameManager : MonoBehaviour
 
     public void SpawnShips(Transform t)
     {
-        var pom = Instantiate(ship, new Vector3(0, 0, -1), t.rotation);
-        var pom2 = pom.GetComponent<Ship>();
-        pom2.shipGoal = t;
-        pom2.move = true;
+        var spawnedShipGameObject = Instantiate(shipGameObject, new Vector3(0, 0, -1), t.rotation);
+        var spawnedShip = spawnedShipGameObject.GetComponent<Ship>();
+        spawnedShip.shipGoal = t;
+        spawnedShip.move = true;
     }
 }
