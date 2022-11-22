@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ship : MonoBehaviour
+public class Move : MonoBehaviour
 {
     private float speed = 5;
     public bool move = false;
@@ -17,7 +17,7 @@ public class Ship : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(move)
+        if (move)
         {
             Vector2 lookDirection = (shipGoal.position - transform.position);
             Debug.Log(lookDirection);
