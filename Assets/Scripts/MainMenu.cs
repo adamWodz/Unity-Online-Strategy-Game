@@ -13,6 +13,7 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame()
     {
+        // indeksy scen znajduj¹ siê w 'File->Build Settings'
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }

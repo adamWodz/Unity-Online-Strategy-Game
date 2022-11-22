@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5262943208096833107}
   - component: {fileID: 8942621507072137752}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Spaceship black-blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

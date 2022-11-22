@@ -152,8 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c4173c8f9a9c4f589b9c1d87cecd25f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ship: {fileID: 9060527398928946586, guid: 5a88f07ef479b4f38a073378fe9b0a42, type: 3}
-  spawn: 0
+  shipGameObject: {fileID: 9060527398928946586, guid: 5a88f07ef479b4f38a073378fe9b0a42, type: 3}
 --- !u!4 &7030810
 Transform:
   m_ObjectHideFlags: 0
