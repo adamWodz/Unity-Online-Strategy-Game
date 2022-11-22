@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5262943208096833107}
-  - component: {fileID: 8942621507072137752}
+  - component: {fileID: -7536219806838839366}
   m_Layer: 0
   m_Name: Spaceship black-blue
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!114 &8942621507072137752
+--- !u!114 &-7536219806838839366
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,10 +42,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 9060527398928946586}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5dc98db861ccfbb46b6981c705f88e5b, type: 3}
+  m_Script: {fileID: 11500000, guid: 8164c8b87ea38124e9baa2b470f1818a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
   move: 0
   shipGoal: {fileID: 0}
 --- !u!1001 &5054643676908241124
