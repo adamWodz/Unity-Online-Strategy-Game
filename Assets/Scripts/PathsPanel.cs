@@ -11,15 +11,16 @@ public class PathsPanel : MonoBehaviour
     void Start()
     {
         GameObject playerTextTempalte = transform.GetChild(0).gameObject;
-        GameObject pom;
+        GameObject path;
 
         int n = paths.Count;
 
         for (int i = 0; i < n; i++)
         {
-            pom = Instantiate(playerTextTempalte, transform);
-            pom.transform.GetChild(0).GetComponent<TMP_Text>().text = paths[i];
+            path = Instantiate(playerTextTempalte, transform);
+            path.transform.GetChild(0).GetComponent<TMP_Text>().text = paths[i];
         }
+
         Destroy(playerTextTempalte);
     }
 
