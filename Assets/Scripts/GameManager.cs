@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
 
     private List<GameObject> shipList = new();
     private List<Transform> shipTransformList = new();
-    private float speed = 20.0f;
 
     // Start is called before the first frame update
     void Start()
