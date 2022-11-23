@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class DrawCardsPanel : MonoBehaviour
 {
-    public Color[] colors; // kolory kart
+    public UnityEngine.Color[] colors; // kolory kart
     void Start()
     {
         GameObject cardTempalte = transform.GetChild(0).gameObject;
@@ -21,7 +21,7 @@ public class DrawCardsPanel : MonoBehaviour
 
         Destroy(cardTempalte);
     }
-    Color RandomColor()
+    UnityEngine.Color RandomColor()
     {
         int index = Random.Range(0, colors.Length);
         return colors[index];
