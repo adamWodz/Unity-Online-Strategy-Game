@@ -26,7 +26,7 @@ public class BuildPath : MonoBehaviour
     {
         for (int i = 0; i < paths.Length; i++)
         {
-            paths[i].material.color = Color.blue;
+            paths[i].material.color = UnityEngine.Color.blue;
             gameManager.SpawnShips(objects[i+1]);
         }
     }
