@@ -24,7 +24,7 @@ public class PlayerState : MonoBehaviour
     int satellitesLeft { set; get; }
 
 
-    private bool CanBuildPath(PathBetweenPlanets path)
+    private bool CanBuildPath(Path path)
     {
         if (!isNowPlaying) return false;
         if(path.isBuilt) return false;
@@ -33,7 +33,7 @@ public class PlayerState : MonoBehaviour
         return true;
     }
 
-    public bool BuildPath(PathBetweenPlanets path)
+    public bool BuildPath(Path path)
     {
         if(CanBuildPath(path))
         {
@@ -43,7 +43,7 @@ public class PlayerState : MonoBehaviour
         return false;
     }
 
-    public void UpdatePlayerAfterBuild(PathBetweenPlanets path)
+    public void UpdatePlayerAfterBuild(Path path)
     {
         curPoints += path.length;
         numOfCardsInColor[path.color] -= path.length;
@@ -70,12 +70,4 @@ public class PlayerState : MonoBehaviour
         throw new NotImplementedException();
     }
 
-    [Serializable]
-    public class PathBetweenPlanets : MonoBehaviour
-    {
-        public int[] planets = new int[2];
-        public Color color;
-        public int length;
-        public bool isBuilt { get; set; }
-    }
 }
