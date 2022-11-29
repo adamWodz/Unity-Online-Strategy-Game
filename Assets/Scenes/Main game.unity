@@ -3783,7 +3783,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1169362080
 Transform:
   m_ObjectHideFlags: 0
@@ -4301,7 +4301,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1291620077
 Transform:
   m_ObjectHideFlags: 0
@@ -6520,6 +6520,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1934100726}
   - component: {fileID: 1934100725}
+  - component: {fileID: 1934100727}
   m_Layer: 0
   m_Name: Space
   m_TagString: Untagged
@@ -6594,6 +6595,56 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1934100727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934100724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f2cd47ba47dfb64899876b1cb1b5bca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  paths:
+  - planets: 0000000001000000
+    color: 0
+    length: 2
+  - planets: 0200000000000000
+    color: 1
+    length: 4
+  - planets: 0200000001000000
+    color: 5
+    length: 3
+  - planets: 0200000003000000
+    color: 3
+    length: 6
+  - planets: 0000000003000000
+    color: 3
+    length: 5
+  planets:
+  - name: Ziemia
+    id: 0
+    position: {x: -2, y: 2, z: -1}
+  - name: Mars
+    id: 1
+    position: {x: 0, y: 3, z: -1}
+  - name: Wenus
+    id: 2
+    position: {x: 1, y: 1, z: -1}
+  - name: Saturn
+    id: 3
+    position: {x: -2, y: -2, z: -1}
+  pathsPrefabs:
+  - {fileID: 484046494481794118, guid: f0a10d0817f13a041bcd30f2bc223c2e, type: 3}
+  - {fileID: 4272788146169644519, guid: 7b569926dea757340860cdeb6aed07d6, type: 3}
+  - {fileID: 229039527718325942, guid: ef3e05416a4fee64aba25c9bb2da8992, type: 3}
+  - {fileID: 545454968660512870, guid: 53f02694041e5624ba05753bba32eed3, type: 3}
+  - {fileID: 5665893906599813316, guid: af57ba4ace4251840a24af44ea5a9e80, type: 3}
+  - {fileID: 8300967037711017267, guid: 9590daaa5d9277a45b1263b9e267afe0, type: 3}
+  planetsPrefabs:
+  - {fileID: 4691723990619664147, guid: 5e8bc481d5ee6e34ea9302fde732f9ca, type: 3}
 --- !u!1 &2063295390
 GameObject:
   m_ObjectHideFlags: 0
