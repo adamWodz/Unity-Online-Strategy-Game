@@ -24,10 +24,18 @@ public class BuildPath : MonoBehaviour
 
     private void OnMouseDown()
     {
+        StartCoroutine(Coroutine());
+    }
+
+    IEnumerator Coroutine()
+    {
+        Debug.Log("Started Coroutine at timestamp : " + Time.time);
         for (int i = 0; i < paths.Length; i++)
         {
             paths[i].material.color = UnityEngine.Color.blue;
-            gameManager.SpawnShips(objects[i+1]);
+            gameManager.SpawnShips(objects[i + 1]);
+            yield return new WaitForSeconds(0.2f);
         }
+        Debug.Log("Finished Coroutine at timestamp : " + Time.time);
     }
 }

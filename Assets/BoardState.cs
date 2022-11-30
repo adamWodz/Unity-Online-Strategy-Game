@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public enum Color
@@ -19,6 +20,7 @@ public struct Planet
 {
     public string name;
     public int id;
+    public Vector3 position;
 }
 
 [Serializable]

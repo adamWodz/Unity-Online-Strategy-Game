@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class Move : MonoBehaviour
 {
@@ -17,13 +18,8 @@ public class Move : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (move)
-        {
-            Vector2 lookDirection = (shipGoal.position - transform.position);
-            Debug.Log(lookDirection);
-            if (lookDirection == Vector2.zero)
-                move = false;
-            transform.Translate(speed * Time.deltaTime * lookDirection);
-        }
+        // Move our position a step closer to the target.
+        var step = speed * Time.deltaTime; // calculate distance to move
+        transform.position = Vector3.MoveTowards(transform.position, shipGoal.position, step);
     }
 }
