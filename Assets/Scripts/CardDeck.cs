@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class CardDeck : MonoBehaviour
 {
     public int[] cards; // liczba kard dla ka¿dego koloru
-    public UnityEngine.Color[] colors; // kolory kart
+    public Sprite[] sprites; // kolory kart
     void Start()
     {
         GameObject cardTempalte = transform.GetChild(0).gameObject;
@@ -18,7 +18,7 @@ public class CardDeck : MonoBehaviour
         for (int i = 0; i < n; i++)
         {
             card = Instantiate(cardTempalte, transform);
-            card.GetComponent<Image>().color = colors[i];
+            card.GetComponent<Image>().sprite = sprites[i];
             card.transform.GetChild(0).GetComponent<TMP_Text>().text = cards[i].ToString();
         }
 
