@@ -2,7 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-
+public enum PanelState
+{
+    Minimized,
+    Maximized,
+    Rolling
+};
 public class GameManager : MonoBehaviour
 {
     public GameObject shipGameObject;
@@ -22,7 +27,38 @@ public class GameManager : MonoBehaviour
     {
 
     }
+    public void ChangeState(ref PanelState panelState, ref float speed)
+    {
+        switch (panelState)
+        {
+            case PanelState.Minimized:
+                speed = 100;
+                panelState = PanelState.Rolling;
+                break;
+            case PanelState.Maximized:
+                speed = -100;
+                panelState = PanelState.Rolling;
+                break;
+        }
+    }
+    // funkcja zmieniaj¹ca d³ugoœæ paneli UI w grze
+    public void ChangeWidth(ref PanelState panelState, ref float width, ref RectTransform panel, float maxWidth, float minWidth, ref float speed)
+    {
+        if (panelState == PanelState.Rolling)
+        {
+            panel.sizeDelta = new Vector2(width, panel.sizeDelta.y);
+            width += speed * Time.deltaTime;
 
+            if (width >= maxWidth)
+            {
+                panelState = PanelState.Maximized;
+            }
+            if (width <= minWidth)
+            {
+                panelState = PanelState.Minimized;
+            }
+        }
+    }
     public void SpawnShips(Transform t)
     {
         var spawnedShipGameObject = Instantiate(shipGameObject, spaceshipsBase, t.rotation);
