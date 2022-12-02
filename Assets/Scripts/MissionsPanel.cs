@@ -7,7 +7,7 @@ public class MissionsPanel : MonoBehaviour
 {
     RectTransform panel;
     float width;
-    float speed = 100;
+    float speed;
     float maxWidth = 191.84f;
     float minWidth = 0;
     private PanelState panelState = PanelState.Minimized;
@@ -20,7 +20,7 @@ public class MissionsPanel : MonoBehaviour
         //pobieram game managera
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        //pobieram odpowiedni przycisk i nadajê mu funkcjê
+        //pobieram odpowiedni przycisk i nadajï¿½ mu funkcjï¿½
         button = GameObject.Find("DrawMissionsCardsButton").GetComponent<Button>();
         button.onClick.AddListener(() => { gameManager.ChangeState(ref panelState, ref speed); });
         

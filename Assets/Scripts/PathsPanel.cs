@@ -22,11 +22,11 @@ public class PathsPanel : MonoBehaviour
         //pobieram game managera
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         
-        //pobieram odpowiedni przycisk i nadajê mu funkcjê
+        //pobieram odpowiedni przycisk i nadajï¿½ mu funkcjï¿½
         button = GameObject.Find("DrawMissionsCardsButton").GetComponent<Button>();
         button.onClick.AddListener(() => { gameManager.ChangeState(ref panelState,ref speed); });
         
-        // pobieram RectTransform z PathsScroll, który jest rodzicem PathsPanel
+        // pobieram RectTransform z PathsScroll, ktï¿½ry jest rodzicem PathsPanel
         scrollPanel = transform.parent.GetComponent<RectTransform>();
         scrollWidth= scrollPanel.sizeDelta.x;
         

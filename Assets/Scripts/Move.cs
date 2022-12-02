@@ -21,5 +21,7 @@ public class Move : MonoBehaviour
         // Move our position a step closer to the target.
         var step = speed * Time.deltaTime; // calculate distance to move
         transform.position = Vector3.MoveTowards(transform.position, shipGoal.position, step);
+        if(transform.position == shipGoal.position)
+            transform.rotation = Quaternion.RotateTowards(transform.rotation,shipGoal.rotation,1);
     }
 }
