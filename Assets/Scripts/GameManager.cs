@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+
 public enum PanelState
 {
     Minimized,
     Maximized,
     Rolling
 };
+
 public class GameManager : MonoBehaviour
 {
     public GameObject shipGameObject;
@@ -15,6 +17,7 @@ public class GameManager : MonoBehaviour
     private List<GameObject> shipList = new();
     private List<Transform> shipTransformList = new();
     private Vector3 spaceshipsBase = new(-8, -4, -1);
+    private float panelsSpeed = 500;
 
     // Start is called before the first frame update
     void Start()
@@ -32,16 +35,16 @@ public class GameManager : MonoBehaviour
         switch (panelState)
         {
             case PanelState.Minimized:
-                speed = 100;
+                speed = panelsSpeed;
                 panelState = PanelState.Rolling;
                 break;
             case PanelState.Maximized:
-                speed = -100;
+                speed = -panelsSpeed;
                 panelState = PanelState.Rolling;
                 break;
         }
     }
-    // funkcja zmieniaj¹ca d³ugoœæ paneli UI w grze
+    // funkcja zmieniajï¿½ca dï¿½ugoï¿½ï¿½ paneli UI w grze
     public void ChangeWidth(ref PanelState panelState, ref float width, ref RectTransform panel, float maxWidth, float minWidth, ref float speed)
     {
         if (panelState == PanelState.Rolling)
@@ -59,11 +62,21 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
     public void SpawnShips(Transform t)
     {
-        var spawnedShipGameObject = Instantiate(shipGameObject, spaceshipsBase, t.rotation);
+        float angle = CalculateAngle(t.position,spaceshipsBase);
+        var spawnedShipGameObject = Instantiate(shipGameObject, spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));//t.rotation);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
         spawnedShip.shipGoal = t;
         spawnedShip.move = true;
+    }
+
+    public float CalculateAngle(Vector3 position1, Vector3 position2)
+    {
+        return Mathf.Atan2(
+                          position1.x - position2.x,
+                          position1.y - position2.y
+                          ) * Mathf.Rad2Deg;
     }
 }
