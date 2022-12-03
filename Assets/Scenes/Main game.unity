@@ -573,6 +573,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f32e7c5cac45f7241a5fcd83799e0da1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  panelState: 0
 --- !u!1 &207637184
 GameObject:
   m_ObjectHideFlags: 0
@@ -5137,9 +5138,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 129dc1837a90178419b79781bd1ca330, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  panelState: 1
   paths:
   - Wenus - Mars
   - Ziemia - Saturn
   - Mars - Pluto
   - Wenus - Pluto
-  gameManager: {fileID: 0}
