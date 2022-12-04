@@ -7,10 +7,12 @@ public class BuildPath : MonoBehaviour
     private GameManager gameManager;
     Transform[] objects;
     Renderer[] paths;
+    Path path = new();
 
     // Start is called before the first frame update
     void Start()
     {
+        path.isBuilt = false;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         paths = gameObject.GetComponentsInChildren<Renderer>();
         objects = gameObject.GetComponentsInChildren<Transform>();
@@ -24,7 +26,11 @@ public class BuildPath : MonoBehaviour
 
     private void OnMouseDown()
     {
-        StartCoroutine(Coroutine());
+        if (!path.isBuilt)
+        {
+            StartCoroutine(Coroutine());
+            path.isBuilt = true;
+        }
     }
 
     IEnumerator Coroutine()

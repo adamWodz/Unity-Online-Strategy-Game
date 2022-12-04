@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
 public class Move : MonoBehaviour
 {
-    private float speed = 5;
+    public float speed = 5;
     public bool move = false;
-    public Transform shipGoal;
+    public Transform goal;
 
     // Start is called before the first frame update
     void Start()
     {
-
+     
     }
 
     // Update is called once per frame
@@ -20,8 +22,20 @@ public class Move : MonoBehaviour
     {
         // Move our position a step closer to the target.
         var step = speed * Time.deltaTime; // calculate distance to move
-        transform.position = Vector3.MoveTowards(transform.position, shipGoal.position, step);
-        if(transform.position == shipGoal.position)
-            transform.rotation = Quaternion.RotateTowards(transform.rotation,shipGoal.rotation,1);
+        transform.position = Vector3.MoveTowards(transform.position, goal.position, step);
+        if (Vector3.Distance(transform.position,goal.position) < 0.001)
+        {
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, goal.rotation, 1);
+           
+            if (gameObject.name.EndsWith("Card"))
+            {
+                if (GameObject.Find(gameObject.name + "s").transform.GetChild(0).TryGetComponent<TMP_Text>(out var counter))
+                {
+                    Debug.Log($"Nazwa:{gameObject.name}");
+                    counter.text = (int.Parse(counter.text) + 1).ToString();
+                    Destroy(gameObject);
+                }
+            }
+        }
     }
 }
