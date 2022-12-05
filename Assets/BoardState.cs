@@ -32,10 +32,3 @@ public class Path
     public bool isBuilt { get; set; }
     
 }
-
-[Serializable]
-public class BoardState : MonoBehaviour
-{
-    List<Planet> planets;
-    
-}
