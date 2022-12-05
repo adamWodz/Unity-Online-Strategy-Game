@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public GameObject shipGameObject;
+    public GameObject cardButton;
 
     private List<GameObject> shipList = new();
     private List<Transform> shipTransformList = new();
@@ -26,10 +28,21 @@ public class GameManager : MonoBehaviour
     public void SpawnShips(Transform t)
     {
         float angle = CalculateAngle(t.position,spaceshipsBase);
-        var spawnedShipGameObject = Instantiate(shipGameObject, spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));//t.rotation);
+        var spawnedShipGameObject = Instantiate(shipGameObject, spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
-        spawnedShip.shipGoal = t;
+        spawnedShip.goal = t;
         spawnedShip.move = true;
+    }
+
+    public void SpawnCards(Transform t, Sprite sprite, string name)
+    {
+        cardButton.GetComponent<Image>().sprite = sprite;
+        var spawnedCardGameObject = Instantiate(cardButton, t);
+        spawnedCardGameObject.name = name;
+        var spawnedShip = spawnedCardGameObject.GetComponent<Move>();
+        spawnedShip.move = true;
+        spawnedShip.speed = 500;
+        spawnedShip.goal = GameObject.Find(name+"s").GetComponent<Transform>();
     }
 
     public float CalculateAngle(Vector3 position1, Vector3 position2)
