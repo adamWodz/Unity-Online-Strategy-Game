@@ -18,6 +18,5 @@ public class PlayerState : MonoBehaviour
 {
     public PlayerColor playerColor;
     public string playerName;
-    public Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>();
-
+    public int points;
 }
