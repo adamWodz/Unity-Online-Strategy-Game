@@ -7,13 +7,13 @@ using UnityEngine;
 
 public enum Color
 {
-    black,
     red,
     green,
     blue,
-    yellow,
+    black,
     white,
-    orange,
+    yellow,
+    pink,
     special
 }
 

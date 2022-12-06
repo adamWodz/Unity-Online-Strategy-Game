@@ -2200,7 +2200,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1055669851}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.09, y: -6.06, z: 0}
+  m_LocalPosition: {x: 11.71, y: -0.84, z: -1}
   m_LocalScale: {x: 1, y: 1.549, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4640,35 +4640,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f2cd47ba47dfb64899876b1cb1b5bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paths:
-  - planets: 0000000001000000
-    color: 0
-    length: 3
-  - planets: 0000000002000000
-    color: 0
-    length: 4
-  - planets: 0000000003000000
-    color: 0
-    length: 5
-  - planets: 0100000002000000
-    color: 0
-    length: 2
-  - planets: 0200000003000000
-    color: 0
-    length: 6
-  planets:
-  - name: Ziemia
-    id: 0
-    position: {x: -2, y: 2, z: -1}
-  - name: Mars
-    id: 1
-    position: {x: 0, y: 3, z: -1}
-  - name: Wenus
-    id: 2
-    position: {x: 1, y: 1, z: -1}
-  - name: Saturn
-    id: 3
-    position: {x: -2, y: -2, z: -1}
   pathsPrefabs:
   - {fileID: 484046494481794118, guid: f0a10d0817f13a041bcd30f2bc223c2e, type: 3}
   - {fileID: 4272788146169644519, guid: 7b569926dea757340860cdeb6aed07d6, type: 3}
@@ -4676,7 +4647,19 @@ MonoBehaviour:
   - {fileID: 545454968660512870, guid: 53f02694041e5624ba05753bba32eed3, type: 3}
   - {fileID: 5665893906599813316, guid: af57ba4ace4251840a24af44ea5a9e80, type: 3}
   - {fileID: 8300967037711017267, guid: 9590daaa5d9277a45b1263b9e267afe0, type: 3}
+  - {fileID: 2351980224881510908, guid: 1787b549c6d187e45a9836bbc70f08c0, type: 3}
+  - {fileID: 3340119059822725561, guid: 4509119869898584e964d42bdfc73ff5, type: 3}
   planetsPrefabs:
+  - {fileID: 4329754044473220178, guid: d10038d6e1c051344a8540de69d15a67, type: 3}
+  - {fileID: 4403890721048219983, guid: 1d9b29c423eecb142b73096512150225, type: 3}
+  - {fileID: 120509872218864145, guid: 289c78308ccf9a445b1a3763e62e897f, type: 3}
+  - {fileID: 3704164352148207490, guid: fc7e4c73372083c438b95bfa231aa001, type: 3}
+  - {fileID: 2355625766475068295, guid: a9fede7d8f750514cb6da808d6967324, type: 3}
+  - {fileID: 2771126958898736130, guid: 21ad6e90a3e921a44b98a8ab972204d1, type: 3}
+  - {fileID: 1782041701090604632, guid: e79f5ca8ab12b4447b60133813d08556, type: 3}
+  - {fileID: 1641136667520140012, guid: bb2245e7b02d1cf448f1034345b6e0ab, type: 3}
+  - {fileID: 6582710055851895374, guid: 08df3b680e7dc494c866d305d229e845, type: 3}
+  - {fileID: 343829207376835345, guid: b98b5c8ff0ce5154fae56c08274d81e2, type: 3}
   - {fileID: 4691723990619664147, guid: 5e8bc481d5ee6e34ea9302fde732f9ca, type: 3}
 --- !u!1 &2106781420
 GameObject:
