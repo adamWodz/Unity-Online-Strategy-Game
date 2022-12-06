@@ -27,7 +27,7 @@ namespace Assets.GameplayControl
         };
         bool isNowPlaying { set; get; }
 
-        List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
+        public List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
 
         protected bool CanBuildPath(Path path)
@@ -48,6 +48,7 @@ namespace Assets.GameplayControl
             path.isBuilt = true;
 
             // wiadomość do serwera żeby powiadomił pozostałych graczy o zmianach
+            // to do
 
             // dodanie planet do grup połączonych planet
             ConnectedPlanets groupPlanetFrom = ConnectedPlanets.GroupContainingPlanet(groupsOfConnectedPlanets, path.planetFrom);
