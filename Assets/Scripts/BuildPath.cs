@@ -5,8 +5,8 @@ using UnityEngine;
 public class BuildPath : MonoBehaviour
 {
     private GameManager gameManager;
-    Transform[] objects;
-    Renderer[] paths;
+    Transform[] tilesTransforms;
+    Renderer[] tilesRenderers;
     Path path = new();
 
     // Start is called before the first frame update
@@ -14,8 +14,8 @@ public class BuildPath : MonoBehaviour
     {
         path.isBuilt = false;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        paths = gameObject.GetComponentsInChildren<Renderer>();
-        objects = gameObject.GetComponentsInChildren<Transform>();
+        tilesRenderers = gameObject.GetComponentsInChildren<Renderer>();
+        tilesTransforms = gameObject.GetComponentsInChildren<Transform>();
     }
 
     // Update is called once per frame
@@ -36,10 +36,9 @@ public class BuildPath : MonoBehaviour
     IEnumerator Coroutine()
     {
         Debug.Log("Started Coroutine at timestamp : " + Time.time);
-        for (int i = 0; i < paths.Length; i++)
+        for (int i = 0; i < tilesRenderers.Length; i++)
         {
-            paths[i].material.color = UnityEngine.Color.blue;
-            gameManager.SpawnShips(objects[i + 1]);
+            gameManager.SpawnShips(tilesTransforms[i + 1]);
             yield return new WaitForSeconds(0.2f);
         }
         Debug.Log("Finished Coroutine at timestamp : " + Time.time);

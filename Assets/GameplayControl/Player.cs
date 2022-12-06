@@ -16,7 +16,7 @@ namespace Assets.GameplayControl
         public List<Mission> missions;
         public Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
-            { Color.orange, 0 },
+            { Color.pink, 0 },
             { Color.red, 0 },
             { Color.black, 0 },
             { Color.blue, 0 },
