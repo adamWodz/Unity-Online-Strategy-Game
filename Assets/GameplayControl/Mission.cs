@@ -13,7 +13,7 @@ namespace Assets.GameplayControl
         public int points;
         public bool IsCompletedByPlayer(Player player)
         {
-            return false;
+            return ConnectedPlanets.ArePlanetsInOneGroup(player.groupsOfConnectedPlanets, start, end);
         }
     }
 }
