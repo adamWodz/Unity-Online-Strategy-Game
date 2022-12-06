@@ -8,6 +8,7 @@ namespace Assets.GameplayControl
 {
     public class Mission
     {
+        public Guid Id = Guid.NewGuid();
         public Planet start { get; set; }
         public Planet end { get; set; }
         public int points;

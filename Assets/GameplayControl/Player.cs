@@ -8,11 +8,10 @@ namespace Assets.GameplayControl
 {
     public class Player
     {
-        public int Id { get; set; }
+        public Guid Id { get; } = Guid.NewGuid();
         public string Name { get; set; }
-        public int curentPoints { get; set; }
-
-        public int satellitesSent = 0;
+        public int curentPoints { get; set; } = 0;
+        public int satellitesSent { get; set; } = 0;
         public List<Mission> missions;
         public Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
@@ -25,12 +24,16 @@ namespace Assets.GameplayControl
             { Color.green, 0 },
             { Color.special, 0 },
         };
-        bool isNowPlaying { set; get; }
-
+        bool isNowPlaying { set; get; } = false;
         public List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
+        public Player(string name, List<Mission> missions)
+        {
+            Name = name;
+            this.missions = missions;
+        }
 
-        protected bool CanBuildPath(Path path)
+        public bool CanBuildPath(Path path)
         {
             if (!isNowPlaying) return false;
             if (path.isBuilt) return false;

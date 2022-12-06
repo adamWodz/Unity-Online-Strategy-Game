@@ -14,14 +14,15 @@ public enum Color
     yellow,
     white,
     orange,
+    optional,
     special
 }
 
 [Serializable]
 public class Planet
 {
+    public Guid Id { get; } = Guid.NewGuid();
     public string name;
-    public int Id;
     public Vector3 position;
     public bool withSatellite { set; get; } = false;
     public List<Path> adjacentPaths;
@@ -30,16 +31,26 @@ public class Planet
 [Serializable]
 public class Path
 {
-    public int Id;
-    public int[] planetsIds = new int[2];
+    public Guid Id { get; } = Guid.NewGuid();
+    public int[] planetsIds = new int[2] { 0, 0};
     public Planet planetFrom;
     public Planet planetTo;
-    public Color color;
-    public int length;
-
+    public Color color { get; }
+    public int length { get; }
     public bool isBuilt { get; set; } = false;
     public Player builtBy = null;
     public bool withSatellie { get; set; } = false;
     public Player playerOfSatellite = null;
+
+    public Path(int length = 1, Color color = Color.optional)
+    {
+        this.length = length;
+        this.color = color;
+    }
+
+    public void SetPlanetsIds()
+    {
+        // to do
+    }
 }
 
