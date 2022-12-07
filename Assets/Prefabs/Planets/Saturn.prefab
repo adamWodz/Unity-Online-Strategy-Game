@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8139259787789825714}
   - component: {fileID: 7385135560249494493}
   m_Layer: 0
-  m_Name: Saturn1
+  m_Name: Saturn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

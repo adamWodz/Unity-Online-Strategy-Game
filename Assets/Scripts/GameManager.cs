@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,11 +13,17 @@ public class GameManager : MonoBehaviour
     private List<GameObject> shipList = new();
     private List<Transform> shipTransformList = new();
     private Vector3 spaceshipsBase = new(-8, -4, -1);
+    private TMP_Text spaceshipCounter;
+    private TMP_Text satelliteCounter;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        spaceshipCounter = GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>();
+        spaceshipCounter.text = "50";
+
+        satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
+        satelliteCounter.text = "3";
     }
 
     // Update is called once per frame
@@ -32,6 +39,7 @@ public class GameManager : MonoBehaviour
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
         spawnedShip.goal = t;
         spawnedShip.move = true;
+        spaceshipCounter.text = (int.Parse(spaceshipCounter.text) - 1).ToString();
     }
 
     public void SpawnCards(Transform t, Sprite sprite, string name)
