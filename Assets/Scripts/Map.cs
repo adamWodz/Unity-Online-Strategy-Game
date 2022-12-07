@@ -192,7 +192,16 @@ public class Map : MonoBehaviour
                 color = Color.special,
                 length = 5
             },
+            new Path()
+            {
+                Id = 10,
+                planetFrom = mars,
+                planetTo = neptun,
+                color = Color.special,
+                length = 4
+            },
         };
+
         CreateMap();
     }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,9 +10,12 @@ public class DrawCardsPanel : MonoBehaviour
     public string[] names = { "RedCard", "GreenCard", "BlueCard", "BlackCard", "WhiteCard", "YellowCard", "PinkCard", "RainbowCard" };
     public List<GameObject> cards = new();
     GameManager gameManager;
+    Button drawCardsButton;
 
     void Start()
     {
+        drawCardsButton = GameObject.Find("DrawCardsButton").GetComponent<Button>();
+        
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         GameObject cardTempalte = transform.GetChild(0).gameObject;
         GameObject card;
@@ -29,6 +33,8 @@ public class DrawCardsPanel : MonoBehaviour
         }
 
         Destroy(cardTempalte);
+        drawCardsButton.transform.SetAsLastSibling();
+        drawCardsButton.onClick.AddListener(MoveCard);
     }
     private void Update()
     {
@@ -36,7 +42,7 @@ public class DrawCardsPanel : MonoBehaviour
     }
     Sprite RandomSprite(ref int index)
     {
-        index = Random.Range(0, sprites.Length);
+        index = UnityEngine.Random.Range(0, sprites.Length);
         return sprites[index];
     }
 
@@ -50,4 +56,12 @@ public class DrawCardsPanel : MonoBehaviour
         cards[index].GetComponent<Image>().sprite = RandomSprite(ref i);
         cards[index].name= names[i];
     }
+    
+    private void MoveCard()
+    {
+        int index = 0;
+        Sprite sprite = RandomSprite(ref index);
+        gameManager.SpawnCards(drawCardsButton.transform, sprite, names[index]);
+    }
+    
 }
