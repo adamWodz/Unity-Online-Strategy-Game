@@ -21,7 +21,7 @@ public enum Color
 public class Planet
 {
     public string name;
-    public int Id;
+    public Guid Id { get; } = Guid.NewGuid();
     public Vector3 position;
     public bool withSatellite { set; get; } = false;
     public List<Path> adjacentPaths;
@@ -30,13 +30,12 @@ public class Planet
 [Serializable]
 public class Path
 {
-    public int Id;
+    public Guid Id { get; } = Guid.NewGuid();
     public int[] planetsIds = new int[2];
     public Planet planetFrom;
     public Planet planetTo;
     public Color color;
     public int length;
-
     public bool isBuilt { get; set; } = false;
     public Player builtBy = null;
     public bool withSatellie { get; set; } = false;
