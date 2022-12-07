@@ -160,7 +160,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 59.156, y: 59.3309}
+  m_SizeDelta: {x: 59.156, y: 52.7289}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1576366
 MonoBehaviour:
@@ -3903,7 +3903,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -4814,10 +4814,58 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panelState: 1
   paths:
-  - Wenus - Mars
-  - Ziemia - Saturn
-  - Mars - Pluto
-  - Wenus - Pluto
+  - Id: 0
+    planetFrom:
+      name: 
+      Id: 0
+      position: {x: 0, y: 0, z: 0}
+      adjacentPaths: []
+    planetTo:
+      name: 
+      Id: 0
+      position: {x: 0, y: 0, z: 0}
+      adjacentPaths: []
+    color: 0
+    length: 0
+  - Id: 0
+    planetFrom:
+      name: 
+      Id: 0
+      position: {x: 0, y: 0, z: 0}
+      adjacentPaths: []
+    planetTo:
+      name: 
+      Id: 0
+      position: {x: 0, y: 0, z: 0}
+      adjacentPaths: []
+    color: 0
+    length: 0
+  - Id: 0
+    planetFrom:
+      name: 
+      Id: 0
+      position: {x: 0, y: 0, z: 0}
+      adjacentPaths: []
+    planetTo:
+      name: 
+      Id: 0
+      position: {x: 0, y: 0, z: 0}
+      adjacentPaths: []
+    color: 0
+    length: 0
+  - Id: 0
+    planetFrom:
+      name: 
+      Id: 0
+      position: {x: 0, y: 0, z: 0}
+      adjacentPaths: []
+    planetTo:
+      name: 
+      Id: 0
+      position: {x: 0, y: 0, z: 0}
+      adjacentPaths: []
+    color: 0
+    length: 0
 --- !u!1001 &4963611424439959761
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4855,11 +4903,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4963611423944183590, guid: 3ec1dbd1f2a2c6a4cb119d44e460f625, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 44.4466
+      value: 49.2183
       objectReference: {fileID: 0}
     - target: {fileID: 4963611423944183590, guid: 3ec1dbd1f2a2c6a4cb119d44e460f625, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 59.3309
+      value: 63.1398
       objectReference: {fileID: 0}
     - target: {fileID: 4963611423944183590, guid: 3ec1dbd1f2a2c6a4cb119d44e460f625, type: 3}
       propertyPath: m_LocalPosition.x

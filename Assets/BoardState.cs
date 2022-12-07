@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum Color
@@ -31,7 +32,7 @@ public class Planet
 public class Path
 {
     public int Id;
-    public int[] planetsIds = new int[2];
+    //public int[] planetsIds = new int[2];
     public Planet planetFrom;
     public Planet planetTo;
     public Color color;
@@ -41,5 +42,10 @@ public class Path
     public Player builtBy = null;
     public bool withSatellie { get; set; } = false;
     public Player playerOfSatellite = null;
+
+    public bool IsEqual(Path other)
+    {
+        return planetFrom.name == other.planetFrom.name && planetTo.name == other.planetTo.name;
+    }
 }
 

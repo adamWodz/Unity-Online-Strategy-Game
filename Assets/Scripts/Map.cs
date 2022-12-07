@@ -5,6 +5,10 @@ using UnityEngine;
 public class Map : MonoBehaviour
 {
     private List<Path> paths;
+    public List<Path> Paths
+    { 
+        get { return paths; } 
+    }
     private List<Planet> planets;
     public GameObject[] pathsPrefabs;
     public GameObject[] planetsPrefabs;
@@ -96,20 +100,7 @@ public class Map : MonoBehaviour
             Id = 10,
             position = new Vector3(-1.8f, -2.04f, -1)
         };
-        planets = new()
-        {
-            merkury,
-            wenus,
-            ziemia,
-            ksiezyc,
-            mars,
-            jowisz,
-            saturn,
-            uran,
-            neptun,
-            pluton, 
-            planeta,
-        };
+        
         paths = new()
         {
             new Path()
@@ -118,7 +109,7 @@ public class Map : MonoBehaviour
                 planetFrom = merkury,
                 planetTo = wenus,
                 color = Color.red,
-                length = 8
+                length = 8,
             },
             new Path()
             {
@@ -200,6 +191,86 @@ public class Map : MonoBehaviour
                 color = Color.special,
                 length = 4
             },
+        };
+
+        merkury.adjacentPaths = new List<Path>()
+        {
+            paths[0],
+            paths[1]
+        };
+
+        wenus.adjacentPaths = new List<Path>()
+        {
+            paths[0],
+            paths[6]
+        };
+
+        ziemia.adjacentPaths = new List<Path>()
+        {
+            paths[2],
+            paths[3],
+            paths[7]
+        };
+
+        ksiezyc.adjacentPaths = new List<Path>()
+        {
+            paths[7]
+        };
+
+        mars.adjacentPaths = new List<Path>()
+        {
+            paths[3],
+            paths[4],
+            paths[6],
+            paths[10]
+        };
+
+        jowisz.adjacentPaths = new List<Path>()
+        {
+            paths[9]
+        };
+
+        saturn.adjacentPaths = new List<Path>()
+        {
+            paths[5]
+        };
+
+        uran.adjacentPaths = new List<Path>()
+        {
+            paths[1],
+            paths[2]
+        };
+
+        neptun.adjacentPaths = new List<Path>()
+        {
+            paths[10]
+        };
+
+        pluton.adjacentPaths = new List<Path>()
+        {
+            paths[4],
+            paths[5]
+        };
+
+        planeta.adjacentPaths = new List<Path>()
+        {
+            paths[8],
+            paths[9]
+        };
+
+        planets = new()
+        {
+            merkury,
+            wenus,
+            ziemia,
+            ksiezyc,
+            mars,
+            jowisz,
+            saturn,
+            uran,
+            neptun,
+            pluton, 
+            planeta,
         };
 
         CreateMap();
