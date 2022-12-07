@@ -5,25 +5,78 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class UnitTests
+namespace UnitTests
 {
-    // A Test behaves as an ordinary method
-    [Test]
-    public void UnitTestsSimplePasses()
+    public class PlayerTests
     {
-        //Path
-        bool b = true;
-        Assert.IsTrue(b);
-        // Use the Assert class to test conditions
+        [TestCase(Color.red, 2, Color.red, 2, false)]
+        [TestCase(Color.blue, 3, Color.red, 1, false)]
+        public void CanBuildPathWhenNoPlayersTurnTest(Color pathColor, int pathLength, Color cardsColor, int cardsQuantity, bool expected)
+        {
+            Player player = new Player("example", null);
+            player.numOfCardsInColor[cardsColor] = cardsQuantity;
+            Path path = new Path(pathColor, pathLength);
+            Assert.AreEqual(player.CanBuildPath(path), expected);
+        }
+
+        [TestCase(Color.red, 2, Color.red, 2, true)]
+        [TestCase(Color.red, 2, Color.blue, 2, false)]
+        [TestCase(Color.red, 2, Color.red, 1, false)]
+        [TestCase(Color.red, 2, Color.red, 2, true)]
+        [TestCase(Color.red, 2, Color.red, 4, true)]
+        public void CanBuildPathTests(Color pathColor, int pathLength, Color cardsColor, int cardsQuantity, bool expected)
+        {
+            Player player = new Player("example", null);
+            player.numOfCardsInColor[cardsColor] = cardsQuantity;
+            player.NewTurn();
+            Path path = new Path(pathColor, pathLength);
+            Assert.AreEqual(player.CanBuildPath(path), expected);
+        }
+
+        [TestCase]
+        public void BuildPathTests()
+        {
+
+        }
+
+        [TestCase]
+        public void CanSendSatelliteTests()
+        {
+
+        }
+
+        [TestCase]
+        public void SendSatellitesTests()
+        {
+
+        }
+
+        [TestCase]
+        public void DrawCardsTests()
+        {
+
+        }
+
+        [TestCase]
+        public void StartTurnTests()
+        {
+
+        }
+
+        [TestCase]
+        public void EndTurnTests()
+        {
+
+        }
     }
 
-    // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-    // `yield return null;` to skip a frame.
-    [UnityTest]
-    public IEnumerator UnitTestsWithEnumeratorPasses()
+    public class MissionTests
     {
-        // Use the Assert class to test conditions.
-        // Use yield to skip a frame.
-        yield return null;
+
+    }
+
+    public class BoardTests
+    {
+
     }
 }

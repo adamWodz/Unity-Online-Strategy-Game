@@ -40,5 +40,14 @@ public class Path
     public Player builtBy = null;
     public bool withSatellie { get; set; } = false;
     public Player playerOfSatellite = null;
+
+    public Path()
+    { }
+
+    public Path(Color color, int length)
+    {
+        this.color = color;
+        this.length = length;
+    }
 }
 

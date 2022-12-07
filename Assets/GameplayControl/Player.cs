@@ -34,7 +34,7 @@ namespace Assets.GameplayControl
             this.missions = missions;
         }
 
-        protected bool CanBuildPath(Path path)
+        public bool CanBuildPath(Path path)
         {
             if (!isNowPlaying) return false;
             if (path.isBuilt) return false;
@@ -83,7 +83,7 @@ namespace Assets.GameplayControl
             return true;
         }
 
-        protected bool CanSendSatellite(Planet planet, Path path, Color color)
+        public bool CanSendSatellite(Planet planet, Path path, Color color)
         {
             if (planet.withSatellite) return false;
             if (path.withSatellie) return false;
