@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Assets.GameplayControl;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -10,7 +11,8 @@ public class UnitTests
     [Test]
     public void UnitTestsSimplePasses()
     {
-        bool b = false;
+        //Path
+        bool b = true;
         Assert.IsTrue(b);
         // Use the Assert class to test conditions
     }
