@@ -106,11 +106,31 @@ namespace UnitTests
 
     public class MissionTests
     {
+        [Test]
+        public void IsMissionCompletedTest()
+        {
+            Planet planet1 = new Planet();
+            Planet planet2 = new Planet();
+            Planet planet3 = new Planet();
+            Mission mission = new Mission();
+            mission.start = planet1;
+            mission.end = planet3;
+            Path path12 = new Path(Color.red, 2);
+            path12.planetFrom = planet1;
+            path12.planetTo = planet2;
+            Path path23 = new Path(Color.green, 3);
+            path23.planetFrom = planet2;
+            path23.planetTo = planet3;
+            
+            Player player = new Player("example", null);
+            player.DrawCards(Color.red, Color.red);
+            player.DrawCards(Color.green, Color.green);
+            player.DrawCards(Color.green, Color.green);
 
-    }
+            player.BuildPath(path12);
+            player.BuildPath(path23);
 
-    public class BoardTests
-    {
-
+            Assert.IsTrue(mission.IsCompletedByPlayer(player));
+        }
     }
 }
