@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
     public GameObject shipGameObject;
     public GameObject cardButton;
@@ -31,11 +32,12 @@ public class GameManager : MonoBehaviour
     {
 
     }
-    
+
     public void SpawnShips(Transform t)
     {
         float angle = CalculateAngle(t.position,spaceshipsBase);
         var spawnedShipGameObject = Instantiate(shipGameObject, spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
+        spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
         spawnedShip.goal = t;
         spawnedShip.move = true;

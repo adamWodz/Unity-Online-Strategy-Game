@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class BuildPath : MonoBehaviour
+public class BuildPath : NetworkBehaviour
 {
     private GameManager gameManager;
     Transform[] tilesTransforms;

@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5262943208096833107}
   - component: {fileID: -7536219806838839366}
+  - component: {fileID: 48467036252612472}
+  - component: {fileID: -8650071689204636855}
   m_Layer: 0
   m_Name: Spaceship black-blue
   m_TagString: Untagged
@@ -45,8 +47,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8164c8b87ea38124e9baa2b470f1818a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 5
   move: 0
-  shipGoal: {fileID: 0}
+  goal: {fileID: 0}
+--- !u!114 &48467036252612472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9060527398928946586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &-8650071689204636855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9060527398928946586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 0
+  SyncRotAngleX: 0
+  SyncRotAngleY: 0
+  SyncRotAngleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  InLocalSpace: 0
+  Interpolate: 1
 --- !u!1001 &5054643676908241124
 PrefabInstance:
   m_ObjectHideFlags: 0
