@@ -9,12 +9,14 @@ public class Move : MonoBehaviour
 {
     public float speed = 5;
     public bool move = false;
-    public Transform goal;
+    //public Transform goal;
+    public Vector3 goalPosition;
+    public Quaternion goalRotation;
 
     // Start is called before the first frame update
     void Start()
     {
-     
+
     }
 
     // Update is called once per frame
@@ -22,10 +24,10 @@ public class Move : MonoBehaviour
     {
         // Move our position a step closer to the target.
         var step = speed * Time.deltaTime; // calculate distance to move
-        transform.position = Vector3.MoveTowards(transform.position, goal.position, step);
-        if (Vector3.Distance(transform.position,goal.position) < 0.001)
+        transform.position = Vector3.MoveTowards(transform.position, goalPosition, step);
+        if (Vector3.Distance(transform.position,goalPosition) < 0.001)
         {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, goal.rotation, 1);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRotation, 1);
            
             if (gameObject.name.EndsWith("Card"))
             {
