@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class BuildPath : MonoBehaviour
@@ -38,7 +39,7 @@ public class BuildPath : MonoBehaviour
         Debug.Log("Started Coroutine at timestamp : " + Time.time);
         for (int i = 0; i < tilesRenderers.Length; i++)
         {
-            gameManager.SpawnShips(tilesTransforms[i + 1]);
+            gameManager.SpawnShipsServerRpc(tilesTransforms[i + 1].position, tilesTransforms[i+1].rotation);
             yield return new WaitForSeconds(0.2f);
         }
         Debug.Log("Finished Coroutine at timestamp : " + Time.time);
