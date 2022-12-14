@@ -6,6 +6,18 @@ using System.Threading.Tasks;
 
 namespace Assets.GameplayControl
 {
+    public enum Color
+    {
+        red,
+        green,
+        blue,
+        black,
+        white,
+        yellow,
+        pink,
+        special
+    }
+
     public static class Board
     {
         public static Dictionary<int, int> pointsPerLength = new Dictionary<int, int>()

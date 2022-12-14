@@ -2,31 +2,8 @@ using Assets.GameplayControl;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public enum Color
-{
-    red,
-    green,
-    blue,
-    black,
-    white,
-    yellow,
-    pink,
-    special
-}
-
-[Serializable]
-public class Planet
-{
-    public string name;
-    public int Id { get; set; }
-    public Vector3 position;
-    public bool withSatellite { set; get; } = false;
-    public List<Path> adjacentPaths;
-}
 
 [Serializable]
 public class Path
@@ -35,7 +12,7 @@ public class Path
     public int[] planetsIds = new int[2];
     public Planet planetFrom;
     public Planet planetTo;
-    public Color color;
+    public Assets.GameplayControl.Color color;
     public int length;
     public bool isBuilt { get; set; } = false;
     public Player builtBy = null;
@@ -46,14 +23,13 @@ public class Path
     {
         return planetFrom.name == other.planetFrom.name && planetTo.name == other.planetTo.name;
     }
-    
+
     public Path()
     { }
 
-    public Path(Color color, int length)
+    public Path(Assets.GameplayControl.Color color, int length)
     {
         this.color = color;
         this.length = length;
     }
 }
-

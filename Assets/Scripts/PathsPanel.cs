@@ -24,7 +24,7 @@ public class PathsPanel : Panel
 
         transform.parent.GetComponent<Button>().onClick.AddListener(HighlightPlanets);
 
-        paths = GetRandomElements(GameObject.Find("Space").GetComponent<Map>().Paths, 3);
+        paths = GetRandomElements(GameObject.Find("Space").GetComponent<Map>().paths, 3);
         
         AssignValues(419.77f, 611.61f, PanelState.Maximized, true);
         
