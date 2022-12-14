@@ -8,11 +8,15 @@ namespace Assets.GameplayControl
 {
     public class ArtificialPlayer : Player
     {
+        public ArtificialPlayer(string name, List<Mission> missions) : base(name, missions)
+        {
+        }
+
         // potrzebne struktutry:
         // - kolejka priorytetowa - brakujące kolory
         // - do rozszerzonego alg Dijkstry
         // - słownik do odległości z każdego wierzchołka do każdego i kolejnego ruchu
-        
+
         // wybieranie najlepszych misji
         void PickBestMissions()
         {
