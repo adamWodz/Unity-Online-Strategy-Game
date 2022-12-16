@@ -146,19 +146,19 @@ public class PathsPanel : Panel
 
     bool CheckIfPlanetCanBeExtinguished(string planetToExtinguishName, string neighbourPlanetFromPathName)
     {
-        foreach (Path p in pathsFromClickedMissionsCards)
+        foreach (Path path in pathsFromClickedMissionsCards)
         {
-            if (p.planetFrom.name == planetToExtinguishName && p.planetTo.name != neighbourPlanetFromPathName)
+            if (path.planetFrom.name == planetToExtinguishName && path.planetTo.name != neighbourPlanetFromPathName)
             {
-                UnityEngine.Color planetColor = GetPlanetColor(p.planetTo.name);
+                UnityEngine.Color planetColor = GetPlanetColor(path.planetTo.name);
                 if (planetColor == UnityEngine.Color.green)
                 {
                     return false;
                 }
             }
-            else if (p.planetTo.name == planetToExtinguishName && p.planetFrom.name != neighbourPlanetFromPathName)
+            else if (path.planetTo.name == planetToExtinguishName && path.planetFrom.name != neighbourPlanetFromPathName)
             {
-                UnityEngine.Color planetColor = GetPlanetColor(p.planetFrom.name);
+                UnityEngine.Color planetColor = GetPlanetColor(path.planetFrom.name);
                 if (planetColor == UnityEngine.Color.green)
                 {
                     return false;

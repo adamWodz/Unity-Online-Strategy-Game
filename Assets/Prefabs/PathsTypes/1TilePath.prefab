@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 875324848495506601}
   - component: {fileID: 4069048135210961532}
   m_Layer: 0
-  m_Name: OneTilePath
+  m_Name: 1TilePath
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

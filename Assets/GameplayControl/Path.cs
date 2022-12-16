@@ -8,16 +8,16 @@ using UnityEngine;
 [Serializable]
 public class Path
 {
-    public int Id { get; set; }
-    public int[] planetsIds = new int[2];
+    //public int Id { get; set; }
+    //public int[] planetsIds = new int[2];
     public Planet planetFrom;
     public Planet planetTo;
     public Assets.GameplayControl.Color color;
     public int length;
     public bool isBuilt { get; set; } = false;
-    public Player builtBy = null;
+    public PlayerGameData builtBy = null;
     public bool withSatellie { get; set; } = false;
-    public Player playerOfSatellite = null;
+    public PlayerGameData playerOfSatellite = null;
 
     public bool IsEqual(Path other)
     {

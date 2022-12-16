@@ -19,6 +19,7 @@ public class Map : MonoBehaviour
         { Assets.GameplayControl.Color.white, UnityEngine.Color.white },
         { Assets.GameplayControl.Color.yellow, UnityEngine.Color.yellow },
     };
+
     // Start is called before the first frame update
     void Start()
     {
@@ -278,7 +279,7 @@ public class Map : MonoBehaviour
             Instantiate(planetsPrefabs[i], planets[i].position, planetsPrefabs[i].transform.rotation);
         }
 
-        // Tworzenie ?cie?ek
+        // Tworzenie œcie¿ek
         for (int i = 0; i < paths.Count; i++)
         {
             // k¹t nachylenia miêdzy dwoma planetami
@@ -291,6 +292,7 @@ public class Map : MonoBehaviour
             Vector2 position = Vector2.Lerp(paths[i].planetTo.position, paths[i].planetFrom.position, 0.5f);
 
             var pathGameObject = Instantiate(pathsPrefabs[paths[i].length - 1], position, Quaternion.Euler(new Vector3(0, 0, -angle)));
+            
             var tilesRenderers = pathGameObject.GetComponentsInChildren<Renderer>();
             for (int j = 0; j < tilesRenderers.Length; j++)
             {

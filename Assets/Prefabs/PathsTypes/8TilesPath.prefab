@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6925973157939794391}
   - component: {fileID: 6124377246211074633}
   m_Layer: 0
-  m_Name: EightTilesPath
+  m_Name: 8TilesPath
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

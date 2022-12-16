@@ -1,3 +1,4 @@
+using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -13,7 +14,6 @@ public class BuildPath : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        path.isBuilt = false;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         tilesRenderers = gameObject.GetComponentsInChildren<Renderer>();
         tilesTransforms = gameObject.GetComponentsInChildren<Transform>();
@@ -27,21 +27,26 @@ public class BuildPath : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!path.isBuilt)
+        PlayerGameData player = PlayerGameData.GetInstance();
+        
+        if(!player.BuildPath(path))
         {
-            StartCoroutine(Coroutine());
-            path.isBuilt = true;
+            return;
+        }
+        else
+        {
+            StartCoroutine(SpawningShipsOnPath());
         }
     }
 
-    IEnumerator Coroutine()
+    IEnumerator SpawningShipsOnPath()
     {
-        Debug.Log("Started Coroutine at timestamp : " + Time.time);
+        //Debug.Log("Started Coroutine at timestamp : " + Time.time);
         for (int i = 0; i < tilesRenderers.Length; i++)
         {
             gameManager.SpawnShipsServerRpc(tilesTransforms[i + 1].position, tilesTransforms[i+1].rotation);
             yield return new WaitForSeconds(0.2f);
         }
-        Debug.Log("Finished Coroutine at timestamp : " + Time.time);
+        //Debug.Log("Finished Coroutine at timestamp : " + Time.time);
     }
 }

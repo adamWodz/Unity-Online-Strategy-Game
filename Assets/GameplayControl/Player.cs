@@ -1,14 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEditor.Experimental.RestService;
+using UnityEngine;
 
 namespace Assets.GameplayControl
 {
-    public class Player
+    public class PlayerGameData
     {
-        public Guid Id { get; } = Guid.NewGuid();
+        // Player jest singletonem
+        private static PlayerGameData instance;
+        public static PlayerGameData GetInstance()
+        {
+            if (instance == null)
+                instance = new PlayerGameData();
+            return instance;
+        }
+        
+        //public Guid Id { get; }
         public string Name { get; }
         public int curentPoints { get; set; } = 0;
         public int satellitesSent { get; set; } = 0;
@@ -28,7 +40,9 @@ namespace Assets.GameplayControl
 
         public List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
-        public Player(string name, List<Mission> missions)
+        public PlayerGameData() { }
+
+        public PlayerGameData(string name, List<Mission> missions)
         {
             Name = name;
             this.missions = missions;

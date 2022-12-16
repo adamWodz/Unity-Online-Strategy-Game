@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 6488730681690304694}
   - component: {fileID: 4069021907532492117}
   m_Layer: 0
-  m_Name: 'TwoTilesPath '
+  m_Name: 2TilesPath
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

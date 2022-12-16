@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.GameplayControl
 {
-    public class ArtificialPlayer : Player
+    public class ArtificialPlayer : PlayerGameData
     {
         public ArtificialPlayer(string name, List<Mission> missions) : base(name, missions)
         {

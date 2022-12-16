@@ -14,7 +14,7 @@ namespace UnitTests
         [TestCase(Assets.GameplayControl.Color.blue, 3, Assets.GameplayControl.Color.red, 1, false)]
         public void CanBuildPathWhenNoPlayersTurnTest(Assets.GameplayControl.Color pathColor, int pathLength, Assets.GameplayControl.Color cardsColor, int cardsQuantity, bool expected)
         {
-            Player player = new Player("example", null);
+            PlayerGameData player = new PlayerGameData("example", null);
             player.numOfCardsInColor[cardsColor] = cardsQuantity;
             Path path = new Path(pathColor, pathLength);
             Assert.AreEqual(player.CanBuildPath(path), expected);
@@ -27,7 +27,7 @@ namespace UnitTests
         [TestCase(Assets.GameplayControl.Color.red, 2, Assets.GameplayControl.Color.red, 4, true)]
         public void CanBuildPathTests(Assets.GameplayControl.Color pathColor, int pathLength, Assets.GameplayControl.Color cardsColor, int cardsQuantity, bool expected)
         {
-            Player player = new Player("example", null);
+            PlayerGameData player = new PlayerGameData("example", null);
             player.numOfCardsInColor[cardsColor] = cardsQuantity;
             player.NewTurn();
             Path path = new Path(pathColor, pathLength);
@@ -37,7 +37,7 @@ namespace UnitTests
         [TestCase(Assets.GameplayControl.Color.red, 2, 3, 1)]
         public void BuildPathTests(Assets.GameplayControl.Color color, int length, int enterQuantity, int finalQuantity)
         {
-            Player player = new Player("example", null);
+            PlayerGameData player = new PlayerGameData("example", null);
             player.numOfCardsInColor[color] = enterQuantity;
             player.NewTurn();
             Path path = new Path(color, length);
@@ -52,7 +52,7 @@ namespace UnitTests
         [TestCase(Assets.GameplayControl.Color.green, 3, 2, true)]
         public void CanSendSatelliteTests(Assets.GameplayControl.Color color, int cardsquantity, int satellietesSent, bool expected)
         {
-            Player player = new Player("example", null);
+            PlayerGameData player = new PlayerGameData("example", null);
             player.numOfCardsInColor[color] = cardsquantity;
             player.satellitesSent = satellietesSent;
             player.NewTurn();
@@ -66,7 +66,7 @@ namespace UnitTests
         [TestCase(Assets.GameplayControl.Color.green, 3, 2, false)]
         public void CanSendSatellitePlanetWithSatelliteTests(Assets.GameplayControl.Color color, int cardsquantity, int satellietesSent, bool expected)
         {
-            Player player = new Player("example", null);
+            PlayerGameData player = new PlayerGameData("example", null);
             player.numOfCardsInColor[color] = cardsquantity;
             player.satellitesSent = satellietesSent;
             player.NewTurn();
@@ -81,7 +81,7 @@ namespace UnitTests
         [TestCase(Assets.GameplayControl.Color.green, 3, 2, false)]
         public void CanSendSatellitePathWithSatelliteTests(Assets.GameplayControl.Color color, int cardsquantity, int satellietesSent, bool expected)
         {
-            Player player = new Player("example", null);
+            PlayerGameData player = new PlayerGameData("example", null);
             player.numOfCardsInColor[color] = cardsquantity;
             player.satellitesSent = satellietesSent;
             player.NewTurn();
@@ -95,7 +95,7 @@ namespace UnitTests
         [TestCase(Assets.GameplayControl.Color.special, 0, 2, Assets.GameplayControl.Color.special, 0, 2)]
         public void DrawCardsTests(Assets.GameplayControl.Color color1, int enterQuantity1, int finalQuantity1, Assets.GameplayControl.Color color2, int enterQuantity2, int finalQuantity2)
         {
-            Player player = new Player("example", null);
+            PlayerGameData player = new PlayerGameData("example", null);
             player.numOfCardsInColor[color1] = enterQuantity1;
             player.numOfCardsInColor[color2] = enterQuantity2;
             player.DrawCards(color1, color2);
@@ -122,7 +122,7 @@ namespace UnitTests
             path23.planetFrom = planet2;
             path23.planetTo = planet3;
 
-            Player player = new Player("example", null);
+            PlayerGameData player = new PlayerGameData("example", null);
             player.DrawCards(Assets.GameplayControl.Color.red, Assets.GameplayControl.Color.red);
             player.DrawCards(Assets.GameplayControl.Color.green, Assets.GameplayControl.Color.green);
             player.DrawCards(Assets.GameplayControl.Color.green, Assets.GameplayControl.Color.green);
