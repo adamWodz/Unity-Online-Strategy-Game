@@ -38,7 +38,8 @@ namespace UnitTests
             PlayerGameData.numOfCardsInColor[color] = enterQuantity;
             PlayerGameData.NewTurn();
             Path path = new Path(color, length);
-            PlayerGameData.PerformBuildPath(path);
+
+            PlayerGameData.BuildPath(path);
             Assert.AreEqual(PlayerGameData.numOfCardsInColor[color], finalQuantity);
         }
 
@@ -115,12 +116,13 @@ namespace UnitTests
             path23.planetFrom = planet2;
             path23.planetTo = planet3;
 
-            PlayerGameData.DrawCards(Assets.GameplayControl.Color.red, Assets.GameplayControl.Color.red);
-            PlayerGameData.DrawCards(Assets.GameplayControl.Color.green, Assets.GameplayControl.Color.green);
-            PlayerGameData.DrawCards(Assets.GameplayControl.Color.green, Assets.GameplayControl.Color.green);
 
-            PlayerGameData.PerformBuildPath(path12);
-            PlayerGameData.PerformBuildPath(path23);
+            PlayerGameData.DrawCards(Color.red, Color.red);
+            PlayerGameData.DrawCards(Color.green, Color.green);
+            PlayerGameData.DrawCards(Color.green, Color.green);
+
+            PlayerGameData.BuildPath(path12);
+            PlayerGameData.BuildPath(path23);
 
             Assert.IsTrue(mission.IsCompletedByPlayer());
         }

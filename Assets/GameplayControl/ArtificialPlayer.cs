@@ -8,8 +8,14 @@ namespace Assets.GameplayControl
 {
     public class ArtificialPlayer
     {
+
+        readonly string name;
+        private readonly List<Mission> missions;
+
         public ArtificialPlayer(string name, List<Mission> missions)
         {
+            this.name = name;
+            this.missions = missions;
         }
 
         // potrzebne struktutry:

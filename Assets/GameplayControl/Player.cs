@@ -11,7 +11,7 @@ namespace Assets.GameplayControl
 {
     public static class PlayerGameData
     {
-        //public int Id { get; }
+        public static int Id { get; }
         public static string Name { get; }
         public static int curentPoints { get; set; } = 0;
         public static int satellitesSent { get; set; } = 0;
@@ -27,9 +27,9 @@ namespace Assets.GameplayControl
             { Color.green, 0 },
             { Color.special, 0 },
         };
-        static bool isNowPlaying { set; get; }
+        public static bool isNowPlaying { set; get; }
 
-        static public List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
+        public static List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
         public static bool CanBuildPath(Path path)
         {
@@ -40,7 +40,8 @@ namespace Assets.GameplayControl
             return true;
         }
 
-        public static void PerformBuildPath(Path path)
+
+        public static bool BuildPath(Path path)
         {
             curentPoints += Board.pointsPerLength[path.length];
             numOfCardsInColor[path.color] -= path.length;
@@ -88,7 +89,8 @@ namespace Assets.GameplayControl
             return true;
         }
 
-        public static void PerformSendSatellite(Planet planet, Path path, Color color)
+
+        public static bool SendSatellite(Planet planet, Path path, Color color)
         {
             satellitesSent++;
             planet.withSatellite = true;
