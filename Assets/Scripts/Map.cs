@@ -1,34 +1,24 @@
+using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Map : MonoBehaviour
 {
-    private List<Path> paths;
-    public List<Path> Paths
-    { 
-        get { return paths; } 
-    }
-    private List<Planet> planets;
+    public List<Path> paths;
+    public List<Planet> planets;
     public GameObject[] pathsPrefabs;
     public GameObject[] planetsPrefabs;
-    
-    // punkty krancowe mapy
-    Vector2 leftTopPoint = new(-5.8f, 3.6f);
-    Vector2 rightTopPoint = new(7, 3.6f);
-    Vector2 leftBottomPoint = new(-5.8f, -3.1f);
-    Vector2 rightPoint = new(7, -3.1f);
 
     // kolory sciezek
-    private UnityEngine.Color[] colors = new UnityEngine.Color[] { 
-        UnityEngine.Color.red,
-        UnityEngine.Color.green,
-        UnityEngine.Color.blue,
-        UnityEngine.Color.black,
-        UnityEngine.Color.white,
-        UnityEngine.Color.yellow,
-        UnityEngine.Color.magenta,
-        UnityEngine.Color.grey,
+    private Dictionary<Assets.GameplayControl.Color, UnityEngine.Color> colorOnMap = new Dictionary<Assets.GameplayControl.Color, UnityEngine.Color>
+    {
+        { Assets.GameplayControl.Color.red, UnityEngine.Color.red },
+        { Assets.GameplayControl.Color.green, UnityEngine.Color.green },
+        { Assets.GameplayControl.Color.blue, UnityEngine.Color.blue },
+        { Assets.GameplayControl.Color.black, UnityEngine.Color.black },
+        { Assets.GameplayControl.Color.white, UnityEngine.Color.white },
+        { Assets.GameplayControl.Color.yellow, UnityEngine.Color.yellow },
     };
 
     // Start is called before the first frame update
@@ -100,95 +90,95 @@ public class Map : MonoBehaviour
             Id = 10,
             position = new Vector3(-1.8f, -2.04f, -1)
         };
-        
+
         paths = new()
         {
             new Path()
             {
-                Id = 0,
+                //Id = 0,
                 planetFrom = merkury,
                 planetTo = wenus,
-                color = Color.red,
+                color = Assets.GameplayControl.Color.red,
                 length = 8,
             },
             new Path()
             {
-                Id = 1,
+                //Id = 1,
                 planetFrom = merkury,
                 planetTo = uran,
-                color = Color.blue,
+                color = Assets.GameplayControl.Color.blue,
                 length = 4
             },
             new Path()
             {
-                Id = 2,
+                //Id = 2,
                 planetFrom = uran,
                 planetTo = ziemia,
-                color = Color.black,
+                color = Assets.GameplayControl.Color.black,
                 length = 5
             },
             new Path()
             {
-                Id = 3,
+                //Id = 3,
                 planetFrom = ziemia,
                 planetTo = mars,
-                color = Color.white,
+                color = Assets.GameplayControl.Color.white,
                 length = 3
             },
             new Path()
             {
-                Id = 4,
+                //Id = 4,
                 planetFrom = mars,
                 planetTo = pluton,
-                color = Color.red,
+                color = Assets.GameplayControl.Color.red,
                 length = 6
             },
             new Path()
             {
-                Id = 5,
+                //Id = 5,
                 planetFrom = pluton,
                 planetTo = saturn,
-                color = Color.green,
+                color = Assets.GameplayControl.Color.green,
                 length = 3
             },
             new Path()
             {
-                Id = 6,
+                //Id = 6,
                 planetFrom = mars,
                 planetTo = wenus,
-                color = Color.yellow,
+                color = Assets.GameplayControl.Color.yellow,
                 length = 4
             },
             new Path()
             {
-                Id = 7,
+                //Id = 7,
                 planetFrom = ziemia,
                 planetTo = ksiezyc,
-                color = Color.green,
+                color = Assets.GameplayControl.Color.green,
                 length = 1
             },
             new Path()
             {
-                Id = 8,
+                //Id = 8,
                 planetFrom = uran,
                 planetTo = planeta,
-                color = Color.pink,
+                color = Assets.GameplayControl.Color.pink,
                 length = 4
             },
             new Path()
             {
-                Id = 9,
+                //Id = 9,
                 planetFrom = planeta,
                 planetTo = jowisz,
-                color = Color.special,
+                color = Assets.GameplayControl.Color.special,
                 length = 5
             },
             new Path()
             {
-                Id = 10,
+                //Id = 10,
                 planetFrom = mars,
                 planetTo = neptun,
-                color = Color.special,
+                color = Assets.GameplayControl.Color.special,
                 length = 4
             },
         };
@@ -269,7 +259,7 @@ public class Map : MonoBehaviour
             saturn,
             uran,
             neptun,
-            pluton, 
+            pluton,
             planeta,
         };
 
@@ -279,43 +269,38 @@ public class Map : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void CreateMap()
     {
         // Tworzenie planet
-        for(int i=0;i<planets.Count;i++) 
+        for (int i = 0; i < planets.Count; i++)
         {
             Instantiate(planetsPrefabs[i], planets[i].position, planetsPrefabs[i].transform.rotation);
         }
 
         // Tworzenie œcie¿ek
-        for(int i = 0;i < paths.Count; i++)
+        for (int i = 0; i < paths.Count; i++)
         {
             // k¹t nachylenia miêdzy dwoma planetami
-            /*
-            float angle = Mathf.Atan2(
-                          planets[paths[i].planetsIds[1]].position.x - planets[paths[i].planetsIds[0]].position.x, 
-                          planets[paths[i].planetsIds[1]].position.y - planets[paths[i].planetsIds[0]].position.y
-                          ) * Mathf.Rad2Deg; 
-            */
             float angle = Mathf.Atan2(
                           paths[i].planetTo.position.x - paths[i].planetFrom.position.x,
                           paths[i].planetTo.position.y - paths[i].planetFrom.position.y
                           ) * Mathf.Rad2Deg;
-            //Debug.Log($"Planet{paths[i].planetsIds[0]} position: {planets[paths[i].planetsIds[0]].position}");
-            //Debug.Log($"Planet{paths[i].planetsIds[1]} position: {planets[paths[i].planetsIds[1]].position}");
-            //Debug.Log($"Planets {paths[i].planetsIds[0]} - {paths[i].planetsIds[1]} angle: {angle}");
 
             // œrodkowy punkt pomiêdzy planetami
-            Vector2 position = Vector2.Lerp(paths[i].planetTo.position, paths[i].planetFrom.position, 0.5f); 
-            
-            var pathGameObject = Instantiate(pathsPrefabs[paths[i].length - 1], position, Quaternion.Euler(new Vector3(0,0,-angle)));
+            Vector2 position = Vector2.Lerp(paths[i].planetTo.position, paths[i].planetFrom.position, 0.5f);
+
+            var pathGameObject = Instantiate(pathsPrefabs[paths[i].length - 1], position, Quaternion.Euler(new Vector3(0, 0, -angle)));
+            // przypisanie do build path
+            var buildPath = pathGameObject.GetComponent<BuildPath>();
+            buildPath.path = paths[i];
+
             var tilesRenderers = pathGameObject.GetComponentsInChildren<Renderer>();
-            for(int j = 0; j < tilesRenderers.Length; j++)
+            for (int j = 0; j < tilesRenderers.Length; j++)
             {
-                tilesRenderers[j].material.color = colors[(int)paths[i].color];
+                tilesRenderers[j].material.color = colorOnMap[(Assets.GameplayControl.Color)(i % colorOnMap.Count)];
             }
         }
     }

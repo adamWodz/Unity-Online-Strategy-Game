@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEditor.Experimental.RestService;
+using UnityEngine;
 
 namespace Assets.GameplayControl
 {
-    public class Player
+    public static class PlayerGameData
     {
-        public Guid Id { get; } = Guid.NewGuid();
-        public string Name { get; }
-        public int curentPoints { get; set; } = 0;
-        public int satellitesSent { get; set; } = 0;
-        public List<Mission> missions;
-        public Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
+        //public int Id { get; }
+        public static string Name { get; }
+        public static int curentPoints { get; set; } = 0;
+        public static int satellitesSent { get; set; } = 0;
+        public static List<Mission> missions;
+        public static Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
             { Color.pink, 0 },
             { Color.red, 0 },
@@ -24,17 +27,11 @@ namespace Assets.GameplayControl
             { Color.green, 0 },
             { Color.special, 0 },
         };
-        bool isNowPlaying { set; get; }
+        static bool isNowPlaying { set; get; }
 
-        public List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
+        static public List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
-        public Player(string name, List<Mission> missions)
-        {
-            Name = name;
-            this.missions = missions;
-        }
-
-        public bool CanBuildPath(Path path)
+        public static bool CanBuildPath(Path path)
         {
             if (!isNowPlaying) return false;
             if (path.isBuilt) return false;
@@ -43,10 +40,8 @@ namespace Assets.GameplayControl
             return true;
         }
 
-        public bool BuildPath(Path path)
+        public static void PerformBuildPath(Path path)
         {
-            if (!CanBuildPath(path)) return false;
-            
             curentPoints += Board.pointsPerLength[path.length];
             numOfCardsInColor[path.color] -= path.length;
             path.isBuilt = true;
@@ -80,41 +75,39 @@ namespace Assets.GameplayControl
                 groupsOfConnectedPlanets.Add(ConnectedPlanets.MergeGroups(groupPlanetTo, groupPlanetFrom));
             }
 
-            return true;
+            // powiadom serwer o wybudowaniu połaczenia
         }
 
-        public bool CanSendSatellite(Planet planet, Path path, Color color)
+        public static bool CanSendSatellite(Planet planet, Path path, Color color)
         {
             if (planet.withSatellite) return false;
             if (path.withSatellie) return false;
             if (satellitesSent >= Board.maSatellitesSent) return false;
             if (numOfCardsInColor[color] < Board.cardsPerSatelliteSend[satellitesSent + 1]) return false;
-            
+
             return true;
         }
 
-        public bool SendSatellite(Planet planet, Path path, Color color)
+        public static void PerformSendSatellite(Planet planet, Path path, Color color)
         {
-            if(!CanSendSatellite(planet, path, color)) return false;
-
-
             satellitesSent++;
             planet.withSatellite = true;
-            return true;
+
+            // powiadom serwer o wybudowaniu satelity
         }
 
-        public void DrawCards(Color firstCardsColor, Color secondCardColor)
+        public static void DrawCards(Color firstCardsColor, Color secondCardColor)
         {
             numOfCardsInColor[firstCardsColor]++;
             numOfCardsInColor[secondCardColor]++;
         }
 
-        public void NewTurn()
+        public static void NewTurn()
         {
             isNowPlaying = true;
         }
 
-        public void EndTurn()
+        public static void EndTurn()
         {
             isNowPlaying = false;
             // wiadomość do serwera o zakończonej turze
