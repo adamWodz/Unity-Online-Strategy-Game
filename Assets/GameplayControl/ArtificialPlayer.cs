@@ -6,10 +6,15 @@ using System.Threading.Tasks;
 
 namespace Assets.GameplayControl
 {
-    public class ArtificialPlayer : Player
+    public class ArtificialPlayer
     {
-        public ArtificialPlayer(string name, List<Mission> missions) : base(name, missions)
+        readonly string name;
+        private readonly List<Mission> missions;
+
+        public ArtificialPlayer(string name, List<Mission> missions)
         {
+            this.name = name;
+            this.missions = missions;
         }
 
         // potrzebne struktutry:

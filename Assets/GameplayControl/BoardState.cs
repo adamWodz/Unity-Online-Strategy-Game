@@ -38,9 +38,9 @@ public class Path
     public Color color;
     public int length;
     public bool isBuilt { get; set; } = false;
-    public Player builtBy = null;
+    public PlayerState builtBy = null;
     public bool withSatellie { get; set; } = false;
-    public Player playerOfSatellite = null;
+    public PlayerState playerOfSatellite = null;
 
     public bool IsEqual(Path other)
     {
