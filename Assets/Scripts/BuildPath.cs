@@ -8,7 +8,7 @@ public class BuildPath : MonoBehaviour
     private GameManager gameManager;
     Transform[] tilesTransforms;
     Renderer[] tilesRenderers;
-    Path path = new();
+    public Path path = new();
 
     // Start is called before the first frame update
     void Start()

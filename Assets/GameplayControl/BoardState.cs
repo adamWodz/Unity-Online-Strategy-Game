@@ -6,16 +6,19 @@ using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public enum Color
+namespace Assets.GameplayControl
 {
-    red,
-    green,
-    blue,
-    black,
-    white,
-    yellow,
-    pink,
-    special
+    public enum Color
+    {
+        red,
+        green,
+        blue,
+        black,
+        white,
+        yellow,
+        pink,
+        special
+    }
 }
 
 [Serializable]
@@ -35,12 +38,12 @@ public class Path
     public int[] planetsIds = new int[2];
     public Planet planetFrom;
     public Planet planetTo;
-    public Color color;
+    public Assets.GameplayControl.Color color;
     public int length;
     public bool isBuilt { get; set; } = false;
-    public Player builtBy = null;
+    public PlayerState builtBy = null;
     public bool withSatellie { get; set; } = false;
-    public Player playerOfSatellite = null;
+    public PlayerState playerOfSatellite = null;
 
     public bool IsEqual(Path other)
     {
@@ -50,7 +53,7 @@ public class Path
     public Path()
     { }
 
-    public Path(Color color, int length)
+    public Path(Assets.GameplayControl.Color color, int length)
     {
         this.color = color;
         this.length = length;
