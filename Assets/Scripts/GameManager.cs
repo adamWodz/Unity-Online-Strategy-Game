@@ -40,9 +40,6 @@ public class GameManager : NetworkBehaviour
         var spawnedShipGameObject = Instantiate(shipGameObject, spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
         spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
-        //GameObject pom = new();
-        //pom.transform.SetPositionAndRotation(position, rotation);
-        //spawnedShip.goal = pom.transform;
         spawnedShip.goalPosition= position;
         spawnedShip.goalRotation= rotation;
         spawnedShip.move = true;
