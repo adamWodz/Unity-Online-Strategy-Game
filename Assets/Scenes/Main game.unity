@@ -4985,9 +4985,6 @@ MonoBehaviour:
   - {fileID: 6582710055851895374, guid: 08df3b680e7dc494c866d305d229e845, type: 3}
   - {fileID: 343829207376835345, guid: b98b5c8ff0ce5154fae56c08274d81e2, type: 3}
   - {fileID: 4691723990619664147, guid: 5e8bc481d5ee6e34ea9302fde732f9ca, type: 3}
-  - {fileID: 7177935469623676912, guid: 95466dca9f38b464aba6b1cc335974cb, type: 3}
-  - {fileID: 4691723990619664147, guid: 5e8bc481d5ee6e34ea9302fde732f9ca, type: 3}
-  - {fileID: 4691723990619664147, guid: 5e8bc481d5ee6e34ea9302fde732f9ca, type: 3}
 --- !u!1 &2106781420
 GameObject:
   m_ObjectHideFlags: 0
@@ -5213,11 +5210,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   popUpPanel: {fileID: 1674471843}
   panelState: 1
-  paths:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  pathButtonPrefab: {fileID: 8818678304912476882, guid: 6a81663fec66bf24d9dd7d7588f92478, type: 3}
+  pathsFromClickedMissionsCards: []
 --- !u!1001 &2329796705193565231
 PrefabInstance:
   m_ObjectHideFlags: 0
