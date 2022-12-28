@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: KonazUnu
   m_EditorClassIdentifier: 
-  planetFrom: {fileID: 0}
-  planetTo: {fileID: 0}
-  color: 0
-  length: 0
+  planetFrom: {fileID: 11400000, guid: f4a55f8dd067f7e468039470bd1db76e, type: 2}
+  planetTo: {fileID: 11400000, guid: c651e373c6ded9249b6b65d21f65c5e8, type: 2}
+  color: 3
+  length: 2
   builtBy: {fileID: 0}
   playerOfSatellite: {fileID: 0}

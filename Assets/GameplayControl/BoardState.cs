@@ -11,8 +11,8 @@ public enum Color
     red,
     green,
     blue,
-    black,
-    white,
+    //black,
+    //white,
     yellow,
     pink,
     special

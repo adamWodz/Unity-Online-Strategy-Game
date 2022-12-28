@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planetFrom: {fileID: 11400000, guid: 0d64057ff8e989b448df2b4d46a8074d, type: 2}
   planetTo: {fileID: 11400000, guid: a69baaed7e2b5bd4098c16f95dfad41f, type: 2}
-  color: 6
+  color: 4
   length: 4
   builtBy: {fileID: 0}
   playerOfSatellite: {fileID: 0}
