@@ -11,9 +11,9 @@ namespace Assets.GameplayControl
         public Planet start { get; set; }
         public Planet end { get; set; }
         public int points;
-        public bool IsCompletedByPlayer(Player player)
+        public bool IsCompletedByPlayer()
         {
-            return ConnectedPlanets.ArePlanetsInOneGroup(player.groupsOfConnectedPlanets, start, end);
+            return ConnectedPlanets.ArePlanetsInOneGroup(PlayerGameData.groupsOfConnectedPlanets, start, end);
         }
     }
 }

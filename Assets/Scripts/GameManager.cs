@@ -33,11 +33,11 @@ public class GameManager : NetworkBehaviour
 
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void SpawnShipsServerRpc(Vector3 position, Quaternion rotation)
+    public void SpawnShips(Vector3 position, Quaternion rotation)
     {
         float angle = CalculateAngle(position,spaceshipsBase);
         var spawnedShipGameObject = Instantiate(shipGameObject, spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
+        // spawnuje siê dla wszystkich graczy bo network object
         spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
         spawnedShip.goalPosition= position;

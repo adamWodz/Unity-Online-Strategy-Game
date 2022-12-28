@@ -307,6 +307,11 @@ public class Map : MonoBehaviour
             Vector2 position = Vector2.Lerp(paths[i].planetTo.position, paths[i].planetFrom.position, 0.5f); 
             
             var pathGameObject = Instantiate(pathsPrefabs[paths[i].length - 1], position, Quaternion.Euler(new Vector3(0,0,-angle)));
+            
+            // przypisanie do build path
+            var buildPath = pathGameObject.GetComponent<BuildPath>();
+            buildPath.path = paths[i];
+
             var tilesRenderers = pathGameObject.GetComponentsInChildren<Renderer>();
             for(int j = 0; j < tilesRenderers.Length; j++)
             {
