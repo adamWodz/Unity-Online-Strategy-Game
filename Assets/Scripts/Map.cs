@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class Map : MonoBehaviour
 {
+    private float mapZparam = -1;
     private List<Path> paths;
     public List<Path> Paths
-    { 
-        get { return paths; } 
+    {
+        get { return paths; }
     }
     private List<Planet> planets;
     public GameObject[] pathsPrefabs;
     public GameObject[] planetsPrefabs;
-    
+
     // punkty krancowe mapy
     Vector2 leftTopPoint = new(-5.8f, 3.6f);
     Vector2 rightTopPoint = new(7, 3.6f);
@@ -20,7 +21,7 @@ public class Map : MonoBehaviour
     Vector2 rightPoint = new(7, -3.1f);
 
     // kolory sciezek
-    private UnityEngine.Color[] colors = new UnityEngine.Color[] { 
+    private UnityEngine.Color[] colors = new UnityEngine.Color[] {
         UnityEngine.Color.red,
         UnityEngine.Color.green,
         UnityEngine.Color.blue,
@@ -37,70 +38,81 @@ public class Map : MonoBehaviour
         Planet merkury = new()
         {
             name = "Merkury",
-            Id = 0,
-            position = new Vector3(-5, 3, -1)
+            //Id = 0,
+            positionX = -5,
+            positionY = 3
         };
         Planet wenus = new()
         {
             name = "Wenus",
-            Id = 1,
-            position = new Vector3(0.5f, 3, -1)
+            //Id = 1,
+            positionX = 0.5f,
+            positionY = 3
         };
         Planet ziemia = new()
         {
             name = "Ziemia",
-            Id = 2,
-            position = new Vector3(0.48f, 0.06f, -1)
+            //Id = 2,
+            positionX = 0.48f,
+            positionY = 0.06f
         };
         Planet ksiezyc = new()
         {
-            name = "Ksiê¿yc",
-            Id = 3,
-            position = new Vector3(1.009f, -1.07f, -1)
+            name = "Ksi??yc",
+            //Id = 3,
+            positionX = 1.009f,
+            positionY = -1.07f
         };
         Planet mars = new()
         {
             name = "Mars",
-            Id = 4,
-            position = new Vector3(2.84f, 1.29f, -1)
+            //Id = 4,
+            positionX = 2.84f,
+            positionY = 1.29f
         };
         Planet jowisz = new()
         {
             name = "Jowisz",
-            Id = 5,
-            position = new Vector3(-5, -2.4f, -1)
+            //Id = 5,
+            positionX = -5,
+            positionY = -2.4f
         };
         Planet saturn = new()
         {
             name = "Saturn",
-            Id = 6,
-            position = new Vector3(5.75f, -2.16f, -1)
+            //Id = 6,
+            positionX = 5.75f,
+            positionY = -2.16f
         };
         Planet uran = new()
         {
             name = "Uran",
-            Id = 7,
-            position = new Vector3(-2.85f, 0.96f, -1)
+            //Id = 7,
+            positionX = -2.85f,
+            positionY = 0.96f
         };
         Planet neptun = new()
         {
             name = "Neptun",
-            Id = 8,
-            position = new Vector3(5.75f, 2.56f, -1)
+            //Id = 8,
+            positionX = 5.75f,
+            positionY = 2.56f
         };
         Planet pluton = new()
         {
             name = "Pluton",
-            Id = 9,
-            position = new Vector3(6.67f, 0.07f, -1)
+            //Id = 9,
+            positionX = 6.67f,
+            positionY = 0.07f
         };
         Planet planeta = new()
         {
             name = "Planeta",
-            Id = 10,
-            position = new Vector3(-1.8f, -2.04f, -1)
+            //Id = 10,
+            positionX = -1.8f,
+            positionY = -2.04f
         };
-        
+
         paths = new()
         {
             new Path()
@@ -269,7 +281,7 @@ public class Map : MonoBehaviour
             saturn,
             uran,
             neptun,
-            pluton, 
+            pluton,
             planeta,
         };
 
@@ -279,46 +291,38 @@ public class Map : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void CreateMap()
     {
         // Tworzenie planet
-        for(int i=0;i<planets.Count;i++) 
+        for (int i = 0; i < planets.Count; i++)
         {
-            Instantiate(planetsPrefabs[i], planets[i].position, planetsPrefabs[i].transform.rotation);
+            Instantiate(planetsPrefabs[i], new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i].transform.rotation);
         }
 
-        // Tworzenie œcie¿ek
-        for(int i = 0;i < paths.Count; i++)
+        // Tworzenie ?cie?ek
+        for (int i = 0; i < paths.Count; i++)
         {
-            // k¹t nachylenia miêdzy dwoma planetami
-            /*
+            // k?t nachylenia mi?dzy dwoma planetami
             float angle = Mathf.Atan2(
-                          planets[paths[i].planetsIds[1]].position.x - planets[paths[i].planetsIds[0]].position.x, 
-                          planets[paths[i].planetsIds[1]].position.y - planets[paths[i].planetsIds[0]].position.y
-                          ) * Mathf.Rad2Deg; 
-            */
-            float angle = Mathf.Atan2(
-                          paths[i].planetTo.position.x - paths[i].planetFrom.position.x,
-                          paths[i].planetTo.position.y - paths[i].planetFrom.position.y
+                          paths[i].planetTo.positionX - paths[i].planetFrom.positionX,
+                          paths[i].planetTo.positionY - paths[i].planetFrom.positionY
                           ) * Mathf.Rad2Deg;
-            //Debug.Log($"Planet{paths[i].planetsIds[0]} position: {planets[paths[i].planetsIds[0]].position}");
-            //Debug.Log($"Planet{paths[i].planetsIds[1]} position: {planets[paths[i].planetsIds[1]].position}");
-            //Debug.Log($"Planets {paths[i].planetsIds[0]} - {paths[i].planetsIds[1]} angle: {angle}");
 
-            // œrodkowy punkt pomiêdzy planetami
-            Vector2 position = Vector2.Lerp(paths[i].planetTo.position, paths[i].planetFrom.position, 0.5f); 
-            
-            var pathGameObject = Instantiate(pathsPrefabs[paths[i].length - 1], position, Quaternion.Euler(new Vector3(0,0,-angle)));
-            
+            // ?rodkowy punkt pomi?dzy planetami
+            Vector2 position = Vector2.Lerp(new Vector2(paths[i].planetTo.positionX, paths[i].planetTo.positionY), 
+                new Vector2(paths[i].planetFrom.positionX, paths[i].planetFrom.positionY), 0.5f);
+
+            var pathGameObject = Instantiate(pathsPrefabs[paths[i].length - 1], position, Quaternion.Euler(new Vector3(0, 0, -angle)));
+
             // przypisanie do build path
             var buildPath = pathGameObject.GetComponent<BuildPath>();
             buildPath.path = paths[i];
 
             var tilesRenderers = pathGameObject.GetComponentsInChildren<Renderer>();
-            for(int j = 0; j < tilesRenderers.Length; j++)
+            for (int j = 0; j < tilesRenderers.Length; j++)
             {
                 tilesRenderers[j].material.color = colors[(int)paths[i].color];
             }

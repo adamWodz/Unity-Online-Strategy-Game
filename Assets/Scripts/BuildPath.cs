@@ -9,7 +9,7 @@ public class BuildPath : MonoBehaviour
     private GameManager gameManager;
     Transform[] tilesTransforms;
     Renderer[] tilesRenderers;
-    public Path path = new();
+    public Path path;
 
     Assets.GameplayControl.Mission mission;
 
@@ -21,7 +21,7 @@ public class BuildPath : MonoBehaviour
         tilesRenderers = gameObject.GetComponentsInChildren<Renderer>();
         tilesTransforms = gameObject.GetComponentsInChildren<Transform>();
 
-        PlayerGameData.EndTurn();
+        //PlayerGameData.EndTurn();
     }
 
     // Update is called once per frame
