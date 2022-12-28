@@ -6,11 +6,25 @@ using System.Threading.Tasks;
 
 namespace Assets.GameplayControl
 {
-    public class ArtificialPlayer : Player
+    public class ArtificialPlayer
     {
-        public ArtificialPlayer(string name, List<Mission> missions) : base(name, missions)
+        public int Id { get; }
+        public string Name { get; }
+        public int curentPoints { get; set; } = 0;
+        public int satellitesSent { get; set; } = 0;
+        public List<Mission> missions;
+        public Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
-        }
+            { Color.pink, 0 },
+            { Color.red, 0 },
+            { Color.black, 0 },
+            { Color.blue, 0 },
+            { Color.white, 0 },
+            { Color.yellow, 0 },
+            { Color.green, 0 },
+            { Color.special, 0 },
+        };
+        public static List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
         // potrzebne struktutry:
         // - kolejka priorytetowa - brakujące kolory
