@@ -8,14 +8,23 @@ namespace Assets.GameplayControl
 {
     public class ArtificialPlayer
     {
-        readonly string name;
-        private readonly List<Mission> missions;
-
-        public ArtificialPlayer(string name, List<Mission> missions)
+        public int Id { get; }
+        public string Name { get; }
+        public int curentPoints { get; set; } = 0;
+        public int satellitesSent { get; set; } = 0;
+        public List<Mission> missions;
+        public Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
-            this.name = name;
-            this.missions = missions;
-        }
+            { Color.pink, 0 },
+            { Color.red, 0 },
+            { Color.black, 0 },
+            { Color.blue, 0 },
+            { Color.white, 0 },
+            { Color.yellow, 0 },
+            { Color.green, 0 },
+            { Color.special, 0 },
+        };
+        public static List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
         // potrzebne struktutry:
         // - kolejka priorytetowa - brakujące kolory

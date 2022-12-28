@@ -19,4 +19,6 @@ public class PlayerState : MonoBehaviour
     public PlayerColor playerColor;
     public string playerName;
     public int points;
+    public bool isAI;
+    public int id;
 }
