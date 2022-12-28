@@ -6,22 +6,22 @@ using UnityEngine.UI;
 
 public class CardDeck : MonoBehaviour
 {
-    public int[] cards; // liczba kard dla ka¿dego koloru
+    public int[] cardsQuantity; // liczba kard dla ka¿dego koloru
     public Sprite[] sprites; // kolory kart
     // nazwy zbiorów kart
-    public string[] names = {"RedCards","GreenCards","BlueCards","BlackCards","WhiteCards","YellowCards","PinkCards","RainbowCards"};
+    public string[] names = {"RedCards","GreenCards","BlueCards","YellowCards","PinkCards","RainbowCards"};
     void Start()
     {
         GameObject cardTempalte = transform.GetChild(0).gameObject;
         GameObject card;
 
-        int n = cards.Length;
+        int colorsNumber = cardsQuantity.Length;
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < colorsNumber; i++)
         {
             card = Instantiate(cardTempalte, transform);
             card.GetComponent<Image>().sprite = sprites[i];
-            card.transform.GetChild(0).GetComponent<TMP_Text>().text = cards[i].ToString();
+            card.transform.GetChild(0).GetComponent<TMP_Text>().text = cardsQuantity[i].ToString();
             card.name = names[i];
         }
 

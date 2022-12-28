@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
+  m_Name: LinosaSorao
+  m_EditorClassIdentifier: 
+  planetFrom: {fileID: 11400000, guid: b3e65f4593495424dab56b573fe1da12, type: 2}
+  planetTo: {fileID: 11400000, guid: e445b728213ba4f4eb557f9280fb7896, type: 2}
+  color: 3
+  length: 4
+  builtBy: {fileID: 0}
+  playerOfSatellite: {fileID: 0}

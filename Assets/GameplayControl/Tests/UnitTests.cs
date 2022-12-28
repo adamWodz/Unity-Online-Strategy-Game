@@ -85,7 +85,7 @@ namespace UnitTests
             Assert.AreEqual(PlayerGameData.CanSendSatellite(planet, path, color), expected);
         }
 
-        [TestCase(Color.red, 1, 2, Color.white, 2, 3)]
+        [TestCase(Color.red, 1, 2, Color.blue, 2, 3)]
         [TestCase(Color.special, 0, 2, Color.special, 0, 2)]
         public void DrawCardsTests(Color color1, int enterQuantity1, int finalQuantity1, Color color2, int enterQuantity2, int finalQuantity2)
         {
