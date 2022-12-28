@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce04dfb4862fb4841ad3a3c8654f0844, type: 3}
   m_Name: Neptun
   m_EditorClassIdentifier: 
-  name: 
-  positionX: 0
-  positionY: 0
+  name: Neptun
+  positionX: 5.75
+  positionY: 2.56
   adjacentPaths: []

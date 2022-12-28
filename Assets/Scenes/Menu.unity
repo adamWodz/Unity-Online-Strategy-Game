@@ -1385,7 +1385,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1414018524}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: StartGame1
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4763,6 +4763,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   availableMapsData:
   - {fileID: 11400000, guid: 21781038664f19c4b9341911804df08d, type: 2}
+  - {fileID: 11400000, guid: f57bf6f1c4a7b8849bfa3ac3b1c5dab9, type: 2}
 --- !u!1 &1534115721
 GameObject:
   m_ObjectHideFlags: 0

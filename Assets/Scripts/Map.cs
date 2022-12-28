@@ -51,15 +51,11 @@ public class Map : MonoBehaviour
 
     void CreateMap()
     {
-        
-        
         // Tworzenie planet
         for (int i = 0; i < planets.Count; i++)
         {
-            Instantiate(planetsPrefabs[i], new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i].transform.rotation);
+            Instantiate(planetsPrefabs[i % planetsPrefabs.Length], new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i % planetsPrefabs.Length].transform.rotation);
         }
-
-        
 
         // Tworzenie ?cie?ek
         for (int i = 0; i < paths.Count; i++)

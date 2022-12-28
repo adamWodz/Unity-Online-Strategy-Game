@@ -15,10 +15,9 @@ public class MainMenu : NetworkBehaviour
         Application.Quit();
     }
 
-    public void StartGame()
+    public void StartGame1()
     {
-        Map.mapData = availableMapsData[0];
-        Debug.Log(availableMapsData.Count);
+        Map.mapData = availableMapsData[1];
         string name = "Scenes/Main Game";
         var status = NetworkManager.SceneManager.LoadScene(name,LoadSceneMode.Single);
     }
