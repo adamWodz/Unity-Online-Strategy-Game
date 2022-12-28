@@ -37,11 +37,9 @@ public class GameManager : NetworkBehaviour
     {
         float angle = CalculateAngle(position,spaceshipsBase);
         var spawnedShipGameObject = Instantiate(shipGameObject, spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
+        // spawnuje siê dla wszystkich graczy bo network object
         spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
-        //GameObject pom = new();
-        //pom.transform.SetPositionAndRotation(position, rotation);
-        //spawnedShip.goal = pom.transform;
         spawnedShip.goalPosition= position;
         spawnedShip.goalRotation= rotation;
         spawnedShip.move = true;

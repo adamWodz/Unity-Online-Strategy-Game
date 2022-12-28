@@ -28,14 +28,16 @@ public static class Communication
     [ServerRpc]
     public static void BuildPathServerRpc(BuildPath buildPath, Path path)
     {
-        BuildPathClientRpc(buildPath, path);
+        buildPath.StartCoroutine(buildPath.BuildPathAnimation());
+        PlayerGameData.BuildPath(path);
         UpdatePlayerPointsClientRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
     }
 
-    [ClientRpc]
-    public static void BuildPathClientRpc(BuildPath buildPath, Path path)
+    [ServerRpc]
+    public static void DrawCard(Color color)
     {
-        buildPath.BuildPathAnimation();
+        // rozpoczecie animacji
+
     }
 
     [ServerRpc]
