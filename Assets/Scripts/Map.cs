@@ -12,7 +12,7 @@ public class Map : MonoBehaviour
     private List<Planet> planets;
     public GameObject[] pathsPrefabs;
     public GameObject[] planetsPrefabs;
-    
+
     // punkty krancowe mapy
     Vector2 leftTopPoint = new(-5.8f, 3.6f);
     Vector2 rightTopPoint = new(7, 3.6f);

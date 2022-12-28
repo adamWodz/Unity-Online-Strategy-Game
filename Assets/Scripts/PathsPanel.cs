@@ -9,39 +9,65 @@ using System.Drawing;
 
 public class PathsPanel : Panel
 {
-    public List<Path> paths;
+    public GameObject pathButtonPrefab;
+    public List<Path> pathsFromClickedMissionsCards;
+    
+    private List<Path> pathsChoosed;
+    public List<Path> PathsChoosed
+    {
+        get 
+        { 
+            return pathsChoosed; 
+        }
+        set 
+        { 
+            
+            var newPaths = value.Except(pathsChoosed,new PathComparer()).ToList();
+            pathsChoosed = value;
+            
+            GameObject path;
+
+            int n = newPaths.Count;
+
+            for (int i = 0; i < n; i++)
+            {
+                int copy = i;
+                path = Instantiate(pathButtonPrefab, transform);
+                path.name = path.transform.GetChild(0).GetComponent<TMP_Text>().text = newPaths[i].planetFrom.name + "-" + newPaths[i].planetTo.name;
+                path.GetComponent<Button>().onClick.AddListener(() => HighlightPlanet(newPaths[copy]));
+            }
+        }
+    }
 
     private bool firstClick;
-
-    private List<Path> pathsFromClickedMissionsCards;
 
     // Start is called before the first frame update
     void Start()
     {
         firstClick = true;
 
-        pathsFromClickedMissionsCards = new List<Path>();
+        pathsFromClickedMissionsCards = new();
 
         transform.parent.GetComponent<Button>().onClick.AddListener(HighlightPlanets);
 
-        paths = GetRandomElements(GameObject.Find("Space").GetComponent<Map>().Paths, 3);
+        pathsChoosed = GetRandomElements(GameObject.Find("Space").GetComponent<Map>().Paths, 3);
         
         AssignValues(419.77f, 611.61f, PanelState.Maximized, true);
         
-        GameObject playerTextTempalte = transform.GetChild(0).gameObject;
+        //GameObject playerTextTempalte = transform.GetChild(0).gameObject;
         GameObject path;
 
-        int n = paths.Count;
+        int n = pathsChoosed.Count;
 
         for (int i = 0; i < n; i++)
         {
             int copy = i;
-            path = Instantiate(playerTextTempalte, transform);
-            path.name = path.transform.GetChild(0).GetComponent<TMP_Text>().text = paths[i].planetFrom.name + "-" + paths[i].planetTo.name;
-            path.GetComponent<Button>().onClick.AddListener(() => HighlightPlanet(paths[copy]));
+            path = Instantiate(pathButtonPrefab, transform);
+            path.name = path.transform.GetChild(0).GetComponent<TMP_Text>().text = pathsChoosed[i].planetFrom.name + "-" + pathsChoosed[i].planetTo.name;
+            path.GetComponent<Button>().onClick.AddListener(() => HighlightPlanet(pathsChoosed[copy]));
         }
 
-        Destroy(playerTextTempalte);
+        //Destroy(playerTextTempalte);
     }
 
     // Update is called once per frame
@@ -50,59 +76,70 @@ public class PathsPanel : Panel
         ChangeWidth(); 
     }
 
-    List<Path> GetRandomElements(List<Path> list, int elementsCount)
+    public List<Path> GetRandomElements(List<Path> list, int elementsCount)
     {
         return list.OrderBy(arg => Guid.NewGuid()).Take(elementsCount).ToList();
     }
 
-    void HighlightPlanets()
+    private void HighlightPlanets()
     {
         if (firstClick)
         {
             ChangePlanetsColor(UnityEngine.Color.green);
-            pathsFromClickedMissionsCards = new(paths);
-            for (int i = 0; i < paths.Count; i++)
+            //pathsFromClickedMissionsCards = new(pathsChoosed);
+            pathsFromClickedMissionsCards.AddRange(pathsChoosed.Except(pathsFromClickedMissionsCards, new PathComparer()).ToList());
+            
+            // zmiana koloru przycisków
+            for (int i = 0; i < pathsChoosed.Count; i++)
                 transform.GetChild(i).GetComponent<Image>().color = UnityEngine.Color.green;
+            
             firstClick = false;
         }
         else
         {
             ChangePlanetsColor(UnityEngine.Color.white);
-            pathsFromClickedMissionsCards = new();
-            for (int i = 0; i < paths.Count; i++)
+            //pathsFromClickedMissionsCards = new();
+            pathsFromClickedMissionsCards = pathsFromClickedMissionsCards.Except(pathsChoosed, new PathComparer()).ToList();
+            
+            // zmiana koloru przycisków
+            for (int i = 0; i < pathsChoosed.Count; i++)
                 transform.GetChild(i).GetComponent<Image>().color = UnityEngine.Color.white;
+            
             firstClick = true;
         }
     }
 
-    void HighlightPlanet(Path path)
+    public void HighlightPlanet(Path path)
     {
+
         string firstPlanetName = path.planetFrom.name;
         string secondPlanetName = path.planetTo.name;
+        Debug.Log(firstPlanetName + "-" + secondPlanetName);
 
+        // podswietlenie przycisku danej sciezki
         var pom = GameObject.Find(firstPlanetName + "-" + secondPlanetName).GetComponent<Image>();
         Debug.Log(pom.name);
-        
+
         if (pom.color == UnityEngine.Color.white)
         {
-           pom.color = UnityEngine.Color.green;
+            pom.color = UnityEngine.Color.green;
         }
         else
         {
-            pom.color= UnityEngine.Color.white;
+            pom.color = UnityEngine.Color.white;
         }
-        
+
         UnityEngine.Color firstPlanetColor = GetPlanetColor(firstPlanetName);
         UnityEngine.Color secondPlanetColor = GetPlanetColor(secondPlanetName);
 
-        if(firstPlanetColor != UnityEngine.Color.green || secondPlanetColor != UnityEngine.Color.green) 
+        if (firstPlanetColor != UnityEngine.Color.green || secondPlanetColor != UnityEngine.Color.green)
         {
             ChangePlanetColor(UnityEngine.Color.green, firstPlanetName);
             ChangePlanetColor(UnityEngine.Color.green, secondPlanetName);
         }
         else
         {
-            if(CheckIfPlanetCanBeExtinguished(firstPlanetName,secondPlanetName))
+            if (CheckIfPlanetCanBeExtinguished(firstPlanetName, secondPlanetName))
             {
                 ChangePlanetColor(UnityEngine.Color.white, firstPlanetName);
             }
@@ -113,7 +150,7 @@ public class PathsPanel : Panel
             }
         }
 
-        if(pathsFromClickedMissionsCards.Contains(path))
+        if (pathsFromClickedMissionsCards.Contains(path))
             pathsFromClickedMissionsCards.Remove(path);
         else
             pathsFromClickedMissionsCards.Add(path);
@@ -121,11 +158,13 @@ public class PathsPanel : Panel
 
     void ChangePlanetsColor(UnityEngine.Color color)
     {
-        for (int i = 0; i < paths.Count; i++)
+        for (int i = 0; i < pathsChoosed.Count; i++)
         {
             //Debug.Log($"{paths[i].planetFrom.name} - {paths[i].planetTo.name}");
-            ChangePlanetColor(color, paths[i].planetFrom.name);
-            ChangePlanetColor(color, paths[i].planetTo.name);
+            if(CheckIfPlanetCanBeExtinguished(pathsChoosed[i].planetFrom.name, pathsChoosed[i].planetTo.name))
+                ChangePlanetColor(color, pathsChoosed[i].planetFrom.name);
+            if (CheckIfPlanetCanBeExtinguished(pathsChoosed[i].planetTo.name, pathsChoosed[i].planetFrom.name))
+                ChangePlanetColor(color, pathsChoosed[i].planetTo.name);
         }
     }
 
@@ -165,7 +204,7 @@ public class PathsPanel : Panel
                 }
             }
         }
-        
-        return true;  
+
+        return true;
     }
 }
