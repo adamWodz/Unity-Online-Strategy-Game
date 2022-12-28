@@ -192,19 +192,93 @@ MonoBehaviour:
     m_StrikethroughOffset: 18
     m_StrikethroughThickness: 6.298828
     m_TabWidth: 24
-  m_GlyphTable: []
-  m_CharacterTable: []
+  m_GlyphTable:
+  - m_Index: 219
+    m_Metrics:
+      m_Width: 42
+      m_Height: 64
+      m_HorizontalBearingX: 3
+      m_HorizontalBearingY: 46
+      m_HorizontalAdvance: 48
+    m_GlyphRect:
+      m_X: 10
+      m_Y: 10
+      m_Width: 42
+      m_Height: 64
+    m_Scale: 1
+    m_AtlasIndex: 0
+  - m_Index: 318
+    m_Metrics:
+      m_Width: 35
+      m_Height: 63
+      m_HorizontalBearingX: 3
+      m_HorizontalBearingY: 63
+      m_HorizontalAdvance: 42
+    m_GlyphRect:
+      m_X: 10
+      m_Y: 93
+      m_Width: 35
+      m_Height: 63
+    m_Scale: 1
+    m_AtlasIndex: 0
+  - m_Index: 201
+    m_Metrics:
+      m_Width: 38
+      m_Height: 64
+      m_HorizontalBearingX: 3
+      m_HorizontalBearingY: 63
+      m_HorizontalAdvance: 43
+    m_GlyphRect:
+      m_X: 10
+      m_Y: 175
+      m_Width: 38
+      m_Height: 64
+    m_Scale: 1
+    m_AtlasIndex: 0
+  m_CharacterTable:
+  - m_ElementType: 1
+    m_Unicode: 281
+    m_GlyphIndex: 219
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 380
+    m_GlyphIndex: 318
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 263
+    m_GlyphIndex: 201
+    m_Scale: 1
   m_AtlasTextures:
   - {fileID: 28268798066460806}
   m_AtlasTextureIndex: 0
   m_IsMultiAtlasTexturesEnabled: 0
   m_ClearDynamicDataOnBuild: 1
-  m_UsedGlyphRects: []
-  m_FreeGlyphRects:
+  m_UsedGlyphRects:
   - m_X: 0
     m_Y: 0
+    m_Width: 61
+    m_Height: 83
+  - m_X: 0
+    m_Y: 83
+    m_Width: 54
+    m_Height: 82
+  - m_X: 0
+    m_Y: 165
+    m_Width: 57
+    m_Height: 83
+  m_FreeGlyphRects:
+  - m_X: 0
+    m_Y: 248
     m_Width: 511
-    m_Height: 511
+    m_Height: 263
+  - m_X: 54
+    m_Y: 83
+    m_Width: 457
+    m_Height: 82
+  - m_X: 57
+    m_Y: 83
+    m_Width: 454
+    m_Height: 428
   m_fontInfo:
     Name: Liberation Sans
     PointSize: 86

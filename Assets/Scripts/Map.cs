@@ -12,7 +12,7 @@ public class Map : MonoBehaviour
     private List<Planet> planets;
     public GameObject[] pathsPrefabs;
     public GameObject[] planetsPrefabs;
-    
+
     // punkty krancowe mapy
     Vector2 leftTopPoint = new(-5.8f, 3.6f);
     Vector2 rightTopPoint = new(7, 3.6f);
@@ -294,12 +294,7 @@ public class Map : MonoBehaviour
         for(int i = 0;i < paths.Count; i++)
         {
             // k¹t nachylenia miêdzy dwoma planetami
-            /*
-            float angle = Mathf.Atan2(
-                          planets[paths[i].planetsIds[1]].position.x - planets[paths[i].planetsIds[0]].position.x, 
-                          planets[paths[i].planetsIds[1]].position.y - planets[paths[i].planetsIds[0]].position.y
-                          ) * Mathf.Rad2Deg; 
-            */
+            
             float angle = Mathf.Atan2(
                           paths[i].planetTo.position.x - paths[i].planetFrom.position.x,
                           paths[i].planetTo.position.y - paths[i].planetFrom.position.y
