@@ -7,8 +7,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PathScriptableObject", menuName = "ScriptableObjects/Path")]
 public class Path : ScriptableObject
 {
-    public int Id { get; set; }
-    public int[] planetsIds = new int[2];
+    //public int Id { get; set; }
+    //public int[] planetsIds = new int[2];
     public Planet planetFrom;
     public Planet planetTo;
     public Color color;

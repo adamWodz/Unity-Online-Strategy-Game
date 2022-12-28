@@ -11,8 +11,6 @@ public class BuildPath : MonoBehaviour
     Renderer[] tilesRenderers;
     public Path path;
 
-    Assets.GameplayControl.Mission mission;
-
     // Start is called before the first frame update
     void Start()
     {

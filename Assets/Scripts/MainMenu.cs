@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -6,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : NetworkBehaviour
 {
+    public List<MapData> availableMapsData;
+
     public void QuitGame()
     {
         Debug.Log("QUIT!");
@@ -14,8 +17,8 @@ public class MainMenu : NetworkBehaviour
 
     public void StartGame()
     {
-        // indeksy scen znajduj¹ siê w 'File->Build Settings'
-        //SceneManager.LoadScene(1);
+        Map.mapData = availableMapsData[0];
+        Debug.Log(availableMapsData.Count);
         string name = "Scenes/Main Game";
         var status = NetworkManager.SceneManager.LoadScene(name,LoadSceneMode.Single);
     }
