@@ -1,3 +1,4 @@
+using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,4 +9,5 @@ public class MapData : ScriptableObject
     public new string name;
     public List<Planet> planets;
     public List<Path> paths;
+    public List<Mission> missions;
 }
