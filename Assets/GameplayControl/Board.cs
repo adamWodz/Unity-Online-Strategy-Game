@@ -24,8 +24,6 @@ namespace Assets.GameplayControl
             {3, 3},
         };
         public static int maSatellitesSent = 3;
-        public static List<Planet> planets;
-        public static List<Path> paths;
     }
 
     public class ConnectedPlanets

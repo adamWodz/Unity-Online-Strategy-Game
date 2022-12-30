@@ -9,9 +9,7 @@ public class BuildPath : MonoBehaviour
     private GameManager gameManager;
     Transform[] tilesTransforms;
     Renderer[] tilesRenderers;
-    public Path path = new();
-
-    Assets.GameplayControl.Mission mission;
+    public Path path;
 
     // Start is called before the first frame update
     void Start()
@@ -21,7 +19,7 @@ public class BuildPath : MonoBehaviour
         tilesRenderers = gameObject.GetComponentsInChildren<Renderer>();
         tilesTransforms = gameObject.GetComponentsInChildren<Transform>();
 
-        PlayerGameData.EndTurn();
+        //PlayerGameData.EndTurn();
     }
 
     // Update is called once per frame

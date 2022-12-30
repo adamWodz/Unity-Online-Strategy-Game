@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class DrawCardsPanel : NetworkBehaviour
 {
     public Sprite[] sprites; // kolory kart
-    public string[] names = { "RedCard", "GreenCard", "BlueCard", "BlackCard", "WhiteCard", "YellowCard", "PinkCard", "RainbowCard" };
+    public string[] names = { "RedCard", "GreenCard", "BlueCard", "YellowCard", "PinkCard", "RainbowCard" };
     public List<GameObject> cards = new();
     GameManager gameManager;
     Button drawCardsButton;
@@ -51,8 +51,9 @@ public class DrawCardsPanel : NetworkBehaviour
     {
         GameObject cardTempalte = transform.GetChild(0).gameObject;
         GameObject card;
-        int n = 5;
-        for (int i = 0; i < n; i++)
+
+        int cardsToDrawQuantity = 5;
+        for (int i = 0; i < cardsToDrawQuantity; i++)
         {
             int copy = i;
             int index = 0;
