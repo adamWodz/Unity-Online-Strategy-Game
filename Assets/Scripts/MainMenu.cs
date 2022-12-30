@@ -15,14 +15,30 @@ public class MainMenu : NetworkBehaviour
         Application.Quit();
     }
 
-    public void StartGame1()
+    public void StartGame()
     {
-        //Map.mapData = availableMapsData[0];
-        //Map.mapData = availableMapsData[1];
-        SetMapDataClientRpc();
-        Debug.Log("StartGame1");
         string name = "Scenes/Main Game";
         var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
+    }
+
+    public void ChooseMap1()
+    {
+        SetMapDataClientRpc();
+    }
+
+    public void ChooseMap2()
+    {
+        SetMapDataClientRpc();
+    }
+
+    public void ChooseMap3()
+    {
+        SetMapDataClientRpc();
+    }
+
+    public void ChooseMap4()
+    {
+        SetMapDataClientRpc();
     }
 
     [ClientRpc]
