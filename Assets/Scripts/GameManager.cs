@@ -18,14 +18,12 @@ public class GameManager : NetworkBehaviour
     private Vector3 spaceshipsBase = new(-8, -4, -1);
     private TMP_Text spaceshipCounter;
     private TMP_Text satelliteCounter;
-    private Canvas canvas;
-    private Panel drawCardsPanel;
+    //private Canvas canvas;
 
     // Start is called before the first frame update
     void Start()
     {
-        canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
-        //drawCardsPanel = GameObject.Find("DrawCardsPanel").GetComponent<Panel>();
+        //canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
 
         spaceshipCounter = GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>();
         spaceshipCounter.text = "50";
@@ -54,15 +52,17 @@ public class GameManager : NetworkBehaviour
         spaceshipCounter.text = (int.Parse(spaceshipCounter.text) - 1).ToString();
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void SpawnCardsServerRpc(Vector3 position, Quaternion rotation, int color, string name)
+    //[ServerRpc(RequireOwnership = false)]
+    public void SpawnCards(Transform t, int color, string name)//Vector3 position, Quaternion rotation, int color, string name)
     {
-        ChangeSpriteClientRpc(color);
-        spawnedCardGameObject = Instantiate(cardButton, position, rotation);
-        spawnedCardGameObject.GetComponent<NetworkObject>().Spawn(true);
-        bool popm = spawnedCardGameObject.GetComponent<NetworkObject>().TrySetParent(canvas.transform);
-        ChangeNameClientRpc(name);
+        //ChangeSpriteClientRpc(color);
+        cardButton.GetComponent<Image>().sprite = cardSprites[color];
+        spawnedCardGameObject = Instantiate(cardButton, t);
+        //spawnedCardGameObject.GetComponent<NetworkObject>().Spawn(true);
+        //bool popm = spawnedCardGameObject.GetComponent<NetworkObject>().TrySetParent(canvas.transform);
+        //ChangeNameClientRpc(name);
         //spawnedCardGameObject.name = name;
+        spawnedCardGameObject.name = name;
         var spawnedCard = spawnedCardGameObject.GetComponent<Move>();
         spawnedCard.move = true;
         spawnedCard.speed = 500;
@@ -70,22 +70,9 @@ public class GameManager : NetworkBehaviour
         spawnedCard.goalPosition = cardsStack.position;
         spawnedCard.goalRotation = cardsStack.rotation;
         
-        Debug.Log(popm);
+        //Debug.Log(popm);
     }
 
-    [ClientRpc]
-    void ChangeSpriteClientRpc(int color)
-    {
-        cardButton.GetComponent<Image>().sprite = cardSprites[color];
-    }
-    
-    [ClientRpc]
-    void ChangeNameClientRpc(string name)
-    {
-        if(spawnedCardGameObject!= null) 
-            spawnedCardGameObject.name = name;
-    }
-    
     public float CalculateAngle(Vector3 position1, Vector3 position2)
     {
         return Mathf.Atan2(
