@@ -17,9 +17,19 @@ public class MainMenu : NetworkBehaviour
 
     public void StartGame1()
     {
-        Map.mapData = availableMapsData[0];
+        //Map.mapData = availableMapsData[0];
+        //Map.mapData = availableMapsData[1];
+        SetMapDataClientRpc();
         Debug.Log("StartGame1");
         string name = "Scenes/Main Game";
-        var status = NetworkManager.SceneManager.LoadScene(name,LoadSceneMode.Single);
+        var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
+    }
+
+    [ClientRpc]
+    public void SetMapDataClientRpc()
+    {
+        //Debug.Log(Map.mapData);
+        //Debug.Log(availableMapsData);
+        Map.mapData = availableMapsData[0];
     }
 }
