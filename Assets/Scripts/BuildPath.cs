@@ -35,7 +35,7 @@ public class BuildPath : MonoBehaviour
         //if (PlayerGameData.CanBuildPath(path))
         {
             PlayerGameData.BuildPath(path);
-            Communication.BuildPathServerRpc(this, path);
+            Communication.BuildPath(this, path);
         }
 
 
@@ -46,7 +46,7 @@ public class BuildPath : MonoBehaviour
         Debug.Log("Started Coroutine at timestamp : " + Time.time);
         for (int i = 0; i < tilesRenderers.Length; i++)
         {
-            gameManager.SpawnShips(tilesTransforms[i + 1].position, tilesTransforms[i+1].rotation);
+            gameManager.SpawnShipsServerRpc(tilesTransforms[i + 1].position, tilesTransforms[i+1].rotation);
             yield return new WaitForSeconds(0.2f);
         }
         Debug.Log("Finished Coroutine at timestamp : " + Time.time);
