@@ -37,10 +37,10 @@ public class Map : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        paths = mapData.paths;
-        planets = mapData.planets; 
+        //paths = mapData.paths;
+        //planets = mapData.planets; 
 
-        CreateMap();
+        //CreateMap();
     }
 
     // Update is called once per frame
