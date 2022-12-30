@@ -8,18 +8,25 @@ using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour
 {
+    public List<Sprite> cardSprites;
     public GameObject shipGameObject;
     public GameObject cardButton;
 
+    private GameObject spawnedCardGameObject;
     private List<GameObject> shipList = new();
     private List<Transform> shipTransformList = new();
     private Vector3 spaceshipsBase = new(-8, -4, -1);
     private TMP_Text spaceshipCounter;
     private TMP_Text satelliteCounter;
+    private Canvas canvas;
+    private Panel drawCardsPanel;
 
     // Start is called before the first frame update
     void Start()
     {
+        canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+        //drawCardsPanel = GameObject.Find("DrawCardsPanel").GetComponent<Panel>();
+
         spaceshipCounter = GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>();
         spaceshipCounter.text = "50";
 
@@ -33,7 +40,8 @@ public class GameManager : NetworkBehaviour
 
     }
 
-    public void SpawnShips(Vector3 position, Quaternion rotation)
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnShipsServerRpc(Vector3 position, Quaternion rotation)
     {
         float angle = CalculateAngle(position,spaceshipsBase);
         var spawnedShipGameObject = Instantiate(shipGameObject, spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
@@ -46,32 +54,43 @@ public class GameManager : NetworkBehaviour
         spaceshipCounter.text = (int.Parse(spaceshipCounter.text) - 1).ToString();
     }
 
-    public void SpawnCards(Transform t, Sprite sprite, string name)
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnCardsServerRpc(Vector3 position, Quaternion rotation, int color, string name)
     {
-        string message = IsHost ? "Host" : "Client";
-        TestServerRpc(message);
-        cardButton.GetComponent<Image>().sprite = sprite;
-        var spawnedCardGameObject = Instantiate(cardButton, t);
-        spawnedCardGameObject.name = name;
-        var spawnedShip = spawnedCardGameObject.GetComponent<Move>();
-        spawnedShip.move = true;
-        spawnedShip.speed = 500;
+        ChangeSpriteClientRpc(color);
+        spawnedCardGameObject = Instantiate(cardButton, position, rotation);
+        spawnedCardGameObject.GetComponent<NetworkObject>().Spawn(true);
+        bool popm = spawnedCardGameObject.GetComponent<NetworkObject>().TrySetParent(canvas.transform);
+        ChangeNameClientRpc(name);
+        //spawnedCardGameObject.name = name;
+        var spawnedCard = spawnedCardGameObject.GetComponent<Move>();
+        spawnedCard.move = true;
+        spawnedCard.speed = 500;
         Transform cardsStack = GameObject.Find(name + "s").GetComponent<Transform>();
-        spawnedShip.goalPosition = cardsStack.position;
-        spawnedShip.goalRotation = cardsStack.rotation;
+        spawnedCard.goalPosition = cardsStack.position;
+        spawnedCard.goalRotation = cardsStack.rotation;
+        
+        Debug.Log(popm);
     }
 
+    [ClientRpc]
+    void ChangeSpriteClientRpc(int color)
+    {
+        cardButton.GetComponent<Image>().sprite = cardSprites[color];
+    }
+    
+    [ClientRpc]
+    void ChangeNameClientRpc(string name)
+    {
+        if(spawnedCardGameObject!= null) 
+            spawnedCardGameObject.name = name;
+    }
+    
     public float CalculateAngle(Vector3 position1, Vector3 position2)
     {
         return Mathf.Atan2(
                           position1.x - position2.x,
                           position1.y - position2.y
                           ) * Mathf.Rad2Deg;
-    }
-
-    [ServerRpc]
-    void TestServerRpc(string message)
-    {
-        Debug.Log($"{message} sent by {OwnerClientId}");
     }
 }

@@ -25,8 +25,7 @@ public static class Communication
             PlayerGameData.NewTurn();
     }
     
-    [ServerRpc]
-    public static void BuildPathServerRpc(BuildPath buildPath, Path path)
+    public static void BuildPath(BuildPath buildPath, Path path)
     {
         buildPath.StartCoroutine(buildPath.BuildPathAnimation());
         PlayerGameData.BuildPath(path);
