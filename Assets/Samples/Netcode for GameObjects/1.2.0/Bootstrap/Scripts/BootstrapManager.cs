@@ -15,7 +15,7 @@ namespace Unity.Netcode.Samples
             var networkManager = NetworkManager.Singleton;
             if (!networkManager.IsClient && !networkManager.IsServer)
             {
-                if (GUILayout.Button("Host"))
+                /*if (GUILayout.Button("Host"))
                 {
                     networkManager.StartHost();
                 }
@@ -28,14 +28,14 @@ namespace Unity.Netcode.Samples
                 if (GUILayout.Button("Server"))
                 {
                     networkManager.StartServer();
-                }
+                }*/
             }
             else
             {
                 GUILayout.Label($"Mode: {(networkManager.IsHost ? "Host" : networkManager.IsServer ? "Server" : "Client")}");
 
                 // "Random Teleport" button will only be shown to clients
-                if (networkManager.IsClient)
+                /*if (networkManager.IsClient)
                 {
                     if (GUILayout.Button("Random Teleport"))
                     {
@@ -49,7 +49,7 @@ namespace Unity.Netcode.Samples
                             }
                         }
                     }
-                }
+                }*/
             }
 
             GUILayout.EndArea();
