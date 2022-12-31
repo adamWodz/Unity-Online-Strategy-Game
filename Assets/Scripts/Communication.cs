@@ -22,7 +22,7 @@ public static class Communication
     public static void StartTurnClientRpc(int id)
     {
         if (id == PlayerGameData.Id)
-            PlayerGameData.NewTurn();
+            PlayerGameData.StartTurn();
     }
     
     public static void BuildPath(BuildPath buildPath, Path path)
@@ -35,7 +35,16 @@ public static class Communication
     public static void DrawCard(DrawCardsPanel drawCardsPanel, int index)
     {
         Color color = drawCardsPanel.MoveCard(index);
+        PlayerGameData.DrawCard(color);
+        if (PlayerGameData.cardsDrewInTurn == 2)
+            EndTurn();
+    }
 
+    public static void EndTurn()
+    {
+        PlayerGameData.EndTurn();
+        var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
+        playerPanel.UpdatePlayersOrderClientRpc();
     }
 
     [ServerRpc]

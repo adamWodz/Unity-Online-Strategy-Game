@@ -11,6 +11,7 @@ namespace Assets.GameplayControl
         public static int Id { get; }
         public static string Name { get; }
         public static int curentPoints { get; set; } = 0;
+        public static int spaceshipsLeft { get; set; } = Board.startSpaceshipsNumber;
         public static int satellitesSent { get; set; } = 0;
         public static List<Mission> missions;
         public static Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
@@ -25,6 +26,7 @@ namespace Assets.GameplayControl
             { Color.special, 0 },
         };
         public static bool isNowPlaying { set; get; }
+        public static int cardsDrewInTurn = 0;
 
         public static List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
@@ -43,6 +45,7 @@ namespace Assets.GameplayControl
             
             curentPoints += Board.pointsPerLength[path.length];
             numOfCardsInColor[path.color] -= path.length;
+            spaceshipsLeft -= path.length;
             path.isBuilt = true;
 
             // wiadomość do serwera żeby powiadomił pozostałych graczy o zmianach
@@ -81,7 +84,7 @@ namespace Assets.GameplayControl
         {
             if (planet.withSatellite) return false;
             if (path.withSatellie) return false;
-            if (satellitesSent >= Board.maSatellitesSent) return false;
+            if (satellitesSent >= Board.maxSatellitesSent) return false;
             if (numOfCardsInColor[color] < Board.cardsPerSatelliteSend[satellitesSent + 1]) return false;
             
             return true;
@@ -101,9 +104,16 @@ namespace Assets.GameplayControl
         {
             numOfCardsInColor[firstCardsColor]++;
             numOfCardsInColor[secondCardColor]++;
+            cardsDrewInTurn += 2;
         }
 
-        public static void NewTurn()
+        public static void DrawCard(Color cardColor)
+        {
+            numOfCardsInColor[cardColor]++;
+            cardsDrewInTurn++;
+        }
+
+        public static void StartTurn()
         {
             isNowPlaying = true;
         }
@@ -111,8 +121,7 @@ namespace Assets.GameplayControl
         public static void EndTurn()
         {
             isNowPlaying = false;
-            // wiadomość do serwera o zakończonej turze
-            throw new NotImplementedException();
+            cardsDrewInTurn = 0;
         }
     }
 }
