@@ -32,10 +32,9 @@ public static class Communication
         UpdatePlayerPointsClientRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
     }
 
-    [ServerRpc]
-    public static void DrawCard(Color color)
+    public static void DrawCard(DrawCardsPanel drawCardsPanel, int index)
     {
-        // rozpoczecie animacji
+        Color color = drawCardsPanel.MoveCard(index);
 
     }
 

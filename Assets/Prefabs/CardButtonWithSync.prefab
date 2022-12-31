@@ -12,12 +12,11 @@ GameObject:
   - component: {fileID: 4963611423944183595}
   - component: {fileID: 4963611423944183592}
   - component: {fileID: 4963611423944183597}
-  - component: {fileID: -3885475484401095774}
   - component: {fileID: -828723952907698550}
-  - component: {fileID: 4318294188745072300}
+  - component: {fileID: -7166304437817938542}
   m_Layer: 5
-  m_Name: CardButton
-  m_TagString: Untagged
+  m_Name: CardButtonWithSync
+  m_TagString: Cards
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -71,7 +70,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9b007d1daf694ce4d82b102b3202df95, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ca5cb7ea051e40a44a89bef7058a6317, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -125,22 +124,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &-3885475484401095774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4963611423944183591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 951099334
-  AlwaysReplicateAsRoot: 0
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
 --- !u!114 &-828723952907698550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,7 +131,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4963611423944183591}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
   m_Name: 
@@ -167,7 +150,7 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
---- !u!114 &4318294188745072300
+--- !u!114 &-7166304437817938542
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -176,13 +159,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4963611423944183591}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8164c8b87ea38124e9baa2b470f1818a, type: 3}
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  move: 0
-  goalPosition: {x: 0, y: 0, z: 0}
-  goalRotation: {x: 0, y: 0, z: 0, w: 0}
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &4963611424646782044
 GameObject:
   m_ObjectHideFlags: 0

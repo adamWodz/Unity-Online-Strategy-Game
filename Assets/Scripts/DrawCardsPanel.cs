@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.TerrainUtils;
 using UnityEngine.UI;
 
 public class DrawCardsPanel : NetworkBehaviour
@@ -10,88 +13,107 @@ public class DrawCardsPanel : NetworkBehaviour
     public Sprite[] sprites; // kolory kart
     public string[] names = { "RedCard", "GreenCard", "BlueCard", "YellowCard", "PinkCard", "RainbowCard" };
     public List<GameObject> cards = new();
+    public GameObject cardPrefab;
     GameManager gameManager;
     Button drawCardsButton;
+    GameObject card;
+    public int[] actualCardColor = new int[5];
 
     void Start()
     {
         drawCardsButton = GameObject.Find("DrawCardsButton").GetComponent<Button>();
         
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        
 
-        //if (IsHost)
-        //{
-            //Draw();
-            
-            GameObject cardTempalte = transform.GetChild(0).gameObject;
-            GameObject card;
-            int n = 5;
-            for (int i = 0; i < n; i++)
+        int i = 0;
+        foreach(Transform child in transform)
+        {
+            if (child.CompareTag("Cards"))
             {
                 int copy = i;
-                int index = 0;
-                card = Instantiate(cardTempalte, transform);
-                //card.GetComponent<NetworkObject>().Spawn(true);
-                //card.GetComponent<NetworkObject>().TrySetParent(transform);
-                card.GetComponent<Image>().sprite = RandomSprite(ref index);
-                card.name = names[index];
-                card.GetComponent<Button>().onClick.AddListener(() => MoveCard(copy, ref index));
-                cards.Add(card);
+                int color = 3;
+                RandomSprite(ref color);
+                child.gameObject.name = names[color];
+                child.gameObject.GetComponent<Button>().onClick.AddListener(() => Communication.DrawCard(this, copy));//MoveCard(copy));
+                actualCardColor[copy] = color;
+                i++;
+                cards.Add(child.gameObject);
             }
-
-            Destroy(cardTempalte);
-            drawCardsButton.transform.SetAsLastSibling();
-            drawCardsButton.onClick.AddListener(MoveCard);
-            
-        //}
-    }
-    [ServerRpc]
-    void DrawServerRpc()
-    {
-        GameObject cardTempalte = transform.GetChild(0).gameObject;
-        GameObject card;
-
-        int cardsToDrawQuantity = 5;
-        for (int i = 0; i < cardsToDrawQuantity; i++)
-        {
-            int copy = i;
-            int index = 0;
-            card = Instantiate(cardTempalte, transform);
-            card.GetComponent<NetworkObject>().Spawn(true);
-            card.GetComponent<NetworkObject>().TrySetParent(transform);
-            card.GetComponent<Image>().sprite = RandomSprite(ref index);
-            card.name = names[index];
-            card.GetComponent<Button>().onClick.AddListener(() => MoveCard(copy, ref index));
-            cards.Add(card);
         }
-
-        Destroy(cardTempalte);
-        drawCardsButton.transform.SetAsLastSibling();
-        drawCardsButton.onClick.AddListener(MoveCard);
+        drawCardsButton.onClick.AddListener(() => Communication.DrawCard(this,10));
     }
+
+    private void Update()
+    {
+        // Synchronizacja kolorów kart do dobrania przez hosta
+        if(IsHost)
+        {
+            for(int i = 0;i < cards.Count; i++)
+            {
+                int copy = i;
+                SyncSpritesClientRpc(actualCardColor[copy], copy);
+            }
+        }
+        
+    }
+
+    [ClientRpc]
+    void SyncSpritesClientRpc(int color, int index)
+    {
+        ChangeCardColor(color, index);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void SyncSpritesServerRpc(int color,int index)
+    {
+        ChangeCardColor(color, index);
+    }
+
+    void ChangeCardColor(int color, int index)
+    {
+        actualCardColor[index] = color;
+        cards[index].GetComponent<Image>().sprite = sprites[actualCardColor[index]];
+        cards[index].name = names[actualCardColor[index]];
+    }
+    
     Sprite RandomSprite(ref int index)
     {
         index = UnityEngine.Random.Range(0, sprites.Length);
         return sprites[index];
     }
-    private void MoveCard(int index,ref int color)
+    
+    public Color MoveCard(int index)
     {
-        Debug.Log($"Index {index}");
-        int i = 0;
-        gameManager.SpawnCardsServerRpc(cards[index].transform.position, cards[index].transform.rotation, color, cards[index].name);
-        //cards[index].SetActive(false);
-        //cards.RemoveAt(index);
-        cards[index].GetComponent<Image>().sprite = RandomSprite(ref i);
-        cards[index].name= names[i];
-        color = i;
+        Color selectedColor;
+        if (index > cards.Count) //dobierana jest losowa karta z kupki
+        {
+            selectedColor = MoveCard();
+        }
+        else // dobierana jest wybrana karta z panelu
+        {
+            // rozpoczyna siê animacja doboru karty danego koloru przez gracza
+            gameManager.SpawnCards(cards[index].transform, actualCardColor[index], names[actualCardColor[index]]);
+            selectedColor = (Color)actualCardColor[index];
+
+            // wybierany jest nowy kolor i synchronizowany
+            int color = 0;
+            RandomSprite(ref color);
+            actualCardColor[index] = color;
+            SyncSpritesClientRpc(color, index);
+            SyncSpritesServerRpc(color, index);
+        }
+
+        return selectedColor;
     }
     
-    private void MoveCard()
+    public Color MoveCard()
     {
-        int index = 0;
-        Sprite sprite = RandomSprite(ref index);
-        gameManager.SpawnCardsServerRpc(drawCardsButton.transform.position, drawCardsButton.transform.rotation, index, names[index]);
+        // gracz dobiera losow¹ kartê z kupki z kartami (widoczne tylko lokalnie)
+        int color = 0;
+        RandomSprite(ref color);
+        gameManager.SpawnCards(drawCardsButton.transform, color, names[color]);
+
+        return (Color)color;
     }
     
 }
