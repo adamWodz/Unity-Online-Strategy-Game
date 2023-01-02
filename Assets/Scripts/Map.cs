@@ -1,3 +1,4 @@
+using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,12 @@ public class Map : MonoBehaviour
     public List<Path> Paths
     {
         get { return paths; }
+    }
+    private List<Mission> missions;
+    public List<Mission> Missions 
+    { 
+        get { return missions; }
+        set { missions = value; }
     }
     private List<Planet> planets;
     public GameObject[] pathsPrefabs;
@@ -39,7 +46,7 @@ public class Map : MonoBehaviour
     {
         paths = mapData.paths;
         planets = mapData.planets; 
-
+        missions = mapData.missions;
         CreateMap();
     }
 

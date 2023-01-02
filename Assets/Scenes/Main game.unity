@@ -2358,6 +2358,7 @@ MonoBehaviour:
   - RainbowCard
   cards: []
   cardPrefab: {fileID: 4963611423944183591, guid: 3ec1dbd1f2a2c6a4cb119d44e460f625, type: 3}
+  actualCardColor: 0000000000000000000000000000000000000000
 --- !u!114 &1071830726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4877,7 +4878,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -276.52, y: 199.06}
-  m_SizeDelta: {x: 611.62, y: 46.004}
+  m_SizeDelta: {x: 611.61, y: 46.004}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1812071544
 MonoBehaviour:
@@ -5734,7 +5735,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -305.81003, y: 0.0001}
+  m_AnchoredPosition: {x: -305.805, y: 0.0001}
   m_SizeDelta: {x: 0, y: 42.5214}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &2120158608

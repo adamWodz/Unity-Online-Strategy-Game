@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2977788407624069113}
   - component: {fileID: 4601001828449440406}
   m_Layer: 0
-  m_Name: Planeta
+  m_Name: Ceres
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

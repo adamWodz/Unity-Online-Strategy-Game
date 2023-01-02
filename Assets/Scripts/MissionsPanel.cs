@@ -1,3 +1,4 @@
+using Assets.GameplayControl;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using UnityEngine.UI;
 
 public class MissionsPanel : Panel
 {
-    public List<Path> pathsToChoose = new();
+    public List<Mission> missionssToChoose = new();
     
     public Button[] missionButtonsAndConfirmButton; // 3 pierwsze przyciski to karty misji, a ostatni to zatwierdzenie
 
@@ -23,16 +24,18 @@ public class MissionsPanel : Panel
         
         AssignValues(0, 242.9984f, PanelState.Minimized, false);
 
-        pathsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Paths.Except(pathsPanel.PathsChoosed,new PathComparer()).ToList());
-
+        missionssToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions.Except(pathsPanel.MissionsChoosed,new MissionComparer()).ToList());
+        
+        Debug.Log($"Missions To Choose: {missionssToChoose.Count}");
         missionButtonsAndConfirmButton = transform.GetComponentsInChildren<Button>();
 
-        var randomPaths = pathsPanel.GetRandomElements(pathsToChoose, 3);
+        var randomPaths = pathsPanel.GetRandomElements(missionssToChoose, 3);
         
+        Debug.Log($"RandomPaths: {randomPaths.Count}");
         for (int i = 0; i < missionButtonsAndConfirmButton.Length - 1; i++)
         {
             int copy = i;
-            missionButtonsAndConfirmButton[copy].name = missionButtonsAndConfirmButton[copy].transform.GetChild(0).GetComponent<TMP_Text>().text = randomPaths[copy].planetFrom.name + "-" + randomPaths[copy].planetTo.name;
+            missionButtonsAndConfirmButton[copy].name = missionButtonsAndConfirmButton[copy].transform.GetChild(0).GetComponent<TMP_Text>().text = randomPaths[copy].start.name + "-" + randomPaths[copy].end.name;
             missionButtonsAndConfirmButton[copy].onClick.AddListener(() => pathsPanel.HighlightPlanet(randomPaths[copy]));
         }
 
@@ -47,7 +50,7 @@ public class MissionsPanel : Panel
 
     void AddMissions()
     {
-        pathsPanel.PathsChoosed.AddRange(pathsPanel.pathsFromClickedMissionsCards.Except(pathsPanel.PathsChoosed, new PathComparer()).ToList());
+        pathsPanel.MissionsChoosed = pathsPanel.missionsFromClickedMissionsCards.Except(pathsPanel.MissionsChoosed, new MissionComparer()).ToList();
         ChangeState();
         pathsPanel.ChangeState();
         button.enabled = true;
