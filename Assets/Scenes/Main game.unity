@@ -463,7 +463,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   popUpPanel: {fileID: 1674471843}
   panelState: 0
-  pathsToChoose: []
+  missionssToChoose: []
   missionButtonsAndConfirmButton: []
 --- !u!1 &207637184
 GameObject:
@@ -3574,19 +3574,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1525409438}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1674471843}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1525409438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5793,7 +5781,7 @@ MonoBehaviour:
   popUpPanel: {fileID: 1674471843}
   panelState: 1
   pathButtonPrefab: {fileID: 8818678304912476882, guid: 6a81663fec66bf24d9dd7d7588f92478, type: 3}
-  pathsFromClickedMissionsCards: []
+  missionsFromClickedMissionsCards: []
 --- !u!1001 &2329796705193565231
 PrefabInstance:
   m_ObjectHideFlags: 0

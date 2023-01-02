@@ -42,7 +42,7 @@ public class PathsPanel : Panel
 
         transform.parent.GetComponent<Button>().onClick.AddListener(HighlightPlanets);
 
-        missionsChoosed = GetRandomElements(GameObject.Find("Space").GetComponent<Map>().Missions, 3);
+        missionsChoosed = GetRandomElementsFromList(GameObject.Find("Space").GetComponent<Map>().Missions, 3);
 
         Debug.Log($"Missions choosed: {missionsChoosed.Count}");
 
@@ -57,7 +57,7 @@ public class PathsPanel : Panel
         ChangeWidth();
     }
 
-    public List<Mission> GetRandomElements(List<Mission> list, int elementsCount)
+    public List<Mission> GetRandomElementsFromList(List<Mission> list, int elementsCount)
     {
         return list.OrderBy(arg => Guid.NewGuid()).Take(elementsCount).ToList();
     }
