@@ -7,8 +7,8 @@ using UnityEngine;
 public class BuildPath : MonoBehaviour
 {
     private GameManager gameManager;
-    Transform[] tilesTransforms;
-    Renderer[] tilesRenderers;
+    private Transform[] tilesTransforms;
+    private Renderer[] tilesRenderers;
     public Path path;
 
     // Start is called before the first frame update
@@ -35,8 +35,6 @@ public class BuildPath : MonoBehaviour
             PlayerGameData.BuildPath(path);
             Communication.BuildPath(this, path);
         }
-
-
     }
 
     public IEnumerator BuildPathAnimation()
@@ -44,7 +42,12 @@ public class BuildPath : MonoBehaviour
         Debug.Log("Started Coroutine at timestamp : " + Time.time);
         for (int i = 0; i < tilesRenderers.Length; i++)
         {
+            // aktualizacja licznika dostêpnych statków 
+            gameManager.spaceshipCounter.text = (int.Parse(gameManager.spaceshipCounter.text) - 1).ToString();
+            
+            // host spawni statki i je przemieszcza 
             gameManager.SpawnShipsServerRpc(tilesTransforms[i + 1].position, tilesTransforms[i+1].rotation);
+            
             yield return new WaitForSeconds(0.2f);
         }
         Debug.Log("Finished Coroutine at timestamp : " + Time.time);

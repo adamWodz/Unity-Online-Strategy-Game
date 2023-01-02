@@ -42,13 +42,15 @@ public class PathsPanel : Panel
 
         transform.parent.GetComponent<Button>().onClick.AddListener(HighlightPlanets);
 
-        missionsChoosed = GetRandomElementsFromList(GameObject.Find("Space").GetComponent<Map>().Missions, 3);
+        //missionsChoosed = GetRandomElementsFromList(GameObject.Find("Space").GetComponent<Map>().Missions, 3);
+
+        missionsChoosed = new();
 
         Debug.Log($"Missions choosed: {missionsChoosed.Count}");
 
         AssignValues(368.62f, 611.61f, PanelState.Maximized, true);
 
-        SpawnMissionsButtons(missionsChoosed);
+        //SpawnMissionsButtons(missionsChoosed);
     }
 
     // Update is called once per frame

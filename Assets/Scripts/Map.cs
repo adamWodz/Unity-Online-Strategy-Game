@@ -44,6 +44,7 @@ public class Map : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(mapData);
         paths = mapData.paths;
         planets = mapData.planets; 
         missions = mapData.missions;

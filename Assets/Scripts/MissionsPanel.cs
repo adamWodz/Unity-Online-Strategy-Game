@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TMPro;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,19 +29,9 @@ public class MissionsPanel : Panel
         
         Debug.Log($"Missions To Choose: {missionsToChoose.Count}");
         missionButtonsAndConfirmButton = transform.GetComponentsInChildren<Button>();
-        /*
-        var randomPaths = pathsPanel.GetRandomElements(missionssToChoose, 3);
         
-        Debug.Log($"RandomPaths: {randomPaths.Count}");
-        for (int i = 0; i < missionButtonsAndConfirmButton.Length - 1; i++)
-        {
-            int copy = i;
-            missionButtonsAndConfirmButton[copy].name = missionButtonsAndConfirmButton[copy].transform.GetChild(0).GetComponent<TMP_Text>().text = randomPaths[copy].start.name + "-" + randomPaths[copy].end.name;
-            missionButtonsAndConfirmButton[copy].onClick.AddListener(() => pathsPanel.HighlightPlanet(randomPaths[copy]));
-        }
-        */
         missionButtonsAndConfirmButton[^1].onClick.AddListener(AddMissions);
-        button.onClick.AddListener(DrawMissions);
+        drawMissionsCardsButton.onClick.AddListener(DrawMissions);
     }
 
     // Update is called once per frame
@@ -48,6 +39,19 @@ public class MissionsPanel : Panel
     {
         ChangeWidth();
     }
+
+    [ClientRpc]
+    void SyncMissionsToChooseClientRpc(string startPlanetName, string endPlanetName)
+    {
+        missionsToChoose.RemoveAll(m => m.start.name == startPlanetName && m.end.name == endPlanetName);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void SyncMissionsToChooseServerRpc(string startPlanetName, string endPlanetName)
+    {
+        SyncMissionsToChooseClientRpc(startPlanetName, endPlanetName);
+    }
+    
     private void DrawMissions()
     {
         popUpPanel.SetActive(true);
@@ -83,12 +87,15 @@ public class MissionsPanel : Panel
             missionButtonsAndConfirmButton[i].name = "";
         }
 
-        // usuwamy misje z listy misju mo¿liwych do wyboru
-        missionsToChoose.RemoveAll(m => missionsChoosed.Contains(m));
+        // usuwamy misje z listy misju mo¿liwych do wyboru i synchronizujemy t¹ listê z innymi graczami
+        foreach(Mission m in missionsChoosed)
+        {
+            SyncMissionsToChooseServerRpc(m.start.name, m.end.name);
+        }
 
         // przywracamy stan paneli sprzed dobierania
         ChangeState();
         pathsPanel.ChangeState();
-        button.enabled = true;
+        drawMissionsCardsButton.enabled = true;
     }
 }

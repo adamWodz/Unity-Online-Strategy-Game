@@ -2,6 +2,7 @@ using Assets.GameplayControl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,13 +34,13 @@ public class MissionComparer: IEqualityComparer<Mission>
     }
 }
 
-public class Panel : MonoBehaviour
+public class Panel : NetworkBehaviour
 {
     private float speed = 500;
     
     public GameObject popUpPanel;
 
-    protected Button button;
+    protected Button drawMissionsCardsButton;
     protected RectTransform panel;
     protected float width;
     protected float maxWidth;
@@ -59,7 +60,7 @@ public class Panel : MonoBehaviour
         panelState = state;
 
         // pobieram odpowiedni przycisk i nadaje mu funkcje
-        button = GameObject.Find("DrawMissionsCardsButton").GetComponent<Button>();
+        drawMissionsCardsButton = GameObject.Find("DrawMissionsCardsButton").GetComponent<Button>();
         //button.onClick.AddListener(() => ChangeState());
 
         // pobieram transforme panelu i zapisuje jej dlugosc
@@ -83,7 +84,7 @@ public class Panel : MonoBehaviour
             }
 
         popUpPanel.SetActive(false);
-        button.enabled = false;
+        drawMissionsCardsButton.enabled = false;
     }
 
     // funkcja zmieniajaca dlugosc panelu w grze
