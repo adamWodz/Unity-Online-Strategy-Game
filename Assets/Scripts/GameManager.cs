@@ -16,7 +16,7 @@ public class GameManager : NetworkBehaviour
     private List<GameObject> shipList = new();
     private List<Transform> shipTransformList = new();
     private Vector3 spaceshipsBase = new(-8, -4, -1);
-    private TMP_Text spaceshipCounter;
+    public TMP_Text spaceshipCounter;
     private TMP_Text satelliteCounter;
     //private Canvas canvas;
 
@@ -46,10 +46,9 @@ public class GameManager : NetworkBehaviour
         // spawnuje siê dla wszystkich graczy bo network object
         spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
-        spawnedShip.goalPosition= position;
-        spawnedShip.goalRotation= rotation;
+        spawnedShip.goalPosition = position;
+        spawnedShip.goalRotation = rotation;
         spawnedShip.move = true;
-        spaceshipCounter.text = (int.Parse(spaceshipCounter.text) - 1).ToString();
     }
 
     //[ServerRpc(RequireOwnership = false)]
