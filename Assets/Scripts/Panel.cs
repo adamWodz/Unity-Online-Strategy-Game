@@ -1,3 +1,4 @@
+using Assets.GameplayControl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,22 +14,22 @@ public enum PanelState
 };
 // klasa porównuj¹ca œcie¿ki na podstawie nazw planet znajduj¹cych siê na tej œcie¿ce
 // potrzebna przy funcji Except dostêpnej dla List
-public class PathComparer: IEqualityComparer<Path>
+public class MissionComparer: IEqualityComparer<Mission>
 {
-    public int GetHashCode(Path path)
+    public int GetHashCode(Mission mission)
     {
-        if(path == null)
+        if(mission == null)
             return 0;
-        return path.planetFrom.GetHashCode() + path.planetTo.GetHashCode();
+        return mission.start.GetHashCode() + mission.end.GetHashCode();
     }
 
-    public bool Equals(Path x, Path y)
+    public bool Equals(Mission x, Mission y)
     {
         if(ReferenceEquals(x, y)) 
             return true;
-        if(x is null || y is null) 
+        if(x == null || y == null) 
             return false;
-        return x.planetTo.name == y.planetTo.name && x.planetFrom.name == y.planetFrom.name;
+        return x.end.name == y.end.name && x.start.name == y.start.name;
     }
 }
 
@@ -109,5 +110,6 @@ public class Panel : MonoBehaviour
         popUpPanel.SetActive(false);
     }
 
+    
     
 }

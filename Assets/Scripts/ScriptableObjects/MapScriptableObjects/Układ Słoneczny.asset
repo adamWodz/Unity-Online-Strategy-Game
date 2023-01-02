@@ -37,3 +37,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 02a3c9c964d1cfd45a623325985b0a20, type: 2}
   - {fileID: 11400000, guid: 2c6148f1ad9711c4fad9f36d1ce1f02b, type: 2}
   - {fileID: 11400000, guid: 86e1330d9abb8eb4c92efab5c2c3cac7, type: 2}
+  missions:
+  - {fileID: 11400000, guid: 8a7e9c4e46d09c742ab548a850e9839b, type: 2}
+  - {fileID: 11400000, guid: 6139ce60dfd01e048922a16fe466b129, type: 2}
+  - {fileID: 11400000, guid: c99976130964a1549826da148308ae92, type: 2}
+  - {fileID: 11400000, guid: 0c7d52e25caa31e49b81337616e9204d, type: 2}
+  - {fileID: 11400000, guid: 9ac736c21af73384a8ae36ce848fa84b, type: 2}
+  - {fileID: 11400000, guid: 8f4f8f7d64e8ee446a96e6462f459280, type: 2}
+  - {fileID: 11400000, guid: 48e024333f291d247a243ab0fccf11f3, type: 2}
+  - {fileID: 11400000, guid: 08e1651db1639fe4b9ef580f79c2e5f3, type: 2}
+  - {fileID: 11400000, guid: 1dc2bcdbf45737d4a81d768e0c1ad913, type: 2}
