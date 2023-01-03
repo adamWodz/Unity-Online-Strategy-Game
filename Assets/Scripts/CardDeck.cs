@@ -23,6 +23,8 @@ public class CardDeck : MonoBehaviour
             card.GetComponent<Image>().sprite = sprites[i];
             card.transform.GetChild(0).GetComponent<TMP_Text>().text = cardsQuantityPerColor[i].ToString();
             card.name = names[i];
+            int ii = i;
+            card.GetComponent<Button>().onClick.AddListener(() => Communication.ChooseCard((Color)ii));
         }
 
         Destroy(cardTempalte);

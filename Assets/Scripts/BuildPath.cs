@@ -30,7 +30,8 @@ public class BuildPath : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Communication.BuildPath(this, path);
+        Debug.Log("OnMouseDown");
+        Communication.ChoosePath(this, path);
     }
 
     public IEnumerator BuildPathAnimation()

@@ -12,16 +12,35 @@ public static class Communication
         if (id == PlayerGameData.Id)
             PlayerGameData.StartTurn();
     }
-    
+
+    private static (BuildPath buildPath, Path path) chosenPath;
+
+    public static void ChoosePath(BuildPath buildPath, Path path)
+    {
+        chosenPath = (buildPath, path);
+    }
+
+    public static void ChooseCard(Color color)
+    {
+        if(chosenPath.buildPath != null && chosenPath.path != null)
+        {
+            if (chosenPath.path.color == color || chosenPath.path.color == Color.any || color == Color.special)
+            {
+                //Debug.Log("CanBuildPath" + PlayerGameData.CanBuildPath(chosenPath.path));
+                if (PlayerGameData.CanBuildPath(chosenPath.path))
+                    BuildPath(chosenPath.buildPath, chosenPath.path);
+            }
+        }
+    }
+
     public static void BuildPath(BuildPath buildPath, Path path)
     {
-        Debug.Log("CanBuildPath" + PlayerGameData.CanBuildPath(path));
-        if (!PlayerGameData.CanBuildPath(path)) return;
         PlayerGameData.BuildPath(path);
         buildPath.StartCoroutine(buildPath.BuildPathAnimation());
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
         playerPanel.UpdatePlayerPointsServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
         EndTurn();
+        chosenPath = (null, null);
     }
 
     public static void DrawCard(DrawCardsPanel drawCardsPanel, int index)

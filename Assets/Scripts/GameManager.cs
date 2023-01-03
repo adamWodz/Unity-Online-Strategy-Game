@@ -19,7 +19,6 @@ public class GameManager : NetworkBehaviour
     private Vector3 spaceshipsBase = new(-8, -4, -1);
     private TMP_Text spaceshipCounter;
     private TMP_Text satelliteCounter;
-    //private Canvas canvas;
 
     // Start is called before the first frame update
     void Start()

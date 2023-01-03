@@ -33,7 +33,8 @@ namespace Assets.GameplayControl
         {
             //if (!isNowPlaying) return false;
             if (path.isBuilt) return false;
-            if (numOfCardsInColor[path.color] < path.length) return false;
+            if (numOfCardsInColor[path.color] < path.length 
+                && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length) return false;
 
             return true;
         }
@@ -43,6 +44,7 @@ namespace Assets.GameplayControl
             if (!CanBuildPath(path)) return false;
             
             curentPoints += Board.pointsPerLength[path.length];
+            numOfCardsInColor[Color.special] -= path.length + numOfCardsInColor[path.color];
             numOfCardsInColor[path.color] -= path.length;
             spaceshipsLeft -= path.length;
             path.isBuilt = true;
