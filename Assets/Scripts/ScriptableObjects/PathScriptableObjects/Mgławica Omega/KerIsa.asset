@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: KerIsa
   m_EditorClassIdentifier: 
+  Id: 2
   planetFrom: {fileID: 11400000, guid: 3449ddcd4f3d7f94485ef720edd86221, type: 2}
   planetTo: {fileID: 11400000, guid: 3c892bf547e7b9a4dbce0d1da06a1a7d, type: 2}
   color: 0

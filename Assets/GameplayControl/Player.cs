@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.GameplayControl
 {
@@ -16,14 +17,12 @@ namespace Assets.GameplayControl
         public static List<Mission> missions;
         public static Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
-            { Color.pink, 0 },
-            { Color.red, 0 },
-            //{ Color.black, 0 },
-            { Color.blue, 0 },
-            //{ Color.white, 0 },
-            { Color.yellow, 0 },
-            { Color.green, 0 },
-            { Color.special, 0 },
+            { Color.pink, 1 },
+            { Color.red, 1 },
+            { Color.blue, 1 },
+            { Color.yellow, 1 },
+            { Color.green, 1 },
+            { Color.special, 1 },
         };
         public static bool isNowPlaying { set; get; }
         public static int cardsDrewInTurn = 0;
@@ -32,7 +31,7 @@ namespace Assets.GameplayControl
 
         public static bool CanBuildPath(Path path)
         {
-            if (!isNowPlaying) return false;
+            //if (!isNowPlaying) return false;
             if (path.isBuilt) return false;
             if (numOfCardsInColor[path.color] < path.length) return false;
 
@@ -122,6 +121,12 @@ namespace Assets.GameplayControl
         {
             isNowPlaying = false;
             cardsDrewInTurn = 0;
+        }
+
+        public static void SetPathIsBuild(int pathId)
+        {
+            Path builtPath = GameObject.Find("Space").GetComponent<MapData>().paths.Where(path => path.Id == pathId).FirstOrDefault();
+            builtPath.isBuilt = true;
         }
     }
 }

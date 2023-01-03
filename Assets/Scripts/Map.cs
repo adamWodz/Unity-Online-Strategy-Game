@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class Map : MonoBehaviour
@@ -16,19 +17,11 @@ public class Map : MonoBehaviour
     public GameObject[] pathsPrefabs;
     public GameObject[] planetsPrefabs;
 
-    // punkty krancowe mapy
-    Vector2 leftTopPoint = new(-5.8f, 3.6f);
-    Vector2 rightTopPoint = new(7, 3.6f);
-    Vector2 leftBottomPoint = new(-5.8f, -3.1f);
-    Vector2 rightPoint = new(7, -3.1f);
-
     // kolory sciezek
     private UnityEngine.Color[] colors = new UnityEngine.Color[] {
         UnityEngine.Color.red,
         UnityEngine.Color.green,
         UnityEngine.Color.blue,
-        //UnityEngine.Color.black,
-        //UnityEngine.Color.white,
         UnityEngine.Color.yellow,
         UnityEngine.Color.magenta,
         UnityEngine.Color.grey,

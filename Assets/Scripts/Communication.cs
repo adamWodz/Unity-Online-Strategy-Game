@@ -6,18 +6,6 @@ using UnityEngine;
 
 public static class Communication
 {
-    [ServerRpc]
-    public static void EndTurnServerRpc()
-    {
-
-    }
-
-    [ClientRpc]
-    public static void EndTurnClientRpc()
-    {
-
-    }
-
     [ClientRpc]
     public static void StartTurnClientRpc(int id)
     {
@@ -27,9 +15,13 @@ public static class Communication
     
     public static void BuildPath(BuildPath buildPath, Path path)
     {
-        buildPath.StartCoroutine(buildPath.BuildPathAnimation());
+        Debug.Log("CanBuildPath" + PlayerGameData.CanBuildPath(path));
+        if (!PlayerGameData.CanBuildPath(path)) return;
         PlayerGameData.BuildPath(path);
-        UpdatePlayerPointsClientRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
+        buildPath.StartCoroutine(buildPath.BuildPathAnimation());
+        var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
+        playerPanel.UpdatePlayerPointsServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
+        EndTurn();
     }
 
     public static void DrawCard(DrawCardsPanel drawCardsPanel, int index)
@@ -47,15 +39,8 @@ public static class Communication
         playerPanel.UpdatePlayersOrderClientRpc();
     }
 
-    [ServerRpc]
-    public static void UpdatePlayerPointsServerRpc()
+    public static void StartTurn()
     {
-
-    }
-
-    [ServerRpc]
-    public static void UpdatePlayerPointsClientRpc(int playerId, int playerPoints)
-    {
-
+        PlayerGameData.StartTurn();
     }
 }

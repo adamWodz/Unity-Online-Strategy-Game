@@ -30,13 +30,7 @@ public class BuildPath : MonoBehaviour
 
     private void OnMouseDown()
     {
-        //if (PlayerGameData.CanBuildPath(path))
-        {
-            PlayerGameData.BuildPath(path);
-            Communication.BuildPath(this, path);
-        }
-
-
+        Communication.BuildPath(this, path);
     }
 
     public IEnumerator BuildPathAnimation()

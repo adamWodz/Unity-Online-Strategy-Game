@@ -2358,6 +2358,7 @@ MonoBehaviour:
   - RainbowCard
   cards: []
   cardPrefab: {fileID: 4963611423944183591, guid: 3ec1dbd1f2a2c6a4cb119d44e460f625, type: 3}
+  actualCardColor: 0000000000000000000000000000000000000000
 --- !u!114 &1071830726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2945,18 +2946,23 @@ MonoBehaviour:
   - Position: 1
     Points: 0
     Name: Ziutek225
+    Id: 0
   - Position: 2
     Points: 0
     Name: AI
+    Id: 0
   - Position: 3
     Points: 0
     Name: AI
+    Id: 0
   - Position: 4
     Points: 0
     Name: AI
+    Id: 0
   - Position: 5
     Points: 0
     Name: AI
+    Id: 0
 --- !u!114 &1223933408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5657,7 +5663,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ed460c587533954fb992082ae79463d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardsQuantity: 000000000200000003000000070000000000000001000000
+  cardsQuantityPerColor: 010000000100000001000000010000000100000001000000
   sprites:
   - {fileID: 21300000, guid: 73b2aeea0d152544d92ac30754144e91, type: 3}
   - {fileID: 21300000, guid: 9b007d1daf694ce4d82b102b3202df95, type: 3}

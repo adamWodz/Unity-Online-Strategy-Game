@@ -7,7 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PathScriptableObject", menuName = "ScriptableObjects/Path")]
 public class Path : ScriptableObject
 {
-    //public int Id { get; set; }
+    public int Id;
     //public int[] planetsIds = new int[2];
     public Planet planetFrom;
     public Planet planetTo;
