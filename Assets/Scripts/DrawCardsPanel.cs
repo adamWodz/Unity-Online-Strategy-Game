@@ -61,8 +61,11 @@ public class DrawCardsPanel : NetworkBehaviour
         //Debug.Log($"Index: {index}");
         actualCardColor[index] = color;
         //Debug.Log($"Color: {color}");
-        cards[index].GetComponent<Image>().sprite = sprites[color];
-        cards[index].name = names[color];
+        if (cards.Count > index) // klient mo¿e nie utworzyæ listy w tym samym czasie co host
+        {
+            cards[index].GetComponent<Image>().sprite = sprites[color];
+            cards[index].name = names[color];
+        }
     }
     
     Sprite RandomSprite(ref int index)
