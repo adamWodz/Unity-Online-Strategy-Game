@@ -18,11 +18,12 @@ public class ChooseMapMenu : NetworkBehaviour
 
     private void StartServer()
     {
-        var networkManager = NetworkManager.Singleton;
-        if (!networkManager.IsClient && !networkManager.IsServer)
-        {
-            networkManager.StartHost();
-        }
+        //var networkManager = NetworkManager.Singleton;
+        //if (!networkManager.IsClient && !networkManager.IsServer)
+        //{
+        //    networkManager.StartHost();
+        //}
+
     }
 
     public void ChooseMap0()
