@@ -1981,9 +1981,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05b8c8aa134218d41813a20b2be3e039, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  availableMapsData:
-  - {fileID: 11400000, guid: 21781038664f19c4b9341911804df08d, type: 2}
-  - {fileID: 11400000, guid: f57bf6f1c4a7b8849bfa3ac3b1c5dab9, type: 2}
 --- !u!1 &320077812
 GameObject:
   m_ObjectHideFlags: 0
@@ -5027,6 +5024,7 @@ GameObject:
   - component: {fileID: 893681996}
   - component: {fileID: 893681995}
   - component: {fileID: 893681994}
+  - component: {fileID: 893681997}
   m_Layer: 5
   m_Name: StartGameButton
   m_TagString: Untagged
@@ -5098,8 +5096,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 313956242}
-        m_TargetAssemblyTypeName: ChooseMapMenu, Assembly-CSharp
+      - m_Target: {fileID: 893681997}
+        m_TargetAssemblyTypeName: StartGameButton, Assembly-CSharp
         m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:
@@ -5148,6 +5146,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 893681992}
   m_CullTransparentMesh: 1
+--- !u!114 &893681997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 893681992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f649e13f24a40d849b85c9e528401bda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  availableMapsData:
+  - {fileID: 11400000, guid: 21781038664f19c4b9341911804df08d, type: 2}
+  - {fileID: 11400000, guid: f57bf6f1c4a7b8849bfa3ac3b1c5dab9, type: 2}
 --- !u!1 &911295868
 GameObject:
   m_ObjectHideFlags: 0

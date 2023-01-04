@@ -38,6 +38,12 @@ public class GameManager : NetworkBehaviour
 
     }
 
+    [ClientRpc]
+    public void TestClientRpc()
+    {
+        Debug.Log("TestClientRpc;");
+    }
+
     [ServerRpc(RequireOwnership = false)]
     public void SpawnShipsServerRpc(Vector3 position, Quaternion rotation)
     {

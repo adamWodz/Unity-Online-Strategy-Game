@@ -6,6 +6,8 @@ using UnityEngine;
 
 public static class Communication
 {
+    public static int mapDataNumber;
+
     [ServerRpc]
     public static void EndTurnServerRpc()
     {
