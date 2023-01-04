@@ -27,6 +27,8 @@ public class LobbyAndRelay : MonoBehaviour
     public Text code, onjoin;
     public InputField input;
 
+    public ChooseMapMenu mapMenu;
+
     // Start is called before the first frame update
     private async void Start()
     {
@@ -193,10 +195,12 @@ public class LobbyAndRelay : MonoBehaviour
                 {
                     JoinRelay(relaycode);
                     Debug.Log($"[JoinByCode] 3/4 Joined a Relay");
+                    //mapMenu.StartGame();//
+                    Debug.Log($"[JoinByCode] 4/4 Joined Game");
                 }
                 //joinedLobby = null;//
             }
-            else Debug.Log($"[JoinByCode] 4/4 NOT CONNECTED to a Relay");
+            else Debug.Log($"[JoinByCode]! NOT CONNECTED to a Relay");
 
         }
         catch (LobbyServiceException e)

@@ -13,6 +13,7 @@ public class ChooseMapMenu : NetworkBehaviour
     {
         SetMapDataClientRpc(mapDataNumer);
         string name = "Scenes/Main Game";
+        Debug.Log($"[ChooseMapMenu.StartGame] {NetworkManager!=null} {NetworkManager.SceneManager!=null}");
         var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
     }
 
