@@ -10,8 +10,13 @@ public class CardDeck : MonoBehaviour
     public Sprite[] sprites; // kolory kart
     // nazwy zbiorów kart
     public string[] names = {"RedCards","GreenCards","BlueCards","YellowCards","PinkCards","RainbowCards"};
+
+    private GameManager gameManager;
+
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        
         GameObject cardTempalte = transform.GetChild(0).gameObject;
         GameObject card;
 
@@ -21,8 +26,10 @@ public class CardDeck : MonoBehaviour
         {
             card = Instantiate(cardTempalte, transform);
             card.GetComponent<Image>().sprite = sprites[i];
-            card.transform.GetChild(0).GetComponent<TMP_Text>().text = cardsQuantity[i].ToString();
+            var counter = card.transform.GetChild(0).GetComponent<TMP_Text>();
+            counter.text = cardsQuantity[i].ToString();
             card.name = names[i];
+            gameManager.cardStackCounterList.Add(counter);
         }
 
         Destroy(cardTempalte);
