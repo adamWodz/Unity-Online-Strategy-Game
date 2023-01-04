@@ -33,28 +33,15 @@ public class DrawCardsPanel : NetworkBehaviour
                 int copy = i;
                 int color = 3;
                 RandomSprite(ref color);
-                child.gameObject.name = names[color];
-                child.gameObject.GetComponent<Button>().onClick.AddListener(() => Communication.DrawCard(this, copy));//MoveCard(copy));
-                actualCardColor[copy] = color;
+                child.gameObject.GetComponent<Button>().onClick.AddListener(() => Communication.DrawCard(this, copy));
                 i++;
                 cards.Add(child.gameObject);
+                
+                // Pocz¹tkowa synchronizacja kolorów kart
+                SyncSpritesServerRpc(color, copy);
             }
         }
         drawCardsButton.onClick.AddListener(() => Communication.DrawCard(this,10));
-    }
-
-    private void Update()
-    {
-        // Synchronizacja kolorów kart do dobrania przez hosta
-        if(IsHost)
-        {
-            for(int i = 0;i < cards.Count; i++)
-            {
-                int copy = i;
-                SyncSpritesClientRpc(actualCardColor[copy], copy);
-            }
-        }
-        
     }
 
     [ClientRpc]
@@ -66,14 +53,19 @@ public class DrawCardsPanel : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void SyncSpritesServerRpc(int color,int index)
     {
-        ChangeCardColor(color, index);
+        SyncSpritesClientRpc(color, index);
     }
 
     void ChangeCardColor(int color, int index)
     {
+        //Debug.Log($"Index: {index}");
         actualCardColor[index] = color;
-        cards[index].GetComponent<Image>().sprite = sprites[actualCardColor[index]];
-        cards[index].name = names[actualCardColor[index]];
+        //Debug.Log($"Color: {color}");
+        if (cards.Count > index) // klient mo¿e nie utworzyæ listy w tym samym czasie co host
+        {
+            cards[index].GetComponent<Image>().sprite = sprites[color];
+            cards[index].name = names[color];
+        }
     }
     
     Sprite RandomSprite(ref int index)
@@ -99,7 +91,8 @@ public class DrawCardsPanel : NetworkBehaviour
             int color = 0;
             RandomSprite(ref color);
             actualCardColor[index] = color;
-            SyncSpritesClientRpc(color, index);
+            
+            // Synchronizacja nowego koloru z innymi graczami
             SyncSpritesServerRpc(color, index);
         }
 

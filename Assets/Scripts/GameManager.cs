@@ -10,14 +10,14 @@ using UnityEngine.UI;
 public class GameManager : NetworkBehaviour
 {
     public List<Sprite> cardSprites;
-    public GameObject shipGameObject;
+    //public GameObject shipGameObject;
     public GameObject cardButton;
 
     private GameObject spawnedCardGameObject;
-    private List<GameObject> shipList = new();
-    private List<Transform> shipTransformList = new();
+    public List<GameObject> shipGameObjectList = new();
+    public List<TMP_Text> cardStackCounterList = new();
     private Vector3 spaceshipsBase = new(-8, -4, -1);
-    private TMP_Text spaceshipCounter;
+    public TMP_Text spaceshipCounter;
     private TMP_Text satelliteCounter;
 
     // Start is called before the first frame update
@@ -39,17 +39,17 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnShipsServerRpc(Vector3 position, Quaternion rotation)
+    public void SpawnShipsServerRpc(Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
     {
+        int clientId = (int)serverRpcParams.Receive.SenderClientId;
         float angle = CalculateAngle(position,spaceshipsBase);
-        var spawnedShipGameObject = Instantiate(shipGameObject, spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
+        var spawnedShipGameObject = Instantiate(shipGameObjectList[clientId], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
         // spawnuje siê dla wszystkich graczy bo network object
         spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
-        spawnedShip.goalPosition= position;
-        spawnedShip.goalRotation= rotation;
+        spawnedShip.goalPosition = position;
+        spawnedShip.goalRotation = rotation;
         spawnedShip.move = true;
-        spaceshipCounter.text = (int.Parse(spaceshipCounter.text) - 1).ToString();
     }
 
     public void SpawnCards(Transform t, int color, string name)

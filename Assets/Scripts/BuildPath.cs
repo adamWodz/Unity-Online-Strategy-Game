@@ -1,14 +1,15 @@
 using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
 public class BuildPath : MonoBehaviour
 {
     private GameManager gameManager;
-    Transform[] tilesTransforms;
-    Renderer[] tilesRenderers;
+    private Transform[] tilesTransforms;
+    private Renderer[] tilesRenderers;
     public Path path;
 
     // Start is called before the first frame update
@@ -31,7 +32,7 @@ public class BuildPath : MonoBehaviour
     private void OnMouseDown()
     {
         Debug.Log("OnMouseDown");
-        Communication.ChoosePath(this, path);
+        Communication.ChoosePath(this, path);in
     }
 
     public IEnumerator BuildPathAnimation()
@@ -39,7 +40,16 @@ public class BuildPath : MonoBehaviour
         Debug.Log("Started Coroutine at timestamp : " + Time.time);
         for (int i = 0; i < tilesRenderers.Length; i++)
         {
-            gameManager.SpawnShipsServerRpc(tilesTransforms[i + 1].position, tilesTransforms[i+1].rotation);
+            // aktualizacja licznika dost�pnych statk�w 
+            gameManager.spaceshipCounter.text = (int.Parse(gameManager.spaceshipCounter.text) - 1).ToString();
+
+            //aktualizacja licznika kart danego koloru
+            var cardCounter = gameManager.cardStackCounterList[(int)path.color];
+            cardCounter.text = (int.Parse(cardCounter.text) - 1).ToString();
+
+            // host spawni statki i je przemieszcza 
+            gameManager.SpawnShipsServerRpc(tilesTransforms[i + 1].position, tilesTransforms[i + 1].rotation);
+            
             yield return new WaitForSeconds(0.2f);
         }
         Debug.Log("Finished Coroutine at timestamp : " + Time.time);

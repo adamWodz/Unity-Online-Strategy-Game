@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f65f3c469f058624da124150cf48bbf9, type: 3}
+  m_Name: SaturnNeptun
+  m_EditorClassIdentifier: 
+  start: {fileID: 11400000, guid: 5b48ad211c15ba044913074654a54578, type: 2}
+  end: {fileID: 11400000, guid: 0a9318bbd48dbcb4493f377d987a6987, type: 2}
+  points: 0

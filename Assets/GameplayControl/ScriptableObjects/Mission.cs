@@ -11,8 +11,8 @@ namespace Assets.GameplayControl
     [CreateAssetMenu(fileName = "MissionScriptableObject", menuName = "ScriptableObjects/Mission")]
     public class Mission : ScriptableObject
     {
-        public Planet start { get; set; }
-        public Planet end { get; set; }
+        public Planet start;
+        public Planet end;
         public int points;
         public bool IsCompletedByPlayer()
         {

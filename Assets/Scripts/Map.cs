@@ -1,3 +1,4 @@
+using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -12,6 +13,12 @@ public class Map : MonoBehaviour
     public List<Path> Paths
     {
         get { return paths; }
+    }
+    private List<Mission> missions;
+    public List<Mission> Missions 
+    { 
+        get { return missions; }
+        set { missions = value; }
     }
     private List<Planet> planets;
     public GameObject[] pathsPrefabs;
@@ -30,9 +37,10 @@ public class Map : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(mapData);
         paths = mapData.paths;
         planets = mapData.planets; 
-
+        missions = mapData.missions;
         CreateMap();
     }
 

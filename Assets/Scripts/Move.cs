@@ -16,7 +16,7 @@ public class Move : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+       
     }
 
     // Update is called once per frame
@@ -24,8 +24,12 @@ public class Move : MonoBehaviour
     {
         // Move our position a step closer to the target.
         var step = speed * Time.deltaTime; // calculate distance to move
-        transform.position = Vector3.MoveTowards(transform.position, goalPosition, step);
-        if (Vector3.Distance(transform.position,goalPosition) < 0.001)
+        
+        Vector2 direction = Vector2.MoveTowards(transform.position, goalPosition, step);
+        
+        transform.position = new Vector3(direction.x, direction.y, -1); // -1 po to, ¿eby statki by³y widoczne nad œcie¿k¹
+        
+        if (Vector2.Distance(transform.position, goalPosition) < 0.001)
         {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, goalRotation, 1);
            
