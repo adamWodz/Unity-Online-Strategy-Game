@@ -463,7 +463,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   popUpPanel: {fileID: 1674471843}
   panelState: 0
-  missionssToChoose: []
+  missionsToChoose: []
   missionButtonsAndConfirmButton: []
 --- !u!1 &207637184
 GameObject:
@@ -5842,9 +5842,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4963611423944183591, guid: e5f8eba41f4eaac4989537a186ab3e31, type: 3}
     - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: shipList.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
       propertyPath: cardSprites.Array.size
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: shipList.Array.data[0]
+      value: 
+      objectReference: {fileID: 9060527398928946586, guid: 5a88f07ef479b4f38a073378fe9b0a42, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: shipList.Array.data[1]
+      value: 
+      objectReference: {fileID: 1072247400550304756, guid: 27a4056407d0349d690c709e653ddcbd, type: 3}
     - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
       propertyPath: cardSprites.Array.data[0]
       value: 
@@ -5877,6 +5889,34 @@ PrefabInstance:
       propertyPath: cardSprites.Array.data[7]
       value: 
       objectReference: {fileID: 21300000, guid: 093e44603351b854c908659f0188b1ec, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: shipGameObjectList.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: shipGameObjectList.Array.data[0]
+      value: 
+      objectReference: {fileID: 9060527398928946586, guid: 5a88f07ef479b4f38a073378fe9b0a42, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: shipGameObjectList.Array.data[1]
+      value: 
+      objectReference: {fileID: 8369623381882470244, guid: 79f1ff033317a7d45ab2cbb94712862a, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: shipGameObjectList.Array.data[2]
+      value: 
+      objectReference: {fileID: 6433532538997406575, guid: ba98483a6c7816a4986b67018ee7cf7a, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: shipGameObjectList.Array.data[3]
+      value: 
+      objectReference: {fileID: 8165343510791839441, guid: 923be1e5173b3e04b99256c8d5d9af86, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: shipGameObjectList.Array.data[4]
+      value: 
+      objectReference: {fileID: 1745176262414041468, guid: b9b0e450e8d713a41b680efd901122b7, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: shipGameObjectList.Array.data[5]
+      value: 
+      objectReference: {fileID: 1072247400550304756, guid: 27a4056407d0349d690c709e653ddcbd, type: 3}
     - target: {fileID: 2329796705188009015, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
       propertyPath: m_Name
       value: GameManager
