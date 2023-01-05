@@ -57,7 +57,7 @@ public class Map : MonoBehaviour
         // Tworzenie planet
         for (int i = 0; i < planets.Count; i++)
         {
-            Debug.Log($"Nazwa: {planetsPrefabs[i].name} Wsp�rz�dne: {planets[i].positionX},{planets[i].positionY}");
+            //Debug.Log($"Nazwa: {planetsPrefabs[i].name} Wsp�rz�dne: {planets[i].positionX},{planets[i].positionY}");
             Instantiate(planetsPrefabs.Single(planet => planet.name.StartsWith(planets[i].name)), new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i].transform.rotation);
             
             //Instantiate(planetNameText, new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i % planetsPrefabs.Length].transform.rotation);
@@ -91,4 +91,6 @@ public class Map : MonoBehaviour
         }
         
     }
+
+
 }

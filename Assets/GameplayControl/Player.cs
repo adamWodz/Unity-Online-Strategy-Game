@@ -14,7 +14,7 @@ namespace Assets.GameplayControl
         public static int curentPoints { get; set; } = 0;
         public static int spaceshipsLeft { get; set; } = Board.startSpaceshipsNumber;
         public static int satellitesSent { get; set; } = 0;
-        public static List<Mission> missions;
+        public static List<Mission> missions = new List<Mission>();
         public static Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
             { Color.pink, 1 },
@@ -78,7 +78,28 @@ namespace Assets.GameplayControl
                 groupsOfConnectedPlanets.Add(ConnectedPlanets.MergeGroups(groupPlanetTo, groupPlanetFrom));
             }
 
+            PrintConnectedPlanets();
+            PrintMissions();
+
             return true;
+        }
+
+        private static void PrintConnectedPlanets()
+        {
+            Debug.Log("Connected planets: ");
+            foreach (var planets in groupsOfConnectedPlanets)
+            {
+                Debug.Log("group:");
+                foreach (var planet in planets.planets)
+                    Debug.Log(planet);
+            }
+        }
+
+        private static void PrintMissions()
+        {
+            Debug.Log("Missions:");
+            foreach (var mission in missions)
+                Debug.Log(mission + "; " + mission.IsCompletedByPlayer());
         }
 
         public static bool CanSendSatellite(Planet planet, Path path, Color color)
@@ -112,6 +133,12 @@ namespace Assets.GameplayControl
         {
             numOfCardsInColor[cardColor]++;
             cardsDrewInTurn++;
+        }
+
+        public static void DrawMissions(List<Mission> _missions)
+        {
+            missions.AddRange(_missions.Except(missions));
+            //Debug.Log(missions);
         }
 
         public static void StartTurn()

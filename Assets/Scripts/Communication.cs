@@ -35,12 +35,16 @@ public static class Communication
 
     public static void BuildPath(BuildPath buildPath, Path path)
     {
+        Debug.Log("path: " + path.planetFrom + " " + path.planetTo);
         PlayerGameData.BuildPath(path);
         buildPath.StartCoroutine(buildPath.BuildPathAnimation());
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
         playerPanel.UpdatePlayerPointsServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
         EndTurn();
         chosenPath = (null, null);
+
+        Debug.Log("BuildPath");
+        Debug.Log("path: " + path.planetFrom + " - " + path.planetTo);
     }
 
     public static void DrawCard(DrawCardsPanel drawCardsPanel, int index)
@@ -49,6 +53,15 @@ public static class Communication
         PlayerGameData.DrawCard(color);
         if (PlayerGameData.cardsDrewInTurn == 2)
             EndTurn();
+    }
+
+    public static void DrawMissions(List<Mission> missions)
+    {
+        PlayerGameData.DrawMissions(missions);
+
+        Debug.Log("DrawMissions");
+        foreach (var mission in missions)
+            Debug.Log("missions: " + mission.start + " - " + mission.end);
     }
 
     public static void EndTurn()

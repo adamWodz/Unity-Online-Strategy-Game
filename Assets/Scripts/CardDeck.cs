@@ -30,7 +30,7 @@ public class CardDeck : MonoBehaviour
             card.name = names[i];
             
             var counter = card.transform.GetChild(0).GetComponent<TMP_Text>();
-            counter.text = cardsQuantity[i].ToString();
+            counter.text = cardsQuantityPerColor[i].ToString();
             card.name = names[i];
             gameManager.cardStackCounterList.Add(counter);
 
