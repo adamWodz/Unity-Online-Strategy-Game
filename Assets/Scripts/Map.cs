@@ -2,6 +2,7 @@ using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using System.Linq;
 using UnityEngine;
 
 public class Map : MonoBehaviour
@@ -23,6 +24,7 @@ public class Map : MonoBehaviour
     private List<Planet> planets;
     public GameObject[] pathsPrefabs;
     public GameObject[] planetsPrefabs;
+    public GameObject planetNameText;
 
     // kolory sciezek
     private UnityEngine.Color[] colors = new UnityEngine.Color[] {
@@ -55,7 +57,10 @@ public class Map : MonoBehaviour
         // Tworzenie planet
         for (int i = 0; i < planets.Count; i++)
         {
-            Instantiate(planetsPrefabs[i % planetsPrefabs.Length], new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i % planetsPrefabs.Length].transform.rotation);
+            Debug.Log($"Nazwa: {planetsPrefabs[i].name} Wsp�rz�dne: {planets[i].positionX},{planets[i].positionY}");
+            Instantiate(planetsPrefabs.Single(planet => planet.name.StartsWith(planets[i].name)), new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i].transform.rotation);
+            
+            //Instantiate(planetNameText, new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i % planetsPrefabs.Length].transform.rotation);
         }
 
         // Tworzenie ?cie?ek
