@@ -7065,6 +7065,7 @@ MonoBehaviour:
   - {fileID: 6582710055851895374, guid: 08df3b680e7dc494c866d305d229e845, type: 3}
   - {fileID: 343829207376835345, guid: b98b5c8ff0ce5154fae56c08274d81e2, type: 3}
   - {fileID: 4691723990619664147, guid: 5e8bc481d5ee6e34ea9302fde732f9ca, type: 3}
+  planetNameText: {fileID: 1073289807774323117, guid: bd708020bf741714a9eead77a55b2df6, type: 3}
 --- !u!1001 &2077764211
 PrefabInstance:
   m_ObjectHideFlags: 0
