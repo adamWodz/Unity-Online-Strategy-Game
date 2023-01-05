@@ -6,6 +6,19 @@ using UnityEngine;
 
 public static class Communication
 {
+    private static GameManager _gameManager;
+
+    private static GameManager _GameManager
+    {
+        get
+        {
+            if(_gameManager == null )
+                _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+            return _gameManager;
+        }
+    }
+    
+    
     [ClientRpc]
     public static void StartTurnClientRpc(int id)
     {
@@ -39,6 +52,7 @@ public static class Communication
         buildPath.StartCoroutine(buildPath.BuildPathAnimation());
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
         playerPanel.UpdatePlayerPointsServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
+        _GameManager.SetBuildPathDataServerRpc(path.Id);
         EndTurn();
         chosenPath = (null, null);
     }
@@ -64,11 +78,12 @@ public static class Communication
     {
         PlayerGameData.EndTurn();
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
-        playerPanel.UpdatePlayersOrderClientRpc();
+        playerPanel.UpdatePlayersOrderServerRpc();
     }
 
-    public static void StartTurn()
+    public static void StartTurn(int playerId)
     {
-        PlayerGameData.StartTurn();
+        if(playerId == PlayerGameData.Id)
+            PlayerGameData.StartTurn();
     }
 }

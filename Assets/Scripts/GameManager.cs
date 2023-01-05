@@ -1,6 +1,7 @@
 using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.Netcode;
 using UnityEditor;
@@ -83,6 +84,13 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     public void SetBuildPathDataClientRpc(int pathId)
     {
-        PlayerGameData.SetPathIsBuild(pathId);
+        Map.mapData.paths.Where(p => p.Id == pathId).FirstOrDefault().isBuilt = true;
+    }
+
+    public void SetPopUpWindow(string message)
+    {
+        var popUp = GameObject.Find("Canvas").transform.GetChild(0);//transform.parent.GetChild(0);
+        popUp.GetChild(0).GetComponent<TMP_Text>().text = message;
+        popUp.gameObject.SetActive(true);
     }
 }

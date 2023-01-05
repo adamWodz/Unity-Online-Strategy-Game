@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class PlayerPanel : NetworkBehaviour
         public int Points;
         public string Name;
         public int Id;
+        public bool IsAI;
     }
 
     [SerializeField] public List<PlayerInfo> players;
@@ -76,7 +78,22 @@ public class PlayerPanel : NetworkBehaviour
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = i.ToString();
         }
 
-        
+        StartNextPlayerTurn();
+    }
+
+    public void StartNextPlayerTurn()
+    {
+        PlayerInfo nextPlayer = players.Where(p => p.Position == 0).FirstOrDefault();
+        if (nextPlayer.IsAI)
+            Server.artificialPlayers.Where(ai => ai.Id == nextPlayer.Id).FirstOrDefault().BestMove();
+        else
+            StartNextPlayerTurnClientRpc(nextPlayer.Id);
+    }
+
+    [ClientRpc]
+    public void StartNextPlayerTurnClientRpc(int playerId)
+    {
+        Communication.StartTurn(playerId);
     }
 
     [ServerRpc]
