@@ -23,7 +23,9 @@ namespace Assets.GameplayControl
             {2, 3},
             {3, 3},
         };
-        public static int maSatellitesSent = 3;
+        public static int maxSatellitesSent = 3;
+        public static int startSpaceshipsNumber = 50;
+        public static int minSpaceshipsLeft = 2;
     }
 
     public class ConnectedPlanets

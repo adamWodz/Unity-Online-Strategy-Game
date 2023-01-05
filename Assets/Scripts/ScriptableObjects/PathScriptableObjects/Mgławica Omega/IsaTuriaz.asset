@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: IsaTuriaz
   m_EditorClassIdentifier: 
+  Id: 1
   planetFrom: {fileID: 11400000, guid: 3c892bf547e7b9a4dbce0d1da06a1a7d, type: 2}
   planetTo: {fileID: 11400000, guid: 0b7305caab033924b963f261c4727e72, type: 2}
   color: 3

@@ -17,8 +17,10 @@ public enum PlayerColor
 public class PlayerState : MonoBehaviour
 {
     public PlayerColor playerColor;
-    public string playerName;
-    public int points;
+    public string Name;
+    public int Points;
     public bool isAI;
     public int id;
+    public int spaceshipsLeft;
+    public int PositionInList;
 }

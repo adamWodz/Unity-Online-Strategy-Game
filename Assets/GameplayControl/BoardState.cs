@@ -11,11 +11,10 @@ public enum Color
     red,
     green,
     blue,
-    //black,
-    //white,
     yellow,
     pink,
-    special
+    special,
+    any
 }
 
 

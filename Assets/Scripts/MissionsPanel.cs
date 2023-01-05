@@ -78,7 +78,9 @@ public class MissionsPanel : Panel
     {
         // misje, które dobraliœmy
         var missionsChoosed = pathsPanel.missionsFromClickedMissionsCards.Except(pathsPanel.MissionsChoosed, new MissionComparer()).ToList();
-        
+
+        Communication.DrawMissions(missionsChoosed);
+
         if (missionsChoosed.Count > 0) // gracz musi dobraæ co najmniej jedn¹ kartê misji
         {
             pathsPanel.MissionsChoosed = missionsChoosed;

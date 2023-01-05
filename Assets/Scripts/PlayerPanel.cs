@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerPanel : MonoBehaviour
+public class PlayerPanel : NetworkBehaviour
 {
     [Serializable]
     public class PlayerInfo
@@ -12,8 +13,8 @@ public class PlayerPanel : MonoBehaviour
         public int Position;
         public int Points;
         public string Name;
+        public int Id;
     }
-    int playerInfoFields = 3;
 
     [SerializeField] public List<PlayerInfo> players;
     Queue<GameObject> playersTiles;
@@ -45,11 +46,18 @@ public class PlayerPanel : MonoBehaviour
         // test
         if(Input.GetKeyDown(KeyCode.T)) 
         {
-            UpdatePlayersOrder();
+            UpdatePlayersOrderServerRpc();
         }   
     }
 
-    public void UpdatePlayersOrder()
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdatePlayersOrderServerRpc()
+    {
+        UpdatePlayersOrderClientRpc();
+    }
+
+    [ClientRpc]
+    public void UpdatePlayersOrderClientRpc()
     {
         // pobieram pierwszego gracza z kolejki (tego, ktorego tura sie zakonczyla)
         var firstElement = playersTiles.Dequeue();
@@ -66,25 +74,27 @@ public class PlayerPanel : MonoBehaviour
         {
             players[i].Position = ++i;
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = i.ToString();
-            /*
-            if (j == 1)
-            {
-                ChangePlayerTileTextColor(playerTile, UnityEngine.Color.green);
-            }
-            else
-            {
-                ChangePlayerTileTextColor(firstElement, UnityEngine.Color.white);
-            }
-            */
         }
 
         
     }
-    /*
-    void ChangePlayerTileTextColor(GameObject playerTile, UnityEngine.Color color)
+
+    [ServerRpc]
+    public void UpdatePlayerPointsServerRpc(int playerId, int playerPoints)
     {
-        for (int i = 0; i < playerInfoFields; i++)
-            playerTile.transform.GetChild(i).GetComponent<TMP_Text>().color = color;
+        UpdatePlayerPointsClientRpc(playerId, playerPoints);
     }
-    */
+
+    [ClientRpc]
+    public void UpdatePlayerPointsClientRpc(int playerId, int playerPoints)
+    {
+        foreach(var player in players)
+        {
+            if(player.Id == playerId)
+            {
+                player.Points = playerPoints;
+                break;
+            }
+        }
+    }
 }

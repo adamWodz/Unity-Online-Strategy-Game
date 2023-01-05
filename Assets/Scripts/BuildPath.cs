@@ -31,11 +31,8 @@ public class BuildPath : MonoBehaviour
 
     private void OnMouseDown()
     {
-        //if (PlayerGameData.CanBuildPath(path))
-        {
-            PlayerGameData.BuildPath(path);
-            Communication.BuildPath(this, path);
-        }
+        Debug.Log("OnMouseDown");
+        Communication.ChoosePath(this, path);
     }
 
     public IEnumerator BuildPathAnimation()
@@ -43,7 +40,7 @@ public class BuildPath : MonoBehaviour
         Debug.Log("Started Coroutine at timestamp : " + Time.time);
         for (int i = 0; i < tilesRenderers.Length; i++)
         {
-            // aktualizacja licznika dostêpnych statków 
+            // aktualizacja licznika dostï¿½pnych statkï¿½w 
             gameManager.spaceshipCounter.text = (int.Parse(gameManager.spaceshipCounter.text) - 1).ToString();
 
             //aktualizacja licznika kart danego koloru

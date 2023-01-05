@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: SoraoOriali
   m_EditorClassIdentifier: 
+  Id: 8
   planetFrom: {fileID: 11400000, guid: e445b728213ba4f4eb557f9280fb7896, type: 2}
   planetTo: {fileID: 11400000, guid: 779aa73934f5c5b47b771cbe0b9da4c6, type: 2}
   color: 0

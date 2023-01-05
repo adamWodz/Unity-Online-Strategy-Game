@@ -1,6 +1,7 @@
 using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using System.Linq;
 using UnityEngine;
 
@@ -25,19 +26,11 @@ public class Map : MonoBehaviour
     public GameObject[] planetsPrefabs;
     public GameObject planetNameText;
 
-    // punkty krancowe mapy
-    Vector2 leftTopPoint = new(-5.8f, 3.6f);
-    Vector2 rightTopPoint = new(7, 3.6f);
-    Vector2 leftBottomPoint = new(-5.8f, -3.1f);
-    Vector2 rightPoint = new(7, -3.1f);
-
     // kolory sciezek
     private UnityEngine.Color[] colors = new UnityEngine.Color[] {
         UnityEngine.Color.red,
         UnityEngine.Color.green,
         UnityEngine.Color.blue,
-        //UnityEngine.Color.black,
-        //UnityEngine.Color.white,
         UnityEngine.Color.yellow,
         UnityEngine.Color.magenta,
         UnityEngine.Color.grey,
@@ -64,7 +57,7 @@ public class Map : MonoBehaviour
         // Tworzenie planet
         for (int i = 0; i < planets.Count; i++)
         {
-            Debug.Log($"Nazwa: {planetsPrefabs[i].name} Wspó³rzêdne: {planets[i].positionX},{planets[i].positionY}");
+            //Debug.Log($"Nazwa: {planetsPrefabs[i].name} Wspï¿½rzï¿½dne: {planets[i].positionX},{planets[i].positionY}");
             Instantiate(planetsPrefabs.Single(planet => planet.name.StartsWith(planets[i].name)), new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i].transform.rotation);
             
             //Instantiate(planetNameText, new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i % planetsPrefabs.Length].transform.rotation);
@@ -98,4 +91,6 @@ public class Map : MonoBehaviour
         }
         
     }
+
+
 }

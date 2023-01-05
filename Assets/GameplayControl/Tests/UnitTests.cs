@@ -27,7 +27,7 @@ namespace UnitTests
         public void CanBuildPathTests(Color pathColor, int pathLength, Color cardsColor, int cardsQuantity, bool expected)
         {
             PlayerGameData.numOfCardsInColor[cardsColor] = cardsQuantity;
-            PlayerGameData.NewTurn();
+            PlayerGameData.StartTurn();
             Path path = new Path(pathColor, pathLength);
             Assert.AreEqual(PlayerGameData.CanBuildPath(path), expected);
         }
@@ -36,7 +36,7 @@ namespace UnitTests
         public void BuildPathTests(Color color, int length, int enterQuantity, int finalQuantity)
         {
             PlayerGameData.numOfCardsInColor[color] = enterQuantity;
-            PlayerGameData.NewTurn();
+            PlayerGameData.StartTurn();
             Path path = new Path(color, length);
             PlayerGameData.BuildPath(path);
             Assert.AreEqual(PlayerGameData.numOfCardsInColor[color], finalQuantity);
@@ -51,7 +51,7 @@ namespace UnitTests
         {
             PlayerGameData.numOfCardsInColor[color] = cardsquantity;
             PlayerGameData.satellitesSent = satellietesSent;
-            PlayerGameData.NewTurn();
+            PlayerGameData.StartTurn();
             Planet planet = new Planet();
             Path path = new Path();
             Assert.AreEqual(PlayerGameData.CanSendSatellite(planet, path, color), expected);
@@ -64,7 +64,7 @@ namespace UnitTests
         {
             PlayerGameData.numOfCardsInColor[color] = cardsquantity;
             PlayerGameData.satellitesSent = satellietesSent;
-            PlayerGameData.NewTurn();
+            PlayerGameData.StartTurn();
             Planet planet = new Planet();
             planet.withSatellite = true;
             Path path = new Path();
@@ -78,7 +78,7 @@ namespace UnitTests
         {
             PlayerGameData.numOfCardsInColor[color] = cardsquantity;
             PlayerGameData.satellitesSent = satellietesSent;
-            PlayerGameData.NewTurn();
+            PlayerGameData.StartTurn();
             Planet planet = new Planet();
             Path path = new Path();
             path.withSatellie = true;

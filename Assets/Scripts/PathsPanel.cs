@@ -22,10 +22,10 @@ public class PathsPanel : Panel
         }
         set
         {
-            Debug.Log($"New missions : {value.Count}");
-            Debug.Log($"Mission Choosed (old) : {missionsChoosed.Count}");
+            //Debug.Log($"New missions : {value.Count}");
+            //Debug.Log($"Mission Choosed (old) : {missionsChoosed.Count}");
             missionsChoosed.AddRange(value);
-            Debug.Log($"Mission Choosed (new) : {missionsChoosed.Count}");
+            //Debug.Log($"Mission Choosed (new) : {missionsChoosed.Count}");
 
             SpawnMissionsButtons(value);
         }
@@ -95,11 +95,11 @@ public class PathsPanel : Panel
 
         string firstPlanetName = mission.start.name;
         string secondPlanetName = mission.end.name;
-        Debug.Log(firstPlanetName + "-" + secondPlanetName);
+        //Debug.Log(firstPlanetName + "-" + secondPlanetName);
 
         // podswietlenie przycisku danej sciezki
         var pom = GameObject.Find(firstPlanetName + "-" + secondPlanetName).GetComponent<Image>();
-        Debug.Log(pom.name);
+        //Debug.Log(pom.name);
 
         if (pom.color == UnityEngine.Color.white)
         {

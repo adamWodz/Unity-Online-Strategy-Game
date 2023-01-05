@@ -1,3 +1,4 @@
+using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -51,16 +52,10 @@ public class GameManager : NetworkBehaviour
         spawnedShip.move = true;
     }
 
-    //[ServerRpc(RequireOwnership = false)]
-    public void SpawnCards(Transform t, int color, string name)//Vector3 position, Quaternion rotation, int color, string name)
+    public void SpawnCards(Transform t, int color, string name)
     {
-        //ChangeSpriteClientRpc(color);
         cardButton.GetComponent<Image>().sprite = cardSprites[color];
         spawnedCardGameObject = Instantiate(cardButton, t);
-        //spawnedCardGameObject.GetComponent<NetworkObject>().Spawn(true);
-        //bool popm = spawnedCardGameObject.GetComponent<NetworkObject>().TrySetParent(canvas.transform);
-        //ChangeNameClientRpc(name);
-        //spawnedCardGameObject.name = name;
         spawnedCardGameObject.name = name;
         var spawnedCard = spawnedCardGameObject.GetComponent<Move>();
         spawnedCard.move = true;
@@ -68,8 +63,6 @@ public class GameManager : NetworkBehaviour
         Transform cardsStack = GameObject.Find(name + "s").GetComponent<Transform>();
         spawnedCard.goalPosition = cardsStack.position;
         spawnedCard.goalRotation = cardsStack.rotation;
-        
-        //Debug.Log(popm);
     }
 
     public float CalculateAngle(Vector3 position1, Vector3 position2)
@@ -78,5 +71,18 @@ public class GameManager : NetworkBehaviour
                           position1.x - position2.x,
                           position1.y - position2.y
                           ) * Mathf.Rad2Deg;
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetBuildPathDataServerRpc(int pathId)
+    {
+        SetBuildPathDataClientRpc(pathId);
+    }
+
+    [ClientRpc]
+    public void SetBuildPathDataClientRpc(int pathId)
+    {
+        PlayerGameData.SetPathIsBuild(pathId);
     }
 }
