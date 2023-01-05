@@ -44,13 +44,18 @@ namespace Assets.GameplayControl
             if (!CanBuildPath(path)) return false;
             
             curentPoints += Board.pointsPerLength[path.length];
-            numOfCardsInColor[Color.special] -= path.length + numOfCardsInColor[path.color];
-            numOfCardsInColor[path.color] -= path.length;
+            if(path.length <= numOfCardsInColor[path.color])
+            {
+                numOfCardsInColor[path.color] -= path.length;
+            }
+            else
+            {
+                int pathLenLeft = path.length - numOfCardsInColor[path.color];
+                numOfCardsInColor[path.color] = 0;
+                numOfCardsInColor[Color.special] -= pathLenLeft;
+            }
             spaceshipsLeft -= path.length;
             path.isBuilt = true;
-
-            // wiadomość do serwera żeby powiadomił pozostałych graczy o zmianach
-            // to do
 
             // dodanie planet do grup połączonych planet
             ConnectedPlanets groupPlanetFrom = ConnectedPlanets.GroupContainingPlanet(groupsOfConnectedPlanets, path.planetFrom);
@@ -124,15 +129,16 @@ namespace Assets.GameplayControl
 
         public static void DrawCards(Color firstCardsColor, Color secondCardColor)
         {
-            numOfCardsInColor[firstCardsColor]++;
-            numOfCardsInColor[secondCardColor]++;
-            cardsDrewInTurn += 2;
+            DrawCard(firstCardsColor);
+            DrawCard(secondCardColor);
         }
 
         public static void DrawCard(Color cardColor)
         {
             numOfCardsInColor[cardColor]++;
             cardsDrewInTurn++;
+
+            //Debug.Log("special cards num: " + numOfCardsInColor[Color.special]);
         }
 
         public static void DrawMissions(List<Mission> _missions)

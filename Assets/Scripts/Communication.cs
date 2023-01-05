@@ -35,16 +35,12 @@ public static class Communication
 
     public static void BuildPath(BuildPath buildPath, Path path)
     {
-        Debug.Log("path: " + path.planetFrom + " " + path.planetTo);
         PlayerGameData.BuildPath(path);
         buildPath.StartCoroutine(buildPath.BuildPathAnimation());
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
         playerPanel.UpdatePlayerPointsServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
         EndTurn();
         chosenPath = (null, null);
-
-        Debug.Log("BuildPath");
-        Debug.Log("path: " + path.planetFrom + " - " + path.planetTo);
     }
 
     public static void DrawCard(DrawCardsPanel drawCardsPanel, int index)
