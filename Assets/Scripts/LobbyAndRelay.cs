@@ -32,6 +32,7 @@ public class LobbyAndRelay : MonoBehaviour
     // Start is called before the first frame update
     private async void Start()
     {
+        
         maxPlayers = 5;
         var options = new InitializationOptions();
 #if UNITY_EDITOR
@@ -43,6 +44,7 @@ public class LobbyAndRelay : MonoBehaviour
         {
             Debug.Log($"Signed in as {AuthenticationService.Instance.PlayerId}");
         };
+        //AuthenticationService.Instance.ClearSessionToken();
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
     private void Update()
