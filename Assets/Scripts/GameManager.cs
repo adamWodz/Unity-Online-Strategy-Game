@@ -91,4 +91,11 @@ public class GameManager : NetworkBehaviour
     {
         PlayerGameData.SetPathIsBuild(pathId);
     }
+
+    public void SetPopUpWindow(string message)
+    {
+        var popUp = GameObject.Find("Canvas").transform.GetChild(0);
+        popUp.GetChild(0).GetComponent<TMP_Text>().text = message;
+        popUp.gameObject.SetActive(true);
+    }
 }

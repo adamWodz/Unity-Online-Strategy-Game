@@ -161,7 +161,7 @@ public class PathsPanel : Panel
 
     Renderer GetPlanetRenderer(string name)
     {
-        return GameObject.Find(name + "(Clone)").GetComponent<Renderer>();
+        return GameObject.Find(name).GetComponent<Renderer>();
     }
 
     bool CheckIfPlanetCanBeExtinguished(string planetToExtinguishName, string secondPlanetFromPathName)

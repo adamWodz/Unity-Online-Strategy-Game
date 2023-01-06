@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using System.Linq;
 using UnityEngine;
+using TMPro;
 
 public class Map : MonoBehaviour
 {
@@ -36,9 +37,13 @@ public class Map : MonoBehaviour
         UnityEngine.Color.grey,
     };
 
+    // canvas, na którym będą wyświetlane nazwy planet na planszy (world space)
+    private Canvas canvasForPlanetsNames;
+
     // Start is called before the first frame update
     void Start()
     {
+        canvasForPlanetsNames = GameObject.Find("CanvasForPlanetsNames").GetComponent<Canvas>();
         Debug.Log(mapData);
         paths = mapData.paths;
         planets = mapData.planets; 
@@ -57,10 +62,16 @@ public class Map : MonoBehaviour
         // Tworzenie planet
         for (int i = 0; i < planets.Count; i++)
         {
-            //Debug.Log($"Nazwa: {planetsPrefabs[i].name} Wsp�rz�dne: {planets[i].positionX},{planets[i].positionY}");
-            Instantiate(planetsPrefabs.Single(planet => planet.name.StartsWith(planets[i].name)), new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i].transform.rotation);
-            
-            //Instantiate(planetNameText, new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i % planetsPrefabs.Length].transform.rotation);
+            // spawneine planety
+            var planet = Instantiate(planetsPrefabs.Single(planet => planet.name.StartsWith(planets[i].name)), new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i].transform.rotation);
+            planet.name = planets[i].name;
+
+            // spawnienie tekstu planety, znajdującego się nad nią, który na razie jest nieaktywny
+            var planetNameText = Instantiate(this.planetNameText, new Vector3(planets[i].positionX, planets[i].positionY + 0.5f, mapZparam), Quaternion.identity);
+            planetNameText.GetComponent<TMP_Text>().text = planets[i].name;
+            planetNameText.name = planets[i].name + "Text";
+            planetNameText.transform.SetParent(canvasForPlanetsNames.transform);
+            //planetNameText.SetActive(false);
         }
 
         // Tworzenie ?cie?ek

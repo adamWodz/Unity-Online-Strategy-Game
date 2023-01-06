@@ -31,6 +31,8 @@ public static class Communication
                 //Debug.Log("CanBuildPath" + PlayerGameData.CanBuildPath(chosenPath.path));
                 if (PlayerGameData.CanBuildPath(chosenPath.path))
                     BuildPath(chosenPath.buildPath, chosenPath.path);
+                else
+                    PathCannotBuildInfo(chosenPath.buildPath);
             }
         }
     }
@@ -43,6 +45,12 @@ public static class Communication
         playerPanel.UpdatePlayerPointsServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
         EndTurn();
         chosenPath = (null, null);
+        
+    }
+
+    private static void PathCannotBuildInfo(BuildPath buildPath)
+    {
+        buildPath.gameManager.SetPopUpWindow("Nie mo¿na wybudowaæ œcie¿ki!");
     }
 
     public static void DrawCard(DrawCardsPanel drawCardsPanel, int index)
