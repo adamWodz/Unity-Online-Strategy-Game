@@ -18,9 +18,13 @@ public class MissionsPanel : Panel
 
     private PathsPanel pathsPanel;
 
+    private GameManager gameManager;
+
     // Start is called before the first frame update
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        
         pathsPanel = GameObject.Find("PathsPanel").GetComponent<PathsPanel>();
         
         AssignValues(0, 242.9984f, PanelState.Minimized, false);
@@ -56,7 +60,7 @@ public class MissionsPanel : Panel
     {
         if (missionsToChoose.Count < 3)
         {
-            SetPopUpWindow("Jest za ma³o kart misji, aby mo¿na by³o dobraæ nowe!");
+            gameManager.SetPopUpWindow("Jest za ma³o kart misji, aby mo¿na by³o dobraæ nowe!");
         }
         else
         {
@@ -111,14 +115,9 @@ public class MissionsPanel : Panel
         }
         else
         {
-            SetPopUpWindow("Musisz wybraæ co najmniej jedn¹ kartê misji!");
+            gameManager.SetPopUpWindow("Musisz wybraæ co najmniej jedn¹ kartê misji!");
         }
     }
 
-    void SetPopUpWindow(string message)
-    {
-        var popUp = transform.parent.GetChild(0);
-        popUp.GetChild(0).GetComponent<TMP_Text>().text = message;
-        popUp.gameObject.SetActive(true);
-    }
+    
 }
