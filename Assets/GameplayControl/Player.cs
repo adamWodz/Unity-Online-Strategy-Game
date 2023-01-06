@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.GameplayControl
 {
@@ -11,28 +12,29 @@ namespace Assets.GameplayControl
         public static int Id { get; }
         public static string Name { get; }
         public static int curentPoints { get; set; } = 0;
+        public static int spaceshipsLeft { get; set; } = Board.startSpaceshipsNumber;
         public static int satellitesSent { get; set; } = 0;
-        public static List<Mission> missions;
+        public static List<Mission> missions = new List<Mission>();
         public static Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
-            { Color.pink, 0 },
-            { Color.red, 0 },
-            //{ Color.black, 0 },
-            { Color.blue, 0 },
-            //{ Color.white, 0 },
-            { Color.yellow, 0 },
-            { Color.green, 0 },
-            { Color.special, 0 },
+            { Color.pink, 1 },
+            { Color.red, 1 },
+            { Color.blue, 1 },
+            { Color.yellow, 1 },
+            { Color.green, 1 },
+            { Color.special, 1 },
         };
         public static bool isNowPlaying { set; get; }
+        public static int cardsDrewInTurn = 0;
 
         public static List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
         public static bool CanBuildPath(Path path)
         {
-            if (!isNowPlaying) return false;
+            //if (!isNowPlaying) return false;
             if (path.isBuilt) return false;
-            if (numOfCardsInColor[path.color] < path.length) return false;
+            if (numOfCardsInColor[path.color] < path.length 
+                && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length) return false;
 
             return true;
         }
@@ -42,11 +44,18 @@ namespace Assets.GameplayControl
             if (!CanBuildPath(path)) return false;
             
             curentPoints += Board.pointsPerLength[path.length];
-            numOfCardsInColor[path.color] -= path.length;
+            if(path.length <= numOfCardsInColor[path.color])
+            {
+                numOfCardsInColor[path.color] -= path.length;
+            }
+            else
+            {
+                int pathLenLeft = path.length - numOfCardsInColor[path.color];
+                numOfCardsInColor[path.color] = 0;
+                numOfCardsInColor[Color.special] -= pathLenLeft;
+            }
+            spaceshipsLeft -= path.length;
             path.isBuilt = true;
-
-            // wiadomość do serwera żeby powiadomił pozostałych graczy o zmianach
-            // to do
 
             // dodanie planet do grup połączonych planet
             ConnectedPlanets groupPlanetFrom = ConnectedPlanets.GroupContainingPlanet(groupsOfConnectedPlanets, path.planetFrom);
@@ -74,14 +83,35 @@ namespace Assets.GameplayControl
                 groupsOfConnectedPlanets.Add(ConnectedPlanets.MergeGroups(groupPlanetTo, groupPlanetFrom));
             }
 
+            PrintConnectedPlanets();
+            PrintMissions();
+
             return true;
+        }
+
+        private static void PrintConnectedPlanets()
+        {
+            Debug.Log("Connected planets: ");
+            foreach (var planets in groupsOfConnectedPlanets)
+            {
+                Debug.Log("group:");
+                foreach (var planet in planets.planets)
+                    Debug.Log(planet);
+            }
+        }
+
+        private static void PrintMissions()
+        {
+            Debug.Log("Missions:");
+            foreach (var mission in missions)
+                Debug.Log(mission + "; " + mission.IsCompletedByPlayer());
         }
 
         public static bool CanSendSatellite(Planet planet, Path path, Color color)
         {
             if (planet.withSatellite) return false;
             if (path.withSatellie) return false;
-            if (satellitesSent >= Board.maSatellitesSent) return false;
+            if (satellitesSent >= Board.maxSatellitesSent) return false;
             if (numOfCardsInColor[color] < Board.cardsPerSatelliteSend[satellitesSent + 1]) return false;
             
             return true;
@@ -99,11 +129,25 @@ namespace Assets.GameplayControl
 
         public static void DrawCards(Color firstCardsColor, Color secondCardColor)
         {
-            numOfCardsInColor[firstCardsColor]++;
-            numOfCardsInColor[secondCardColor]++;
+            DrawCard(firstCardsColor);
+            DrawCard(secondCardColor);
         }
 
-        public static void NewTurn()
+        public static void DrawCard(Color cardColor)
+        {
+            numOfCardsInColor[cardColor]++;
+            cardsDrewInTurn++;
+
+            //Debug.Log("special cards num: " + numOfCardsInColor[Color.special]);
+        }
+
+        public static void DrawMissions(List<Mission> _missions)
+        {
+            missions.AddRange(_missions.Except(missions));
+            //Debug.Log(missions);
+        }
+
+        public static void StartTurn()
         {
             isNowPlaying = true;
         }
@@ -111,8 +155,13 @@ namespace Assets.GameplayControl
         public static void EndTurn()
         {
             isNowPlaying = false;
-            // wiadomość do serwera o zakończonej turze
-            throw new NotImplementedException();
+            cardsDrewInTurn = 0;
+        }
+
+        public static void SetPathIsBuild(int pathId)
+        {
+            Path builtPath = GameObject.Find("Space").GetComponent<MapData>().paths.Where(path => path.Id == pathId).FirstOrDefault();
+            builtPath.isBuilt = true;
         }
     }
 }
