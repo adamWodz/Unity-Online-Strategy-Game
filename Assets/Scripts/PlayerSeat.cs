@@ -11,7 +11,7 @@ public class PlayerSeat : MonoBehaviour
     public Player player;
     public Text Nickname;
     public Button PlayerType, KickPlayer;
-    public Image AIPlayer, regularPlayer;
+    public Image AIPlayer, regularPlayer, joinedBackground;
     public bool AI;
     public string playerId;
 
@@ -28,22 +28,29 @@ public class PlayerSeat : MonoBehaviour
         
     }
 
-    public void SwitchMode()
+    public void HideIcon()
     {
-        AI = !AI;
-        if (AI)
+        AIPlayer.gameObject.SetActive(false);
+        regularPlayer.gameObject.SetActive(false);
+        PlayerType.gameObject.SetActive(false);
+        KickPlayer.gameObject.SetActive(false);
+    }
+
+    public void DisplayJoined(bool cankick)
+    {
+        joinedBackground.gameObject.SetActive(true);
+        if (cankick) KickPlayer.gameObject.SetActive(true);
+    }
+
+    public void ChangePlayerType()
+    {
+        if (lobby == null)
         {
-            AIPlayer.gameObject.SetActive(true);
-            regularPlayer.gameObject.SetActive(false);
-            KickPlayer.gameObject.SetActive(false);
+            AI = !AI;
+            AIPlayer.gameObject.SetActive(AI);
+            Debug.Log($"[PlayerSeat.SwitchMode] AI:{AI}");
         }
-        else
-        {
-            AIPlayer.gameObject.SetActive(false);
-            regularPlayer.gameObject.SetActive(true);
-            KickPlayer.gameObject.SetActive(true);
-        }
-        Debug.Log($"[PlayerSeat.SwitchMode] AI:{AI}");
+        else Debug.Log($"[PlayerSeat.SwitchMode] Cannot edit playerType");
     }
     public void TryLeave()
     {

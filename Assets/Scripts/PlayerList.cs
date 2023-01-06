@@ -18,6 +18,8 @@ public class PlayerList : MonoBehaviour
     {
         try
         {
+            bool cankick = false;
+            if (lobbyData.IsLobbyHost()) cankick = true;
             Debug.Log($"[PlayerList.RefreshList] 1/1 Clicked Refresh");
             if (lobbyData != null && lobbyData.joinedLobby != null)
             {
@@ -26,15 +28,15 @@ public class PlayerList : MonoBehaviour
                 for (int j = 0; j < seats.Count; j++)
                 {
                     if (i == players.Count) break;
-                    //wolne//
                     if (!seats[j].AI && seats[j].player == null)
                     {
-                        seats[j].lobby = lobbyData;
+                        //seats[j].lobby = lobbyData;
 
                         string pref = (i == 0) ? "host" : "spaceman";
                         var playerId = players[i++].Id;
                         
                         seats[j].playerId = playerId;
+                        seats[j].DisplayJoined(cankick);
                         SetPlayerNick(j, pref, playerId);
                     }
                 }
@@ -62,7 +64,8 @@ public class PlayerList : MonoBehaviour
         int res = 0;
         foreach (var s in seats) if (!s.AI) res++;
         lobbyData.maxPlayers = res;
-        Debug.Log(res);
+        Debug.Log($"[PlayerList.NonAI] MaxPlayer = {res}");
+        for (int j = 0; j < seats.Count; j++) seats[j].PlayerType.interactable = false;
     }
 
     
