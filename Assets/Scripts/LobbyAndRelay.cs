@@ -36,6 +36,7 @@ public class LobbyAndRelay : MonoBehaviour
         var options = new InitializationOptions();
 #if UNITY_EDITOR
         options.SetProfile(ClonesManager.IsClone() ? ClonesManager.GetArgument() : "Primary");
+#endif
         await UnityServices.InitializeAsync(options);
 
         AuthenticationService.Instance.SignedIn += () =>
@@ -43,7 +44,6 @@ public class LobbyAndRelay : MonoBehaviour
             Debug.Log($"Signed in as {AuthenticationService.Instance.PlayerId}");
         };
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
-#endif
     }
     private void Update()
     {
