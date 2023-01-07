@@ -7,6 +7,12 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : NetworkBehaviour
 {
+    [ClientRpc]
+    public void TestClientRpc()
+    {
+        Debug.Log("ClientRpc");
+    }
+
 
     public void QuitGame()
     {

@@ -23,6 +23,8 @@ public class MissionsPanel : Panel
     // Start is called before the first frame update
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        
         pathsPanel = GameObject.Find("PathsPanel").GetComponent<PathsPanel>();
         
         AssignValues(0, 242.9984f, PanelState.Minimized, false);
@@ -60,7 +62,7 @@ public class MissionsPanel : Panel
     {
         if (missionsToChoose.Count < 3)
         {
-            gameManager.SetPopUpWindow("Jest za ma³o kart misji, aby mo¿na by³o dobraæ nowe!");
+            gameManager.SetPopUpWindow("Jest za maï¿½o kart misji, aby moï¿½na byï¿½o dobraï¿½ nowe!");
         }
         else
         {
@@ -80,12 +82,12 @@ public class MissionsPanel : Panel
     }
     void AddMissions()
     {
-        // misje, które dobraliœmy
+        // misje, ktï¿½re dobraliï¿½my
         var missionsChoosed = pathsPanel.missionsFromClickedMissionsCards.Except(pathsPanel.MissionsChoosed, new MissionComparer()).ToList();
 
         Communication.DrawMissions(missionsChoosed);
 
-        if (missionsChoosed.Count > 0) // gracz musi dobraæ co najmniej jedn¹ kartê misji
+        if (missionsChoosed.Count > 0) // gracz musi dobraï¿½ co najmniej jednï¿½ kartï¿½ misji
         {
             pathsPanel.MissionsChoosed = missionsChoosed;
 
@@ -95,14 +97,14 @@ public class MissionsPanel : Panel
                 pathsPanel.HighlightPlanet(m);
             }
 
-            // "czyœcimy" przyciski z MissionsPanel
+            // "czyï¿½cimy" przyciski z MissionsPanel
             for (int i = 0; i < missionButtonsAndConfirmButton.Length - 1; i++)
             {
                 missionButtonsAndConfirmButton[i].onClick.RemoveAllListeners();
                 missionButtonsAndConfirmButton[i].name = "";
             }
 
-            // usuwamy misje z listy misju mo¿liwych do wyboru i synchronizujemy t¹ listê z innymi graczami
+            // usuwamy misje z listy misju moï¿½liwych do wyboru i synchronizujemy tï¿½ listï¿½ z innymi graczami
             foreach (Mission m in missionsChoosed)
             {
                 SyncMissionsToChooseServerRpc(m.start.name, m.end.name);
@@ -115,7 +117,7 @@ public class MissionsPanel : Panel
         }
         else
         {
-            gameManager.SetPopUpWindow("Musisz wybraæ co najmniej jedn¹ kartê misji!");
+            gameManager.SetPopUpWindow("Musisz wybraï¿½ co najmniej jednï¿½ kartï¿½ misji!");
         }
     }
 }

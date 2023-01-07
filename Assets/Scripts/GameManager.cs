@@ -39,6 +39,12 @@ public class GameManager : NetworkBehaviour
 
     }
 
+    [ClientRpc]
+    public void TestClientRpc()
+    {
+        Debug.Log("TestClientRpc;");
+    }
+
     [ServerRpc(RequireOwnership = false)]
     public void SpawnShipsServerRpc(Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
     {
@@ -90,6 +96,13 @@ public class GameManager : NetworkBehaviour
     public void SetPopUpWindow(string message)
     {
         var popUp = GameObject.Find("Canvas").transform.GetChild(0);//transform.parent.GetChild(0);
+        popUp.GetChild(0).GetComponent<TMP_Text>().text = message;
+        popUp.gameObject.SetActive(true);
+    }
+
+    public void SetPopUpWindow(string message)
+    {
+        var popUp = GameObject.Find("Canvas").transform.GetChild(0);
         popUp.GetChild(0).GetComponent<TMP_Text>().text = message;
         popUp.gameObject.SetActive(true);
     }

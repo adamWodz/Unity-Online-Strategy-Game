@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class BuildPath : MonoBehaviour
 {
-    private GameManager gameManager;
+    public GameManager gameManager;
     private Transform[] tilesTransforms;
     private Renderer[] tilesRenderers;
     public Path path;
@@ -45,6 +45,12 @@ public class BuildPath : MonoBehaviour
 
             //aktualizacja licznika kart danego koloru
             var cardCounter = gameManager.cardStackCounterList[(int)path.color];
+
+            // Jeśli nie mamy już kart danego koloru, to znaczy, że musimy użyć tęczowych
+            if(cardCounter.text == "0")
+            {
+                cardCounter = gameManager.cardStackCounterList[^1];
+            }
             cardCounter.text = (int.Parse(cardCounter.text) - 1).ToString();
 
             // host spawni statki i je przemieszcza 
