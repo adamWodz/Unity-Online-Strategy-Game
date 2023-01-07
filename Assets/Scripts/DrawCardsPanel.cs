@@ -87,19 +87,30 @@ public class DrawCardsPanel : NetworkBehaviour
             gameManager.SpawnCards(cards[index].transform, actualCardColor[index], names[actualCardColor[index]]);
             selectedColor = (Color)actualCardColor[index];
 
-            // wybierany jest nowy kolor i synchronizowany
-            int color = 0;
-            RandomSprite(ref color);
-            actualCardColor[index] = color;
-            
-            // Synchronizacja nowego koloru z innymi graczami
-            SyncSpritesServerRpc(color, index);
+            ChooseRandomColor(index);
         }
 
         return selectedColor;
     }
     
-    public Color MoveCard()
+    private void ChooseRandomColor(int index)
+    {
+        // wybierany jest nowy kolor i synchronizowany
+        int color = 0;
+        RandomSprite(ref color);
+        actualCardColor[index] = color;
+
+        // Synchronizacja nowego koloru z innymi graczami
+        SyncSpritesServerRpc(color, index);
+    }
+
+    public Color[] GetCurrentCardsToChoose()
+    {
+        return new Color[] { (Color)actualCardColor[0], (Color)actualCardColor[1], 
+            (Color)actualCardColor[2], (Color)actualCardColor[3], (Color)actualCardColor[4], };
+    }
+
+    private Color MoveCard()
     {
         // gracz dobiera losow¹ kartê z kupki z kartami (widoczne tylko lokalnie)
         int color = 0;

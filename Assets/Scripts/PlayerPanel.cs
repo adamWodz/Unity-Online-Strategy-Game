@@ -83,7 +83,7 @@ public class PlayerPanel : NetworkBehaviour
 
     public void StartNextPlayerTurn()
     {
-        PlayerInfo nextPlayer = players.Where(p => p.Position == 0).FirstOrDefault();
+        PlayerInfo nextPlayer = players.Where(p => p.Position == 1).FirstOrDefault();
         if (nextPlayer.IsAI)
             Server.artificialPlayers.Where(ai => ai.Id == nextPlayer.Id).FirstOrDefault().BestMove();
         else

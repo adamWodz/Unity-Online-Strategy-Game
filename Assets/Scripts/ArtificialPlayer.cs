@@ -3,11 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.GameplayControl
 {
     public class ArtificialPlayer
     {
+        private DrawCardsPanel _drawCardsPanel;
+        private DrawCardsPanel drawCardsPanel
+        {
+            get
+            {
+                if (_drawCardsPanel == null)
+                    _drawCardsPanel = GameObject.Find("DrawCardsPanel").GetComponent<DrawCardsPanel>();
+                return _drawCardsPanel;
+            }
+        }
+        
         public int Id { get; }
         public string Name { get; }
         public int curentPoints { get; set; } = 0;
@@ -15,12 +27,12 @@ namespace Assets.GameplayControl
         public List<Mission> missions;
         public Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
-            { Color.pink, 0 },
-            { Color.red, 0 },
-            { Color.blue, 0 },
-            { Color.yellow, 0 },
-            { Color.green, 0 },
-            { Color.special, 0 },
+            { Color.pink, 1 },
+            { Color.red, 1 },
+            { Color.blue, 1 },
+            { Color.yellow, 1 },
+            { Color.green, 1 },
+            { Color.special, 1 },
         };
         public static List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
@@ -28,16 +40,6 @@ namespace Assets.GameplayControl
         // - kolejka priorytetowa - brakujące kolory
         // - do rozszerzonego alg Dijkstry
         // - słownik do odległości z każdego wierzchołka do każdego i kolejnego ruchu
-
-        // wybieranie najlepszych misji
-        void PickBestMissions()
-        {
-            /*
-             * dobranie pierwszych misji
-             - szukamy par misji, których trasy się pokrywają
-             
-             */
-        }
 
         public void BestMove()
         {
@@ -57,9 +59,65 @@ namespace Assets.GameplayControl
             - szukamy najkrótszej trasy sposród dostępnych
             - przy czym połączona miasta sąsiadują ze sobą
              */
+
+            Communication.EndAITurn();
         }
 
-        public List<Path> QuickestPath()
+        private void UpdateBestOptions()
+        {
+
+        }
+
+        // wybieranie najlepszych misji
+        void PickBestMissions()
+        {
+            /*
+             * dobranie pierwszych misji
+             - szukamy par misji, których trasy się pokrywają
+            */
+        }
+
+        public List<Path> QuickestWayWithLongestPaths(Mission mission)
+        {
+            // szukamy najkrótszej ścieżki pod względem liczby połączeń
+            // jeśli dwie mają tyle samo połączeń to wybieramy to krótsze
+            
+            return null;
+        }
+
+        private void DrawCards()
+        {
+            if(BestCardColorsToDraw() == null)
+                DrawRandomCard();
+            else
+                DrawCard();
+
+            if (BestCardColorsToDraw() == null)
+                DrawRandomCard();
+            else
+                DrawCard();
+        }
+
+        private void DrawCard()
+        {
+            List<Color> bestCardsToDraw = BestCardColorsToDraw();
+            Color[] availableColors = drawCardsPanel.GetCurrentCardsToChoose();
+
+            for(int i = 0; i < availableColors.Length; i++)
+            {
+                if (bestCardsToDraw.Contains(availableColors[i]))
+                {
+                    numOfCardsInColor[availableColors[i]]++;
+                }
+            }
+        }
+
+        private void DrawRandomCard()
+        {
+
+        }
+
+        private List<Color> BestCardColorsToDraw()
         {
             return null;
         }

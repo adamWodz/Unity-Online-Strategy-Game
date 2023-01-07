@@ -7,7 +7,6 @@ using UnityEngine;
 public static class Communication
 {
     private static GameManager _gameManager;
-
     private static GameManager _GameManager
     {
         get
@@ -17,8 +16,18 @@ public static class Communication
             return _gameManager;
         }
     }
-    
-    
+
+    private static PlayerPanel _playerPanel;
+    private static PlayerPanel _PlayerPanel
+    {
+        get
+        {
+            if (_playerPanel == null)
+                _playerPanel = GameObject.Find("PlayerPanel").GetComponent<PlayerPanel>();
+            return _playerPanel;
+        }
+    }
+
     [ClientRpc]
     public static void StartTurnClientRpc(int id)
     {
@@ -77,8 +86,12 @@ public static class Communication
     public static void EndTurn()
     {
         PlayerGameData.EndTurn();
-        var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
-        playerPanel.UpdatePlayersOrderServerRpc();
+        _PlayerPanel.UpdatePlayersOrderServerRpc();
+    }
+
+    public static void EndAITurn()
+    {
+        _PlayerPanel.UpdatePlayersOrderServerRpc();
     }
 
     public static void StartTurn(int playerId)

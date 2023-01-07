@@ -9,6 +9,18 @@ namespace Assets.GameplayControl
 {
     public static class PlayerGameData
     {
+        private static MapData _mapData;
+        private static MapData mapData
+        {
+            get
+            {
+                if (_mapData == null)
+                    _mapData = GameObject.Find("Space").GetComponent<MapData>();
+                return _mapData;
+            }
+        }
+
+
         public static int Id { get; }
         public static string Name { get; }
         public static int curentPoints { get; set; } = 0;
@@ -83,8 +95,8 @@ namespace Assets.GameplayControl
                 groupsOfConnectedPlanets.Add(ConnectedPlanets.MergeGroups(groupPlanetTo, groupPlanetFrom));
             }
 
-            PrintConnectedPlanets();
-            PrintMissions();
+            //PrintConnectedPlanets();
+            //PrintMissions();
 
             return true;
         }
@@ -160,7 +172,7 @@ namespace Assets.GameplayControl
 
         public static void SetPathIsBuild(int pathId)
         {
-            Path builtPath = GameObject.Find("Space").GetComponent<MapData>().paths.Where(path => path.Id == pathId).FirstOrDefault();
+            Path builtPath = mapData.paths.Where(path => path.Id == pathId).FirstOrDefault();
             builtPath.isBuilt = true;
         }
     }
