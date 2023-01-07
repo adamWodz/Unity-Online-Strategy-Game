@@ -1,3 +1,4 @@
+using Assets.GameplayControl;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ public class PlayerPanel : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        players = Server.allPlayersInfo;
+        
         playersTiles = new();
 
         GameObject playerTextTemplate = transform.GetChild(0).gameObject;
@@ -77,15 +80,14 @@ public class PlayerPanel : NetworkBehaviour
             players[i].Position = ++i;
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = i.ToString();
         }
-
-        StartNextPlayerTurn();
     }
 
-    public void StartNextPlayerTurn()
+    [ServerRpc(RequireOwnership = false)]
+    public void StartNextPlayerTurnServerRpc()
     {
-        PlayerInfo nextPlayer = players.Where(p => p.Position == 1).FirstOrDefault();
+        PlayerInfo nextPlayer = players.Where(p => p.Position == 1).First();
         if (nextPlayer.IsAI)
-            Server.artificialPlayers.Where(ai => ai.Id == nextPlayer.Id).FirstOrDefault().BestMove();
+            Server.artificialPlayers.Where(ai => ai.Id == nextPlayer.Id).First().BestMove();
         else
             StartNextPlayerTurnClientRpc(nextPlayer.Id);
     }
@@ -93,6 +95,7 @@ public class PlayerPanel : NetworkBehaviour
     [ClientRpc]
     public void StartNextPlayerTurnClientRpc(int playerId)
     {
+        Debug.Log("StartNextPlayerTurnClientRpc; playerId: " + playerId + " thisPlayerId: " + PlayerGameData.Id);
         Communication.StartTurn(playerId);
     }
 

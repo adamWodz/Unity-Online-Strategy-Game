@@ -20,10 +20,10 @@ namespace Assets.GameplayControl
             }
         }
         
-        public int Id { get; }
-        public string Name { get; }
+        public int Id { set;  get; }
+        public string Name { set; get; }
         public int curentPoints { get; set; } = 0;
-        public int satellitesSent { get; set; } = 0;
+        //public int satellitesSent { get; set; } = 0;
         public List<Mission> missions;
         public Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {

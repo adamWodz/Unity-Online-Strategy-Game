@@ -23,18 +23,12 @@ public static class Communication
         get
         {
             if (_playerPanel == null)
-                _playerPanel = GameObject.Find("PlayerPanel").GetComponent<PlayerPanel>();
+                _playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
             return _playerPanel;
         }
     }
     public static int mapDataNumber;
 
-    [ClientRpc]
-    public static void StartTurnClientRpc(int id)
-    {
-        if (id == PlayerGameData.Id)
-            PlayerGameData.StartTurn();
-    }
 
     private static (BuildPath buildPath, Path path) chosenPath;
 
@@ -53,13 +47,19 @@ public static class Communication
                 if (PlayerGameData.CanBuildPath(chosenPath.path))
                     BuildPath(chosenPath.buildPath, chosenPath.path);
                 else
-                    PathCannotBuildInfo(chosenPath.buildPath);
+                    _GameManager.SetPopUpWindow("Nie możnesz wybudować tej ścieżki!");
             }
         }
     }
 
     public static void BuildPath(BuildPath buildPath, Path path)
     {
+        if (!PlayerGameData.isNowPlaying)
+        {
+            SetNotThisTurnPopUpWindow();
+            return;
+        }
+        
         PlayerGameData.BuildPath(path);
         buildPath.StartCoroutine(buildPath.BuildPathAnimation());
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
@@ -70,13 +70,19 @@ public static class Communication
         
     }
 
-    private static void PathCannotBuildInfo(BuildPath buildPath)
+    public static void SetNotThisTurnPopUpWindow()
     {
-        buildPath.gameManager.SetPopUpWindow("Nie mo�na wybudowa� �cie�ki!");
+        _GameManager.SetPopUpWindow("Poczekaj na swoją turę!");
     }
 
     public static void DrawCard(DrawCardsPanel drawCardsPanel, int index)
     {
+        if (!PlayerGameData.isNowPlaying)
+        {
+            SetNotThisTurnPopUpWindow();
+            return;
+        }
+        
         Color color = drawCardsPanel.MoveCard(index);
         PlayerGameData.DrawCard(color);
         if (PlayerGameData.cardsDrewInTurn == 2)
@@ -85,6 +91,12 @@ public static class Communication
 
     public static void DrawMissions(List<Mission> missions)
     {
+        if (!PlayerGameData.isNowPlaying)
+        {
+            SetNotThisTurnPopUpWindow();
+            return;
+        }
+
         PlayerGameData.DrawMissions(missions);
 
         Debug.Log("DrawMissions");
@@ -95,7 +107,20 @@ public static class Communication
     public static void EndTurn()
     {
         PlayerGameData.EndTurn();
+        Debug.Log("Before order update: ");
+        foreach (var player in Server.allPlayersInfo)
+        {
+            Debug.Log("name: " + player.Name + " posiotion: " + player.Position);
+        }
         _PlayerPanel.UpdatePlayersOrderServerRpc();
+        Debug.Log("After order update: ");
+        foreach (var player in Server.allPlayersInfo)
+        {
+            Debug.Log("name: " + player.Name + " posiotion: " + player.Position);
+        }
+        _playerPanel.StartNextPlayerTurnServerRpc();
+        Debug.Log("EndTurn");
+
     }
 
     public static void EndAITurn()
