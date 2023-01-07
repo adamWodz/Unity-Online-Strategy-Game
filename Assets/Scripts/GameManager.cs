@@ -1,11 +1,14 @@
 using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using TMPro;
 using Unity.Netcode;
 using UnityEditor;
+
 using UnityEngine;
+using UnityEngine.Networking.Types;
 using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour
@@ -13,6 +16,7 @@ public class GameManager : NetworkBehaviour
     public List<Sprite> cardSprites;
     //public GameObject shipGameObject;
     public GameObject cardButton;
+    public GameObject cardButtonWithSync;
 
     private GameObject spawnedCardGameObject;
     public List<GameObject> shipGameObjectList = new();
@@ -21,10 +25,15 @@ public class GameManager : NetworkBehaviour
     public TMP_Text spaceshipCounter;
     private TMP_Text satelliteCounter;
 
+    public bool iSendSpawnCardsServerRpc;
+    GameObject drawCardsPanel;
+    GameObject cardGoal;
+
     // Start is called before the first frame update
     void Start()
     {
-        //canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+        drawCardsPanel = GameObject.Find("DrawCardsPanel");
+        cardGoal = GameObject.Find("CardGoal");
 
         spaceshipCounter = GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>();
         spaceshipCounter.text = "50";
@@ -51,12 +60,11 @@ public class GameManager : NetworkBehaviour
         int clientId = (int)serverRpcParams.Receive.SenderClientId;
         float angle = CalculateAngle(position,spaceshipsBase);
         var spawnedShipGameObject = Instantiate(shipGameObjectList[clientId], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
-        // spawnuje siê dla wszystkich graczy bo network object
+        // spawnuje siï¿½ dla wszystkich graczy bo network object
         spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
         spawnedShip.goalPosition = position;
         spawnedShip.goalRotation = rotation;
-        spawnedShip.move = true;
     }
 
     public void SpawnCards(Transform t, int color, string name)
@@ -65,11 +73,36 @@ public class GameManager : NetworkBehaviour
         spawnedCardGameObject = Instantiate(cardButton, t);
         spawnedCardGameObject.name = name;
         var spawnedCard = spawnedCardGameObject.GetComponent<Move>();
-        spawnedCard.move = true;
-        spawnedCard.speed = 500;
+        spawnedCard.speed = 700;
         Transform cardsStack = GameObject.Find(name + "s").GetComponent<Transform>();
         spawnedCard.goalPosition = cardsStack.position;
         spawnedCard.goalRotation = cardsStack.rotation;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnCardsServerRpc(Vector3 position,int color,string name,int index)
+    {
+       SpawnCardsClientRpc(position, color, name,index);
+    }
+
+    [ClientRpc]
+    void SpawnCardsClientRpc(Vector3 position, int color, string name,int index)
+    {
+        if (!iSendSpawnCardsServerRpc)
+        {
+            cardButton.GetComponent<Image>().sprite = cardSprites[color];
+            spawnedCardGameObject = Instantiate(cardButton, drawCardsPanel.transform.GetChild(index));
+            spawnedCardGameObject.name = name;
+            spawnedCardGameObject.transform.localScale = new(0.5f, 0.5f);
+            //spawnedCardGameObject.transform.SetParent(canvas.transform);
+            var spawnedCard = spawnedCardGameObject.GetComponent<Move>();
+
+            spawnedCard.speed = 1000;
+            spawnedCard.goalPosition = cardGoal.transform.position;
+            spawnedCard.goalRotation = Quaternion.identity;
+        }
+        else
+            iSendSpawnCardsServerRpc = false;
     }
 
     public float CalculateAngle(Vector3 position1, Vector3 position2)

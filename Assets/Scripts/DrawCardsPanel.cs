@@ -85,6 +85,10 @@ public class DrawCardsPanel : NetworkBehaviour
         {
             // rozpoczyna siê animacja doboru karty danego koloru przez gracza
             gameManager.SpawnCards(cards[index].transform, actualCardColor[index], names[actualCardColor[index]]);
+            gameManager.iSendSpawnCardsServerRpc = true;
+            // animacja dla pozosta³ych graczy
+            gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]],index);
+            
             selectedColor = (Color)actualCardColor[index];
 
             ChooseRandomColor(index);
