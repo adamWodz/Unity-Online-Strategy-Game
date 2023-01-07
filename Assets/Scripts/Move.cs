@@ -8,8 +8,6 @@ using static UnityEngine.GraphicsBuffer;
 public class Move : MonoBehaviour
 {
     public float speed = 5;
-    public bool move = false;
-    //public Transform goal;
     public Vector3 goalPosition;
     public Quaternion goalRotation;
 
