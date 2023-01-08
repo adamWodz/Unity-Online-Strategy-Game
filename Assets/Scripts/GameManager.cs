@@ -60,7 +60,7 @@ public class GameManager : NetworkBehaviour
         int clientId = (int)serverRpcParams.Receive.SenderClientId;
         float angle = CalculateAngle(position,spaceshipsBase);
         var spawnedShipGameObject = Instantiate(shipGameObjectList[clientId], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
-        // spawnuje si� dla wszystkich graczy bo network object
+        // spawnuje si� dla wszystkich graczy bo network object
         spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
         spawnedShip.goalPosition = position;
@@ -86,7 +86,7 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    void SpawnCardsClientRpc(Vector3 position, int color, string name,int index)
+    public void SpawnCardsClientRpc(Vector3 position, int color, string name,int index)
     {
         if (!iSendSpawnCardsServerRpc)
         {
@@ -123,13 +123,26 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     public void SetBuildPathDataClientRpc(int pathId)
     {
-        PlayerGameData.SetPathIsBuild(pathId);
+        Path path = Map.mapData.paths.Where(p => p.Id == pathId).First();
+        path.isBuilt = true;
     }
 
     public void SetPopUpWindow(string message)
     {
-        var popUp = GameObject.Find("Canvas").transform.GetChild(0);
+        var popUp = GameObject.Find("Canvas").transform.GetChild(0);//transform.parent.GetChild(0);
         popUp.GetChild(0).GetComponent<TMP_Text>().text = message;
         popUp.gameObject.SetActive(true);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void EndGameServerRpc() // wyświetlanie ekranu końcowego
+    {
+        EndGameClientRpc();
+    }
+
+    [ClientRpc]
+    private void EndGameClientRpc()
+    {
+        Application.Quit();
     }
 }

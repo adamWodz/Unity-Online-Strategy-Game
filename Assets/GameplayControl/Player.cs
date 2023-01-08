@@ -9,8 +9,20 @@ namespace Assets.GameplayControl
 {
     public static class PlayerGameData
     {
-        public static int Id { get; }
-        public static string Name { get; }
+        private static MapData _mapData;
+        private static MapData mapData
+        {
+            get
+            {
+                if (_mapData == null)
+                    _mapData = GameObject.Find("Space").GetComponent<MapData>();
+                return _mapData;
+            }
+        }
+
+
+        public static int Id { set;  get; }
+        public static string Name { set;  get; }
         public static int curentPoints { get; set; } = 0;
         public static int spaceshipsLeft { get; set; } = Board.startSpaceshipsNumber;
         public static int satellitesSent { get; set; } = 0;
@@ -31,8 +43,10 @@ namespace Assets.GameplayControl
 
         public static bool CanBuildPath(Path path)
         {
-            //if (!isNowPlaying) return false;
+            if (!isNowPlaying) return false;
+            if (cardsDrewInTurn > 0) return false;
             if (path.isBuilt) return false;
+            if (path.length > spaceshipsLeft) return false;
             if (numOfCardsInColor[path.color] < path.length 
                 && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length) return false;
 
@@ -41,7 +55,7 @@ namespace Assets.GameplayControl
 
         public static bool BuildPath(Path path)
         {
-            if (!CanBuildPath(path)) return false;
+            //if (!CanBuildPath(path)) return false;
             
             curentPoints += Board.pointsPerLength[path.length];
             if(path.length <= numOfCardsInColor[path.color])
@@ -83,13 +97,13 @@ namespace Assets.GameplayControl
                 groupsOfConnectedPlanets.Add(ConnectedPlanets.MergeGroups(groupPlanetTo, groupPlanetFrom));
             }
 
-            PrintConnectedPlanets();
-            PrintMissions();
+            //PrintConnectedPlanets();
+            //PrintMissions();
 
             return true;
         }
 
-        private static void PrintConnectedPlanets()
+        public static void PrintConnectedPlanets()
         {
             Debug.Log("Connected planets: ");
             foreach (var planets in groupsOfConnectedPlanets)
@@ -100,7 +114,7 @@ namespace Assets.GameplayControl
             }
         }
 
-        private static void PrintMissions()
+        public static void PrintMissions()
         {
             Debug.Log("Missions:");
             foreach (var mission in missions)
@@ -110,7 +124,7 @@ namespace Assets.GameplayControl
         public static bool CanSendSatellite(Planet planet, Path path, Color color)
         {
             if (planet.withSatellite) return false;
-            if (path.withSatellie) return false;
+            //if (path.withSatellie) return false;
             if (satellitesSent >= Board.maxSatellitesSent) return false;
             if (numOfCardsInColor[color] < Board.cardsPerSatelliteSend[satellitesSent + 1]) return false;
             
@@ -160,7 +174,7 @@ namespace Assets.GameplayControl
 
         public static void SetPathIsBuild(int pathId)
         {
-            Path builtPath = GameObject.Find("Space").GetComponent<MapData>().paths.Where(path => path.Id == pathId).FirstOrDefault();
+            Path builtPath = mapData.paths.Where(path => path.Id == pathId).FirstOrDefault();
             builtPath.isBuilt = true;
         }
     }

@@ -1,3 +1,4 @@
+using Assets.GameplayControl;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -83,27 +84,51 @@ public class DrawCardsPanel : NetworkBehaviour
         }
         else // dobierana jest wybrana karta z panelu
         {
+            selectedColor = (Color)actualCardColor[index];
+
             // rozpoczyna siê animacja doboru karty danego koloru przez gracza
             gameManager.SpawnCards(cards[index].transform, actualCardColor[index], names[actualCardColor[index]]);
             gameManager.iSendSpawnCardsServerRpc = true;
             // animacja dla pozosta³ych graczy
-            gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]],index);
-            
-            selectedColor = (Color)actualCardColor[index];
-
-            // wybierany jest nowy kolor i synchronizowany
-            int color = 0;
-            RandomSprite(ref color);
-            actualCardColor[index] = color;
-            
-            // Synchronizacja nowego koloru z innymi graczami
-            SyncSpritesServerRpc(color, index);
+            gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]], index);
+            ChooseRandomColor(index);
         }
-
         return selectedColor;
     }
     
-    public Color MoveCard()
+    public void AiDrawCardAndEndTurn(int index, ArtificialPlayer ai)
+    {
+        StartCoroutine(SpawnCardOfIndexAndEndTurn(index, ai));
+    }
+
+    public IEnumerator SpawnCardOfIndexAndEndTurn(int index, ArtificialPlayer ai)
+    {
+        gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]], index);
+        ChooseRandomColor(index);
+
+        yield return new WaitForSeconds(3);
+
+        Communication.EndAITurn(ai);
+    }
+
+    public void ChooseRandomColor(int index)
+    {
+        // wybierany jest nowy kolor i synchronizowany
+        int color = 0;
+        RandomSprite(ref color);
+        actualCardColor[index] = color;
+
+        // Synchronizacja nowego koloru z innymi graczami
+        SyncSpritesServerRpc(color, index);
+    }
+
+    public Color[] GetCurrentCardsToChoose()
+    {
+        return new Color[] { (Color)actualCardColor[0], (Color)actualCardColor[1], 
+            (Color)actualCardColor[2], (Color)actualCardColor[3], (Color)actualCardColor[4], };
+    }
+
+    private Color MoveCard()
     {
         // gracz dobiera losow¹ kartê z kupki z kartami (widoczne tylko lokalnie)
         int color = 0;

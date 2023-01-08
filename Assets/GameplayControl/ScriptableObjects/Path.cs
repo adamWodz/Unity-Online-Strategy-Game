@@ -14,9 +14,9 @@ public class Path : ScriptableObject
     public Color color;
     public int length;
     public bool isBuilt { get; set; } = false;
-    public PlayerState builtBy = null;
-    public bool withSatellie { get; set; } = false;
-    public PlayerState playerOfSatellite = null;
+    public int builtById;
+    //public bool withSatellie { get; set; } = false;
+    //public PlayerState playerOfSatellite;
 
     public bool IsEqual(Path other)
     {

@@ -71,6 +71,7 @@ namespace UnitTests
             Assert.AreEqual(PlayerGameData.CanSendSatellite(planet, path, color), expected);
         }
 
+        /*
         [TestCase(Color.green, 3, 3, false)]
         [TestCase(Color.green, 0, 0, false)]
         [TestCase(Color.green, 3, 2, false)]
@@ -84,6 +85,7 @@ namespace UnitTests
             path.withSatellie = true;
             Assert.AreEqual(PlayerGameData.CanSendSatellite(planet, path, color), expected);
         }
+        */
 
         [TestCase(Color.red, 1, 2, Color.blue, 2, 3)]
         [TestCase(Color.special, 0, 2, Color.special, 0, 2)]
