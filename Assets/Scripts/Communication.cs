@@ -2,6 +2,7 @@ using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public static class Communication
@@ -28,6 +29,7 @@ public static class Communication
         }
     }
     public static int mapDataNumber;
+    private static bool isLastTurn = false;
 
 
     private static (BuildPath buildPath, Path path) chosenPath;
@@ -65,7 +67,7 @@ public static class Communication
 
         buildPath.StartCoroutine(buildPath.BuildPathAnimation());
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
-        playerPanel.UpdatePlayerPointsServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
+        playerPanel.UpdatePointsAndSpeceshipsNumServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.spaceshipsLeft);
         _GameManager.SetBuildPathDataServerRpc(path.Id);
         EndTurn();
         chosenPath = (null, null);
@@ -123,13 +125,25 @@ public static class Communication
         _playerPanel.StartNextPlayerTurnServerRpc();
         Debug.Log("EndTurn");
 
+        if (isLastTurn)
+            _PlayerPanel.EndGameServerRpc();
+
+        if (PlayerGameData.spaceshipsLeft < Board.minSpaceshipsLeft)
+            isLastTurn = true;
+
     }
 
-    public static void EndAITurn()
+    public static void EndAITurn(ArtificialPlayer ai)
     {
         _PlayerPanel.UpdatePlayersOrderServerRpc();
         _playerPanel.StartNextPlayerTurnServerRpc();
         Debug.Log("EndAiTurn");
+
+        if (isLastTurn)
+            _PlayerPanel.EndGameServerRpc();
+
+        if (ai.spaceshipsLeft < Board.minSpaceshipsLeft)
+            isLastTurn = true;
     }
 
     public static void StartTurn(int playerId)

@@ -43,8 +43,10 @@ namespace Assets.GameplayControl
 
         public static bool CanBuildPath(Path path)
         {
-            //if (!isNowPlaying) return false;
+            if (!isNowPlaying) return false;
+            if (cardsDrewInTurn > 0) return false;
             if (path.isBuilt) return false;
+            if (path.length > spaceshipsLeft) return false;
             if (numOfCardsInColor[path.color] < path.length 
                 && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length) return false;
 

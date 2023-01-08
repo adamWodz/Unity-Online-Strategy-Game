@@ -60,7 +60,7 @@ public class StartGameButton : NetworkBehaviour
             Name = "player" + position.ToString(),
             Id = id,
             IsAI = false,
-            SpaceshipsLeft = startSpaceshipsNumber,
+            SpaceshipsLeft = Board.startSpaceshipsNumber,
         };
         Server.allPlayersInfo.Add(playerState);
     }
@@ -75,7 +75,7 @@ public class StartGameButton : NetworkBehaviour
             Name = "AIplayer" + position.ToString(),
             Id = id,
             IsAI = true,
-            SpaceshipsLeft = startSpaceshipsNumber,
+            SpaceshipsLeft = Board.startSpaceshipsNumber,
         };
         Server.allPlayersInfo.Add(playerState);
         Server.artificialPlayers.Add(new ArtificialPlayer

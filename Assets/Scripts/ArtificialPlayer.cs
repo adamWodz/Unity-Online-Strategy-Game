@@ -24,6 +24,7 @@ namespace Assets.GameplayControl
         public string Name { set; get; }
         public int curentPoints { get; set; } = 0;
         //public int satellitesSent { get; set; } = 0;
+        public int spaceshipsLeft = Board.startSpaceshipsNumber;
         public List<Mission> missions;
         public Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
@@ -62,7 +63,7 @@ namespace Assets.GameplayControl
 
             Debug.Log("Best Move");
 
-            Communication.EndAITurn();
+            Communication.EndAITurn(this);
         }
 
         private void UpdateBestOptions()
