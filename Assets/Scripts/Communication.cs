@@ -61,6 +61,8 @@ public static class Communication
         }
         
         PlayerGameData.BuildPath(path);
+        Debug.Log("CurrentPoints: " + PlayerGameData.curentPoints);
+
         buildPath.StartCoroutine(buildPath.BuildPathAnimation());
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
         playerPanel.UpdatePlayerPointsServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
@@ -126,6 +128,8 @@ public static class Communication
     public static void EndAITurn()
     {
         _PlayerPanel.UpdatePlayersOrderServerRpc();
+        _playerPanel.StartNextPlayerTurnServerRpc();
+        Debug.Log("EndAiTurn");
     }
 
     public static void StartTurn(int playerId)

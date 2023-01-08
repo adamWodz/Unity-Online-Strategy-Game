@@ -53,7 +53,7 @@ namespace Assets.GameplayControl
 
         public static bool BuildPath(Path path)
         {
-            if (!CanBuildPath(path)) return false;
+            //if (!CanBuildPath(path)) return false;
             
             curentPoints += Board.pointsPerLength[path.length];
             if(path.length <= numOfCardsInColor[path.color])

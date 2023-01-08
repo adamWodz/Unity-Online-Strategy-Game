@@ -60,6 +60,8 @@ namespace Assets.GameplayControl
             - przy czym połączona miasta sąsiadują ze sobą
              */
 
+            Debug.Log("Best Move");
+
             Communication.EndAITurn();
         }
 

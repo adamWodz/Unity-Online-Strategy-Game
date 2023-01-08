@@ -13,6 +13,7 @@ public class StartGameButton : NetworkBehaviour
 {
     public List<MapData> availableMapsData;
     int allPlayersLimit = 5;
+    int startSpaceshipsNumber = 10;
 
     public void StartGame()
     {
@@ -27,17 +28,15 @@ public class StartGameButton : NetworkBehaviour
         int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
         int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
         InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
-        int position = 1;
-        //NetworkManager.Singleton.pla
+        int position = 0;
         foreach (var player in NetworkManager.Singleton.ConnectedClientsList)
         {
-            AddToAllPlayersInfoClientRpc(position, (int)player.ClientId);
+            AddRealPlayerClientRpc(position, (int)player.ClientId);
             position++;
         }
-        foreach(var player in Server.artificialPlayers)
+        for(int i = 0; i < aiPlayersNum; i++)
         {
-            AddToAiPlayersInfoClientRpc(position, position);
-            AddToAllPlayersInfoClientRpc(position, position);
+            AddAiPlayerClientRpc(position, position + 100);
             position++;
         }
 
@@ -52,35 +51,37 @@ public class StartGameButton : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void AddToAllPlayersInfoClientRpc(int position, int id)
+    public void AddRealPlayerClientRpc(int position, int id)
     {
         PlayerPanel.PlayerInfo playerState = new PlayerPanel.PlayerInfo
         {
             Position = position,
             Points = 0,
             Name = "player" + position.ToString(),
-            Id = position,
+            Id = id,
             IsAI = false,
+            SpaceshipsLeft = startSpaceshipsNumber,
         };
         Server.allPlayersInfo.Add(playerState);
     }
 
     [ClientRpc]
-    public void AddToAiPlayersInfoClientRpc(int position, int id)
+    public void AddAiPlayerClientRpc(int position, int id)
     {
         PlayerPanel.PlayerInfo playerState = new PlayerPanel.PlayerInfo
         {
             Position = position,
             Points = 0,
             Name = "AIplayer" + position.ToString(),
-            Id = position,
-            IsAI = false,
+            Id = id,
+            IsAI = true,
+            SpaceshipsLeft = startSpaceshipsNumber,
         };
         Server.allPlayersInfo.Add(playerState);
         Server.artificialPlayers.Add(new ArtificialPlayer
         {
             Name = "AIplayer" + position.ToString(),
-            Id = position,
+            Id = id,
         });
     }
 
