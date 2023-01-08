@@ -86,7 +86,7 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    void SpawnCardsClientRpc(Vector3 position, int color, string name,int index)
+    public void SpawnCardsClientRpc(Vector3 position, int color, string name,int index)
     {
         if (!iSendSpawnCardsServerRpc)
         {
@@ -123,7 +123,8 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     public void SetBuildPathDataClientRpc(int pathId)
     {
-        Map.mapData.paths.Where(p => p.Id == pathId).FirstOrDefault().isBuilt = true;
+        Path path = Map.mapData.paths.Where(p => p.Id == pathId).First();
+        path.isBuilt = true;
     }
 
     public void SetPopUpWindow(string message)
@@ -131,5 +132,17 @@ public class GameManager : NetworkBehaviour
         var popUp = GameObject.Find("Canvas").transform.GetChild(0);//transform.parent.GetChild(0);
         popUp.GetChild(0).GetComponent<TMP_Text>().text = message;
         popUp.gameObject.SetActive(true);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void EndGameServerRpc() // wyświetlanie ekranu końcowego
+    {
+        EndGameClientRpc();
+    }
+
+    [ClientRpc]
+    private void EndGameClientRpc()
+    {
+        Application.Quit();
     }
 }

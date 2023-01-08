@@ -126,7 +126,11 @@ public static class Communication
         Debug.Log("EndTurn");
 
         if (isLastTurn)
-            _PlayerPanel.EndGameServerRpc();
+        {
+            PlayerGameData.PrintMissions();
+            
+            _GameManager.EndGameServerRpc();
+        }
 
         if (PlayerGameData.spaceshipsLeft < Board.minSpaceshipsLeft)
             isLastTurn = true;
@@ -140,7 +144,7 @@ public static class Communication
         Debug.Log("EndAiTurn");
 
         if (isLastTurn)
-            _PlayerPanel.EndGameServerRpc();
+            _GameManager.EndGameServerRpc();
 
         if (ai.spaceshipsLeft < Board.minSpaceshipsLeft)
             isLastTurn = true;

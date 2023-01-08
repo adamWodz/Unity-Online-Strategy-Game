@@ -124,16 +124,4 @@ public class PlayerPanel : NetworkBehaviour
         player.SpaceshipsLeft = spaceshipsLeft;
         playerTilesByIds[player.PlayerTileId].transform.GetChild(2).GetComponent<TMP_Text>().text = player.SpaceshipsLeft.ToString();
     }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void EndGameServerRpc() // wyœwietlanie ekranu koñcowego
-    {
-        EndGameClientRpc();
-    }
-
-    [ClientRpc]
-    private void EndGameClientRpc()
-    {
-        Application.Quit();
-    }
 }

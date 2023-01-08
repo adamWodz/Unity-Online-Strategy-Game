@@ -103,7 +103,7 @@ namespace Assets.GameplayControl
             return true;
         }
 
-        private static void PrintConnectedPlanets()
+        public static void PrintConnectedPlanets()
         {
             Debug.Log("Connected planets: ");
             foreach (var planets in groupsOfConnectedPlanets)
@@ -114,7 +114,7 @@ namespace Assets.GameplayControl
             }
         }
 
-        private static void PrintMissions()
+        public static void PrintMissions()
         {
             Debug.Log("Missions:");
             foreach (var mission in missions)
@@ -124,7 +124,7 @@ namespace Assets.GameplayControl
         public static bool CanSendSatellite(Planet planet, Path path, Color color)
         {
             if (planet.withSatellite) return false;
-            if (path.withSatellie) return false;
+            //if (path.withSatellie) return false;
             if (satellitesSent >= Board.maxSatellitesSent) return false;
             if (numOfCardsInColor[color] < Board.cardsPerSatelliteSend[satellitesSent + 1]) return false;
             
