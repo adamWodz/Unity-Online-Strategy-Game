@@ -1,21 +1,39 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerPanel : NetworkBehaviour
+ [Serializable]
+public class PlayerInfo
 {
-    [Serializable]
-    public class PlayerInfo
-    {
-        public int Position;
-        public int Points;
-        public string Name;
-        public int Id;
-    }
+    public int Position;
+    public int Points;
+    public string Name;
+    public int Id;
 
+    public PlayerInfo()
+    {
+        Position = 1;
+        Points = 0;
+        Name = "Gracz";
+        Id = 0;
+    }
+    
+    public PlayerInfo(int position, int points, string name,int id) 
+    {
+        Position = position;
+        Points = points; 
+        Name = name;
+        Id = id;
+    }
+}
+
+public class PlayerPanel : NetworkBehaviour, IDataPersistence
+{
+   
     [SerializeField] public List<PlayerInfo> players;
     Queue<GameObject> playersTiles;
 
@@ -50,6 +68,17 @@ public class PlayerPanel : NetworkBehaviour
         }   
     }
 
+    public void LoadData(GameData data)
+    {
+        
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.actualPlayer = players.Single(player => player.Position == 1);
+        data.players = players;
+    }
+
     [ServerRpc(RequireOwnership = false)]
     public void UpdatePlayersOrderServerRpc()
     {
@@ -72,11 +101,10 @@ public class PlayerPanel : NetworkBehaviour
         int i = 0;
         foreach(var playerTile in playersTiles) 
         {
-            players[i].Position = ++i;
-            playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = i.ToString();
+            int pos = players[i].Position;
+            players[i].Position = pos - 1 < 1 ? players.Count : pos - 1;
+            playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (++i).ToString();
         }
-
-        
     }
 
     [ServerRpc]
