@@ -7,20 +7,37 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerPanel : NetworkBehaviour
+ [Serializable]
+public class PlayerInfo
 {
-    [Serializable]
-    public class PlayerInfo
+    public int Position;
+    public int Points;
+    public string Name;
+    public int Id;
+
+    public PlayerInfo()
     {
-        public int Position;
-        public int Points;
-        public string Name;
-        public int Id;
+        Position = 1;
+        Points = 0;
+        Name = "Gracz";
+        Id = 0;
+    }
+    
+    public PlayerInfo(int position, int points, string name,int id) 
+    {
+        Position = position;
+        Points = points; 
+        Name = name;
+        Id = id;
         public bool IsAI;
         public int SpaceshipsLeft;
         public int PlayerTileId;
     }
+}
 
+public class PlayerPanel : NetworkBehaviour, IDataPersistence
+{
+   
     [SerializeField] public List<PlayerInfo> players;
     Queue<GameObject> playersTiles;
     Dictionary<int, GameObject> playerTilesByIds = new Dictionary<int, GameObject>();
@@ -64,6 +81,26 @@ public class PlayerPanel : NetworkBehaviour
         }   
     }
 
+    public void LoadData(GameData data)
+    {
+        players = data.players;
+        for(int i=0;i<players.Count;i++)
+        {
+            var playerTile = playersTiles.Dequeue();
+            playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = players[i].Position.ToString();
+            playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = players[i].Name;
+            playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].Points.ToString();
+            playerTile.transform.SetSiblingIndex(players[i].Position);
+            playersTiles.Enqueue(playerTile);
+        }
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.actualPlayer = players.Single(player => player.Position == 1);
+        data.players = players;
+    }
+
     [ServerRpc(RequireOwnership = false)]
     public void UpdatePlayersOrderServerRpc()
     {
@@ -87,7 +124,7 @@ public class PlayerPanel : NetworkBehaviour
         foreach(var playerTile in playersTiles) 
         {
             players[i].Position = (players[i].Position + 1) % players.Count;
-            Debug.Log(players[i].Name + ". Position: " + players[i].Position);
+            //Debug.Log(players[i].Name + ". Position: " + players[i].Position);
             i++;
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = i.ToString();
         }

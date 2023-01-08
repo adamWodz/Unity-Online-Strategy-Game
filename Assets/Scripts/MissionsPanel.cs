@@ -120,4 +120,14 @@ public class MissionsPanel : Panel
             gameManager.SetPopUpWindow("Musisz wybra� co najmniej jedn� kart� misji!");
         }
     }
+    public override void LoadData(GameData data)
+    {
+        missionsToChoose = data.missionsToChoose;
+    }
+
+    public override void SaveData(ref GameData data)
+    {
+        data.missionsToChoose = missionsToChoose;
+    }
+
 }
