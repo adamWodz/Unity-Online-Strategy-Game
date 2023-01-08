@@ -1,10 +1,12 @@
+using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CardDeck : MonoBehaviour
+public class CardDeck : NetworkBehaviour, IDataPersistence
 {
     public int[] cardsQuantityPerColor; // liczba kart dla każdego koloru
     public Sprite[] sprites; // kolory kart
@@ -41,9 +43,25 @@ public class CardDeck : MonoBehaviour
         Destroy(cardTempalte);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void LoadData(GameData data)
     {
+        for(int i=0;i<gameManager.cardStackCounterList.Count;i++)
+        {
+            gameManager.cardStackCounterList[i].text = data.cardsForEachPalyer[PlayerGameData.Id][i].ToString();
+        }
+    }
 
+    public void SaveData(ref GameData data)
+    {
+        int[] numbersOfEachOfCardsColors = new int[gameManager.cardStackCounterList.Count];
+        for(int i = 0; i < gameManager.cardStackCounterList.Count; i++)
+        {
+            numbersOfEachOfCardsColors[i] = int.Parse(gameManager.cardStackCounterList[i].text);
+            Debug.Log(numbersOfEachOfCardsColors[i]);
+        }
+        if (!data.cardsForEachPalyer.ContainsKey(PlayerGameData.Id))
+            data.cardsForEachPalyer.Add(PlayerGameData.Id, numbersOfEachOfCardsColors);
+        else
+            data.cardsForEachPalyer[PlayerGameData.Id] = numbersOfEachOfCardsColors;
     }
 }

@@ -28,14 +28,12 @@ public class DataPersistenceManager : MonoBehaviour
 
     private void Start()
     {
-        
         dataHandler = new(Application.persistentDataPath, fileName);
         
-        // tworzymy nowe dane
-        gameData = new();
-
         // znajdujemy listê skryptów, które posiadaj¹ dane do zapisu/wczytania
         dataPersistenceObjects = FindAllDataPersistenceObjects();
+        
+        LoadGame();
     }
 
     public void NewGame()

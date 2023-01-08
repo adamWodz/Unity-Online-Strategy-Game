@@ -203,4 +203,17 @@ public class PathsPanel : Panel
             missionButton.GetComponent<Button>().onClick.AddListener(() => HighlightPlanet(newMissions[copy]));
         }
     }
+
+    public override void LoadData(GameData data)
+    {
+        MissionsChoosed = data.missionsForEachPalyer[PlayerGameData.Id];
+    }
+
+    public override void SaveData(ref GameData data)
+    {
+        if (!data.missionsForEachPalyer.ContainsKey(PlayerGameData.Id))
+            data.missionsForEachPalyer.Add(PlayerGameData.Id, missionsChoosed);
+        else
+            data.missionsForEachPalyer[PlayerGameData.Id] = missionsChoosed;
+    }
 }

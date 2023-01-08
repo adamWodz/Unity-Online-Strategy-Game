@@ -70,7 +70,16 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
 
     public void LoadData(GameData data)
     {
-        
+        players = data.players;
+        for(int i=0;i<players.Count;i++)
+        {
+            var playerTile = playersTiles.Dequeue();
+            playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = players[i].Position.ToString();
+            playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = players[i].Name;
+            playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].Points.ToString();
+            playerTile.transform.SetSiblingIndex(players[i].Position);
+            playersTiles.Enqueue(playerTile);
+        }
     }
 
     public void SaveData(ref GameData data)

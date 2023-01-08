@@ -119,5 +119,14 @@ public class MissionsPanel : Panel
         }
     }
 
-    
+    public override void LoadData(GameData data)
+    {
+        missionsToChoose = data.missionsToChoose;
+    }
+
+    public override void SaveData(ref GameData data)
+    {
+        data.missionsToChoose = missionsToChoose;
+    }
+
 }
