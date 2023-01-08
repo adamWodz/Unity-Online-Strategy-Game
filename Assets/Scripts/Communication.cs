@@ -2,18 +2,35 @@ using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public static class Communication
 {
-    public static int mapDataNumber;
-
-    [ClientRpc]
-    public static void StartTurnClientRpc(int id)
+    private static GameManager _gameManager;
+    private static GameManager _GameManager
     {
-        if (id == PlayerGameData.Id)
-            PlayerGameData.StartTurn();
+        get
+        {
+            if(_gameManager == null )
+                _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+            return _gameManager;
+        }
     }
+
+    private static PlayerPanel _playerPanel;
+    private static PlayerPanel _PlayerPanel
+    {
+        get
+        {
+            if (_playerPanel == null)
+                _playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
+            return _playerPanel;
+        }
+    }
+    public static int mapDataNumber;
+    private static bool isLastTurn = false;
+
 
     private static (BuildPath buildPath, Path path) chosenPath;
 
@@ -32,29 +49,44 @@ public static class Communication
                 if (PlayerGameData.CanBuildPath(chosenPath.path))
                     BuildPath(chosenPath.buildPath, chosenPath.path);
                 else
-                    PathCannotBuildInfo(chosenPath.buildPath);
+                    _GameManager.SetPopUpWindow("Nie moÅ¼nesz wybudowaÄ‡ tej Å›cieÅ¼ki!");
             }
         }
     }
 
     public static void BuildPath(BuildPath buildPath, Path path)
     {
+        if (!PlayerGameData.isNowPlaying)
+        {
+            SetNotThisTurnPopUpWindow();
+            return;
+        }
+        
         PlayerGameData.BuildPath(path);
+        Debug.Log("CurrentPoints: " + PlayerGameData.curentPoints);
+
         buildPath.StartCoroutine(buildPath.BuildPathAnimation());
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
-        playerPanel.UpdatePlayerPointsServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints);
+        playerPanel.UpdatePointsAndSpeceshipsNumServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.spaceshipsLeft);
+        _GameManager.SetBuildPathDataServerRpc(path.Id);
         EndTurn();
         chosenPath = (null, null);
         
     }
 
-    private static void PathCannotBuildInfo(BuildPath buildPath)
+    public static void SetNotThisTurnPopUpWindow()
     {
-        buildPath.gameManager.SetPopUpWindow("Nie mo¿na wybudowaæ œcie¿ki!");
+        _GameManager.SetPopUpWindow("Poczekaj na swojÄ… turÄ™!");
     }
 
     public static void DrawCard(DrawCardsPanel drawCardsPanel, int index)
     {
+        if (!PlayerGameData.isNowPlaying)
+        {
+            SetNotThisTurnPopUpWindow();
+            return;
+        }
+        
         Color color = drawCardsPanel.MoveCard(index);
         PlayerGameData.DrawCard(color);
         if (PlayerGameData.cardsDrewInTurn == 2)
@@ -63,6 +95,12 @@ public static class Communication
 
     public static void DrawMissions(List<Mission> missions)
     {
+        if (!PlayerGameData.isNowPlaying)
+        {
+            SetNotThisTurnPopUpWindow();
+            return;
+        }
+
         PlayerGameData.DrawMissions(missions);
 
         Debug.Log("DrawMissions");
@@ -73,12 +111,48 @@ public static class Communication
     public static void EndTurn()
     {
         PlayerGameData.EndTurn();
-        var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
-        playerPanel.UpdatePlayersOrderClientRpc();
+        Debug.Log("Before order update: ");
+        foreach (var player in Server.allPlayersInfo)
+        {
+            Debug.Log("name: " + player.Name + " posiotion: " + player.Position);
+        }
+        _PlayerPanel.UpdatePlayersOrderServerRpc();
+        Debug.Log("After order update: ");
+        foreach (var player in Server.allPlayersInfo)
+        {
+            Debug.Log("name: " + player.Name + " posiotion: " + player.Position);
+        }
+        _playerPanel.StartNextPlayerTurnServerRpc();
+        Debug.Log("EndTurn");
+
+        if (isLastTurn)
+        {
+            PlayerGameData.PrintMissions();
+            
+            _GameManager.EndGameServerRpc();
+        }
+
+        if (PlayerGameData.spaceshipsLeft < Board.minSpaceshipsLeft)
+            isLastTurn = true;
+
     }
 
-    public static void StartTurn()
+    public static void EndAITurn(ArtificialPlayer ai)
     {
-        PlayerGameData.StartTurn();
+        _PlayerPanel.UpdatePlayersOrderServerRpc();
+        _playerPanel.StartNextPlayerTurnServerRpc();
+        Debug.Log("EndAiTurn");
+
+        if (isLastTurn)
+            _GameManager.EndGameServerRpc();
+
+        if (ai.spaceshipsLeft < Board.minSpaceshipsLeft)
+            isLastTurn = true;
+    }
+
+    public static void StartTurn(int playerId)
+    {
+        if(playerId == PlayerGameData.Id)
+            PlayerGameData.StartTurn();
     }
 }

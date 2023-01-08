@@ -1,3 +1,4 @@
+using Assets.GameplayControl;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,6 +29,9 @@ public class PlayerInfo
         Points = points; 
         Name = name;
         Id = id;
+        public bool IsAI;
+        public int SpaceshipsLeft;
+        public int PlayerTileId;
     }
 }
 
@@ -36,24 +40,33 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
    
     [SerializeField] public List<PlayerInfo> players;
     Queue<GameObject> playersTiles;
+    Dictionary<int, GameObject> playerTilesByIds = new Dictionary<int, GameObject>();
 
     // Start is called before the first frame update
     void Start()
     {
+        players = Server.allPlayersInfo;
+        
         playersTiles = new();
 
         GameObject playerTextTemplate = transform.GetChild(0).gameObject;
         GameObject playerTile;
 
-        int n = players.Count;
+        int playersCount = players.Count;
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < playersCount; i++)
         {
+            var player = players.Where(p => p.Position == i).First();
+
             playerTile = Instantiate(playerTextTemplate, transform);
-            playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = players[i].Position.ToString();
+            playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (players[i].Position + 1).ToString();
             playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = players[i].Name;
-            playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].Points.ToString();
+            playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].SpaceshipsLeft.ToString();
+            playerTile.transform.GetChild(3).GetComponent<TMP_Text>().text = players[i].SpaceshipsLeft.ToString();
             playersTiles.Enqueue(playerTile);
+
+            player.PlayerTileId = playerTile.GetInstanceID();
+            playerTilesByIds.Add(player.PlayerTileId, playerTile);
         }
         Destroy(playerTextTemplate);
     }
@@ -110,28 +123,42 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         int i = 0;
         foreach(var playerTile in playersTiles) 
         {
-            int pos = players[i].Position;
-            players[i].Position = pos - 1 < 1 ? players.Count : pos - 1;
-            playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (++i).ToString();
+            players[i].Position = (players[i].Position + 1) % players.Count;
+            //Debug.Log(players[i].Name + ". Position: " + players[i].Position);
+            i++;
+            playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = i.ToString();
         }
     }
 
-    [ServerRpc]
-    public void UpdatePlayerPointsServerRpc(int playerId, int playerPoints)
+    [ServerRpc(RequireOwnership = false)]
+    public void StartNextPlayerTurnServerRpc()
     {
-        UpdatePlayerPointsClientRpc(playerId, playerPoints);
+        PlayerInfo nextPlayer = players.Where(p => p.Position == 0).First();
+        if (nextPlayer.IsAI)
+            Server.artificialPlayers.Where(ai => ai.Id == nextPlayer.Id).First().BestMove();
+        else
+            StartNextPlayerTurnClientRpc(nextPlayer.Id);
     }
 
     [ClientRpc]
-    public void UpdatePlayerPointsClientRpc(int playerId, int playerPoints)
+    public void StartNextPlayerTurnClientRpc(int playerId)
     {
-        foreach(var player in players)
-        {
-            if(player.Id == playerId)
-            {
-                player.Points = playerPoints;
-                break;
-            }
-        }
+        Debug.Log("StartNextPlayerTurnClientRpc; playerId: " + playerId + " thisPlayerId: " + PlayerGameData.Id);
+        Communication.StartTurn(playerId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdatePointsAndSpeceshipsNumServerRpc(int playerId, int playerPoints, int spaceshipsLeft)
+    {
+        UpdatePointsAndSpaceshipsNumClientRpc(playerId, playerPoints, spaceshipsLeft);
+    }
+
+    [ClientRpc]
+    public void UpdatePointsAndSpaceshipsNumClientRpc(int playerId, int playerPoints, int spaceshipsLeft)
+    {
+        var player = players.Where(p => p.Id == playerId).First();
+        player.Points = playerPoints;
+        player.SpaceshipsLeft = spaceshipsLeft;
+        playerTilesByIds[player.PlayerTileId].transform.GetChild(2).GetComponent<TMP_Text>().text = player.SpaceshipsLeft.ToString();
     }
 }

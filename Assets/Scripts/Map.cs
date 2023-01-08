@@ -106,6 +106,4 @@ public class Map : NetworkBehaviour, IDataPersistence
         }
         
     }
-
-
 }
