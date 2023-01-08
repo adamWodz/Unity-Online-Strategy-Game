@@ -14,24 +14,24 @@ public class PlayerInfo
     public int Points;
     public string Name;
     public int Id;
+    public bool IsAI;
+    public int SpaceshipsLeft;
+    public int PlayerTileId;
 
     public PlayerInfo()
     {
-        Position = 1;
+        Position = 0;
         Points = 0;
         Name = "Gracz";
         Id = 0;
     }
-    
-    public PlayerInfo(int position, int points, string name,int id) 
+
+    public PlayerInfo(int position, int points, string name, int id)
     {
         Position = position;
-        Points = points; 
+        Points = points;
         Name = name;
-        Id = id;
-        public bool IsAI;
-        public int SpaceshipsLeft;
-        public int PlayerTileId;
+        Id = id;  
     }
 }
 
@@ -84,7 +84,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     public void LoadData(GameData data)
     {
         players = data.players;
-        for(int i=0;i<players.Count;i++)
+        for(int i=0; i < players.Count; i++)
         {
             var playerTile = playersTiles.Dequeue();
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = players[i].Position.ToString();
@@ -97,7 +97,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
 
     public void SaveData(ref GameData data)
     {
-        data.actualPlayer = players.Single(player => player.Position == 1);
+        data.actualPlayer = players.Single(player => player.Position == 0);
         data.players = players;
     }
 

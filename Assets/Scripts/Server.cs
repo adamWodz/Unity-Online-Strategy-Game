@@ -6,7 +6,7 @@ using UnityEngine;
 
 public static class Server
 {
-    public static List<PlayerPanel.PlayerInfo> allPlayersInfo { get; set; }
+    public static List<PlayerInfo> allPlayersInfo { get; set; }
     public static List<ArtificialPlayer> artificialPlayers { get; set; }
     public static int curPlayerId = 1;
 }
