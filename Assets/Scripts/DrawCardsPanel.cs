@@ -96,12 +96,12 @@ public class DrawCardsPanel : NetworkBehaviour
         return selectedColor;
     }
     
-    public void AiDrawCardAndEndTurn(int index, ArtificialPlayer ai)
+    public void AiDrawCard(int index, ArtificialPlayer ai)
     {
-        StartCoroutine(SpawnCardOfIndexAndEndTurn(index, ai));
+        StartCoroutine(SpawnCardOfIndex(index, ai));
     }
 
-    public IEnumerator SpawnCardOfIndexAndEndTurn(int index, ArtificialPlayer ai)
+    public IEnumerator SpawnCardOfIndex(int index, ArtificialPlayer ai)
     {
         gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]], index);
         ChooseRandomColor(index);

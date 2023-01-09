@@ -137,6 +137,17 @@ public class GameManager : NetworkBehaviour
         popUp.gameObject.SetActive(true);
     }
 
+    public void EndAiTurn(ArtificialPlayer ai)
+    {
+        StartCoroutine(EndAiTurnCoroutine(ai));
+    }
+
+    IEnumerator EndAiTurnCoroutine(ArtificialPlayer ai)
+    {
+        yield return new WaitForSeconds(3);
+        Communication.EndAITurn(ai);
+    }
+
     [ServerRpc(RequireOwnership = false)]
     public void EndGameServerRpc() // wyświetlanie ekranu końcowego
     {

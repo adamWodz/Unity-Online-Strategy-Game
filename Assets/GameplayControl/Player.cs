@@ -72,30 +72,7 @@ namespace Assets.GameplayControl
             path.isBuilt = true;
 
             // dodanie planet do grup połączonych planet
-            ConnectedPlanets groupPlanetFrom = ConnectedPlanets.GroupContainingPlanet(groupsOfConnectedPlanets, path.planetFrom);
-            ConnectedPlanets groupPlanetTo = ConnectedPlanets.GroupContainingPlanet(groupsOfConnectedPlanets, path.planetTo);
-
-            // jeśli obu planet nie ma w żadnej grupie, to tworzymy nową grupę
-            if (groupPlanetFrom == null && groupPlanetTo == null)
-            {
-                groupsOfConnectedPlanets.Add(new ConnectedPlanets(new List<Planet> { path.planetFrom, path.planetTo }));
-            }
-            // dodajemy nowo połączoną planetę do grupy
-            else if (groupPlanetFrom == null)
-            {
-                groupPlanetTo.planets.Add(path.planetFrom);
-            }
-            else if (groupPlanetTo == null)
-            {
-                groupPlanetFrom.planets.Add(path.planetTo);
-            }
-            // jesli obie planety należą do innej grupy, to łączymy te grupy
-            else if (groupPlanetFrom != groupPlanetTo)
-            {
-                groupsOfConnectedPlanets.Remove(groupPlanetTo);
-                groupsOfConnectedPlanets.Remove(groupPlanetFrom);
-                groupsOfConnectedPlanets.Add(ConnectedPlanets.MergeGroups(groupPlanetTo, groupPlanetFrom));
-            }
+            ConnectedPlanets.AddPlanetsFromPathToPlanetsGrups(path, groupsOfConnectedPlanets);
 
             //PrintConnectedPlanets();
             //PrintMissions();

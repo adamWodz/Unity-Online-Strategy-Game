@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 namespace Assets.GameplayControl
@@ -61,9 +62,11 @@ namespace Assets.GameplayControl
             { Color.special, 1 },
         };
         public List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
-        public int[,] distanceBetweenPlanets = new int[Map.mapData.planets.Count,Map.mapData.planets.Count];
+        public int[,] dist = new int[Map.mapData.planets.Count,Map.mapData.planets.Count];
         public int[,] nextPlanet = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         public Dictionary<Planet, int> planetIds = new Dictionary<Planet, int>();
+        
+        List<Path> pathsToBuild = new List<Path>();
 
         // potrzebne struktutry:
         // - kolejka priorytetowa - brakujące kolory
@@ -79,7 +82,7 @@ namespace Assets.GameplayControl
                 ii++;
             }
 
-            UpdateDistances();
+            //UpdateDistancesAndNextMoves();
         }
 
         public void BestMove()
@@ -101,27 +104,61 @@ namespace Assets.GameplayControl
             - przy czym połączona miasta sąsiadują ze sobą
              */
 
-            DrawMissions();
+            //DrawMissions();
 
-            //int cardIndex = 0;
-            //drawCardsPanel.AiDrawCardAndEndTurn(cardIndex, this);
+            
 
             //BuildPath(Map.mapData.paths[0]);
 
+            SetQuickestPathForEveryPairOfPlantes();
+            SetPathsToBuild();
+
+            Path path = BestPathToBuild();
+            if (path != null)
+                BuildPath(path);
+            else if (missions.Count > 0)
+                DrawCards();
+            else
+                DrawMissions();
+
+
             Debug.Log("Best Move");
 
-            Communication.EndAITurn(this);
+            _GameManager.EndAiTurn(this);
+
         }
 
-        private void UpdateDistances()
+        // sprawdzamy czy możemy wybudować jakąkiekolwiek połączenie
+        Path BestPathToBuild()
+        {
+            pathsToBuild = pathsToBuild.OrderByDescending(p1 => p1.length).ToList();
+
+            foreach (var path in pathsToBuild)
+                if (CanBeBuild(path))
+                    return path;
+
+            return null;
+        }
+
+        bool CanBeBuild(Path path)
+        {
+            if (path.length > spaceshipsLeft) return false;
+            if (numOfCardsInColor[path.color] < path.length
+                && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length) return false;
+
+            return true;
+        }
+
+        /*
+        private void UpdateDistancesAndNextMoves()
         {
             for (int i = 0; i < Map.mapData.planets.Count; i++)
                 for (int j = 0; j < Map.mapData.planets.Count; j++)
-                    distanceBetweenPlanets[i, j] = int.MaxValue;
+                    dist[i, j] = int.MaxValue;
 
             for (int i = 0; i < Map.mapData.planets.Count; i++)
             {
-                distanceBetweenPlanets[i, i] = 0;
+                dist[i, i] = 0;
                 nextPlanet[i, i] = 0;
             }
 
@@ -131,15 +168,15 @@ namespace Assets.GameplayControl
                 {
                     if(path.builtById == Id)
                     {
-                        distanceBetweenPlanets[planetIds[path.planetFrom], planetIds[path.planetTo]] = 0;
-                        distanceBetweenPlanets[planetIds[path.planetTo], planetIds[path.planetFrom]] = 0;
+                        dist[planetIds[path.planetFrom], planetIds[path.planetTo]] = 0;
+                        dist[planetIds[path.planetTo], planetIds[path.planetFrom]] = 0;
                     }
-                    else // path.buildById != Id
+                    else //if path.buildById != Id
                         continue;
 
                 }
-                distanceBetweenPlanets[planetIds[path.planetFrom], planetIds[path.planetTo]] = path.length;
-                distanceBetweenPlanets[planetIds[path.planetTo], planetIds[path.planetFrom]] = path.length;
+                dist[planetIds[path.planetFrom], planetIds[path.planetTo]] = path.length;
+                dist[planetIds[path.planetTo], planetIds[path.planetFrom]] = path.length;
                 nextPlanet[planetIds[path.planetTo], planetIds[path.planetFrom]] = planetIds[path.planetFrom];
                 nextPlanet[planetIds[path.planetFrom], planetIds[path.planetTo]] = planetIds[path.planetTo];
             }
@@ -147,17 +184,143 @@ namespace Assets.GameplayControl
             for (int k = 0; k < Map.mapData.planets.Count; k++)
                 for (int i = 0; i < Map.mapData.planets.Count; i++)
                     for (int j = 0; j < Map.mapData.planets.Count; j++)
-                        if (distanceBetweenPlanets[i, j] > distanceBetweenPlanets[i, k] + distanceBetweenPlanets[k, j])
+                        if (dist[i, j] > dist[i, k] + dist[k, j])
                         {
-                            distanceBetweenPlanets[i, j] = distanceBetweenPlanets[i, k] + distanceBetweenPlanets[k, j];
-                            nextPlanet[i, j] = nextPlanet[k, j];
+                            dist[i, j] = dist[i, k] + dist[k, j];
+                            nextPlanet[i, j] = nextPlanet[i, k];
                         }
+        }
+        */
+
+        /*
+        void SetPathsToBuild()
+        {
+            pathsToBuild = new List<Path>();
+
+            foreach (Mission mission in missions)
+            {
+                if (dist[planetIds[mission.start], planetIds[mission.end]] == int.MaxValue)
+                    continue;
+                int i = planetIds[mission.start];
+                int end = planetIds[mission.end];
+                while (i != end)
+                {
+                    int next = nextPlanet[i, end];
+                    Planet planet1 = planetIds.First(p => p.Value == i).Key;
+                    Planet planet2 = planetIds.First(p => p.Value == next).Key;
+                    Path path = Map.mapData.paths.Where(p => (p.planetTo == planet1 && p.planetFrom == planet2) ||
+                        (p.planetTo == planet2 && p.planetFrom == planet1)).First();
+                    pathsToBuild.Add(path);
+                    i = next;
+                }
+            }
+        }
+        */
+
+        Dictionary<(Planet, Planet), List<Planet>> pathBetweenPlanets = new Dictionary<(Planet, Planet), List<Planet>>();
+        int[,] kay = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
+
+        private void SetQuickestPathForEveryPairOfPlantes()
+        {
+            for (int i = 0; i < Map.mapData.planets.Count; i++)
+                for (int j = 0; j < Map.mapData.planets.Count; j++)
+                    dist[i, j] = int.MaxValue;
+
+            for (int i = 0; i < Map.mapData.planets.Count; i++)
+            {
+                dist[i, i] = 0;
+            }
+
+            foreach (Path path in Map.mapData.paths)
+            {
+                if (path.isBuilt) continue;
+                dist[planetIds[path.planetFrom], planetIds[path.planetTo]] = path.length;
+                dist[planetIds[path.planetTo], planetIds[path.planetFrom]] = path.length;
+            }
+
+            for (int k = 0; k < Map.mapData.planets.Count; k++)
+                for (int i = 0; i < Map.mapData.planets.Count; i++)
+                    for (int j = 0; j < Map.mapData.planets.Count; j++)
+                        if (dist[i, j] > dist[i, k] + dist[k, j] && dist[i, k] < int.MaxValue && dist[k, j] < int.MaxValue)
+                        {
+                            dist[i, j] = dist[i, k] + dist[k, j];
+                            kay[i, j] = k;
+                        }
+
+            foreach(Planet planet1 in Map.mapData.planets)
+                foreach(Planet planet2 in Map.mapData.planets)
+                {
+                    List<Planet> path = pathBetweenPlanets[(planet1, planet2)] = new List<Planet>();
+                    path.Add(planet1);
+                    GetPath(planetIds[planet1], planetIds[planet2], path);
+                }
+        }
+
+        public void GetPath(int i, int j, List<Planet> path)
+        {
+            if (i == j)
+                return;
+            if (kay[i, j] == 0)
+                path.Add(planetIds.First(p => p.Value == j).Key);
+            else
+            {
+                GetPath(i, kay[i, j], path);
+                GetPath(kay[i, j], j, path);
+            }
+        }
+
+        void SetPathsToBuild()
+        {
+            pathsToBuild = new List<Path>();
+
+            foreach (Mission mission in missions)
+                pathsToBuild.AddRange(GetQuickestPathForMission(mission));
+        }
+
+        List<Path> GetQuickestPathForMission(Mission mission)
+        {
+            List<Planet> quicketsPath;
+
+            ConnectedPlanets startPlanetGroup = ConnectedPlanets.GroupContainingPlanet(groupsOfConnectedPlanets, mission.start);
+            ConnectedPlanets endPlanetGroup = ConnectedPlanets.GroupContainingPlanet(groupsOfConnectedPlanets, mission.end);
+
+            int shortestDist = dist[planetIds[mission.start], planetIds[mission.end]];
+            if(shortestDist == int.MaxValue)
+            {
+                SetmissionAsIncompletable(mission);
+                return null;
+            }
+            quicketsPath = pathBetweenPlanets[(mission.start, mission.end)];
+
+            foreach(Planet planet1 in startPlanetGroup.planets)
+                foreach(Planet planet2 in endPlanetGroup.planets)
+                {
+                    if (dist[planetIds[planet1], planetIds[planet2]] < shortestDist)
+                    {
+                        shortestDist = dist[planetIds[planet1], planetIds[planet2]];
+                        quicketsPath = pathBetweenPlanets[(planet1, planet2)];
+                    }
+                }
+
+            return ConvertPath(quicketsPath);
+        }
+
+        List<Path> ConvertPath(List<Planet> path)
+        {
+            // to do
+            
+            return null;
+        }
+
+        void SetmissionAsIncompletable(Mission mission)
+        {
+            missions.Remove(mission);
         }
 
         private void BuildPath(Path path)
         {
-            distanceBetweenPlanets[planetIds[path.planetFrom], planetIds[path.planetTo]] = 0;
-            distanceBetweenPlanets[planetIds[path.planetTo], planetIds[path.planetFrom]] = 0;
+            //dist[planetIds[path.planetFrom], planetIds[path.planetTo]] = 0;
+            //dist[planetIds[path.planetTo], planetIds[path.planetFrom]] = 0;
 
             curentPoints += Board.pointsPerLength[path.length];
             if (path.length <= numOfCardsInColor[path.color])
@@ -172,6 +335,8 @@ namespace Assets.GameplayControl
             }
             spaceshipsLeft -= path.length;
 
+            ConnectedPlanets.AddPlanetsFromPathToPlanetsGrups(path, groupsOfConnectedPlanets);
+
             BuildPath buildPath = Server.buildPaths.Where(b => b.path == path).First();
             buildPath.StartCoroutine(buildPath.BuildPathAnimation(Id));
 
@@ -184,6 +349,7 @@ namespace Assets.GameplayControl
         {
             MissionsPanel missionsPanel = GameObject.Find("MissionsPanel").GetComponent<MissionsPanel>();
             List<Mission> bestMissions = PickBestMissions(missionsPanel.GetRandomMissions());
+            missions.AddRange(bestMissions);
 
             foreach (Mission m in bestMissions)
             {
@@ -194,6 +360,8 @@ namespace Assets.GameplayControl
         // wybieranie najlepszych misji
         List<Mission> PickBestMissions(List<Mission> missions)
         {
+            // to do
+            
             /*
              * dobranie pierwszych misji
              - szukamy par misji, których trasy się pokrywają
@@ -202,6 +370,7 @@ namespace Assets.GameplayControl
             return missions;
         }
 
+        /*
         public List<Path> QuickestWayWithLongestPaths(Mission mission)
         {
             // szukamy najkrótszej ścieżki pod względem liczby połączeń
@@ -209,42 +378,52 @@ namespace Assets.GameplayControl
             
             return null;
         }
+        */
 
         private void DrawCards()
         {
-            if(BestCardColorsToDraw() == null)
+            var colors = BestCardColorsToDraw();
+            
+            if (!DrawCard(colors))
                 DrawRandomCard();
-            else
-                DrawCard();
 
-            if (BestCardColorsToDraw() == null)
+            if (!DrawCard(colors))
                 DrawRandomCard();
-            else
-                DrawCard();
         }
 
-        private void DrawCard()
+        private bool DrawCard(List<Color> colors)
         {
-            List<Color> bestCardsToDraw = BestCardColorsToDraw();
             Color[] availableColors = drawCardsPanel.GetCurrentCardsToChoose();
 
             for(int i = 0; i < availableColors.Length; i++)
             {
-                if (bestCardsToDraw.Contains(availableColors[i]))
+                if (colors.Contains(availableColors[i]))
                 {
                     numOfCardsInColor[availableColors[i]]++;
+                    drawCardsPanel.AiDrawCard(i, this);
+                    return true;
                 }
             }
+
+            return false;
         }
 
         private void DrawRandomCard()
         {
-
+            Color[] availableColors = drawCardsPanel.GetCurrentCardsToChoose();
+            numOfCardsInColor[availableColors.Last()]++;
+            drawCardsPanel.AiDrawCard(5, this);
         }
 
         private List<Color> BestCardColorsToDraw()
         {
-            return null;
+            List<Color> colors = new List<Color>();
+
+            foreach (var path in pathsToBuild)
+                if (!colors.Contains(path.color))
+                    colors.Add(path.color);
+
+            return colors;
         }
     }
 }
