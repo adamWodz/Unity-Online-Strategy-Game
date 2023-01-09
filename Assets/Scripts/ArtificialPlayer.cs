@@ -68,11 +68,6 @@ namespace Assets.GameplayControl
         
         List<Path> pathsToBuild = new List<Path>();
 
-        // potrzebne struktutry:
-        // - kolejka priorytetowa - brakujące kolory
-        // - do rozszerzonego alg Dijkstry
-        // - słownik do odległości z każdego wierzchołka do każdego i kolejnego ruchu
-
         public ArtificialPlayer()
         {
             int ii = 0;
@@ -81,38 +76,13 @@ namespace Assets.GameplayControl
                 planetIds.Add(planet, ii);
                 ii++;
             }
-
-            //UpdateDistancesAndNextMoves();
         }
 
         public void BestMove()
         {
-            /*
-             * na początku:
-            - znalezienie najkrótszych tras do zrealizowania misji
-            - wybranie tych z najdłuższymi połączeniami
-            - jeśli nie starczy kart do wybudowania zadnej z nich - dobranie kart
-            
-             * co turę
-            - jeśli któryś z graczy zabudował aktualna najlepsza trasę - wybranie nowej
-            - jesli nowa najlepsza jest dłuższa od x, to odpuszczamy ją
-            - znalezienie połączenia, które możemy wybudować
-            - kolory kart, których brakuje, posortowane najpierw po tym ile brakuje, potem po długości ich połączeń
-            - jeśli nie możemy nic wybudować - dobieramy karty, priorytetem jest posortowanie
-            - jeśli do spełnienia wszyskich misji brakuje 3 połączeń, dobranie nowej misji
-            - szukamy najkrótszej trasy sposród dostępnych
-            - przy czym połączona miasta sąsiadują ze sobą
-             */
-
-            //DrawMissions();
-
-            
-
-            //BuildPath(Map.mapData.paths[0]);
-
             SetQuickestPathForEveryPairOfPlantes();
             SetPathsToBuild();
-
+            
             Path path = BestPathToBuild();
             if (path != null)
                 BuildPath(path);
@@ -148,74 +118,6 @@ namespace Assets.GameplayControl
 
             return true;
         }
-
-        /*
-        private void UpdateDistancesAndNextMoves()
-        {
-            for (int i = 0; i < Map.mapData.planets.Count; i++)
-                for (int j = 0; j < Map.mapData.planets.Count; j++)
-                    dist[i, j] = int.MaxValue;
-
-            for (int i = 0; i < Map.mapData.planets.Count; i++)
-            {
-                dist[i, i] = 0;
-                nextPlanet[i, i] = 0;
-            }
-
-            foreach (Path path in Map.mapData.paths)
-            {
-                if(path.isBuilt)
-                {
-                    if(path.builtById == Id)
-                    {
-                        dist[planetIds[path.planetFrom], planetIds[path.planetTo]] = 0;
-                        dist[planetIds[path.planetTo], planetIds[path.planetFrom]] = 0;
-                    }
-                    else //if path.buildById != Id
-                        continue;
-
-                }
-                dist[planetIds[path.planetFrom], planetIds[path.planetTo]] = path.length;
-                dist[planetIds[path.planetTo], planetIds[path.planetFrom]] = path.length;
-                nextPlanet[planetIds[path.planetTo], planetIds[path.planetFrom]] = planetIds[path.planetFrom];
-                nextPlanet[planetIds[path.planetFrom], planetIds[path.planetTo]] = planetIds[path.planetTo];
-            }
-
-            for (int k = 0; k < Map.mapData.planets.Count; k++)
-                for (int i = 0; i < Map.mapData.planets.Count; i++)
-                    for (int j = 0; j < Map.mapData.planets.Count; j++)
-                        if (dist[i, j] > dist[i, k] + dist[k, j])
-                        {
-                            dist[i, j] = dist[i, k] + dist[k, j];
-                            nextPlanet[i, j] = nextPlanet[i, k];
-                        }
-        }
-        */
-
-        /*
-        void SetPathsToBuild()
-        {
-            pathsToBuild = new List<Path>();
-
-            foreach (Mission mission in missions)
-            {
-                if (dist[planetIds[mission.start], planetIds[mission.end]] == int.MaxValue)
-                    continue;
-                int i = planetIds[mission.start];
-                int end = planetIds[mission.end];
-                while (i != end)
-                {
-                    int next = nextPlanet[i, end];
-                    Planet planet1 = planetIds.First(p => p.Value == i).Key;
-                    Planet planet2 = planetIds.First(p => p.Value == next).Key;
-                    Path path = Map.mapData.paths.Where(p => (p.planetTo == planet1 && p.planetFrom == planet2) ||
-                        (p.planetTo == planet2 && p.planetFrom == planet1)).First();
-                    pathsToBuild.Add(path);
-                    i = next;
-                }
-            }
-        }
-        */
 
         Dictionary<(Planet, Planet), List<Planet>> pathBetweenPlanets = new Dictionary<(Planet, Planet), List<Planet>>();
         int[,] kay = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
@@ -305,11 +207,18 @@ namespace Assets.GameplayControl
             return ConvertPath(quicketsPath);
         }
 
-        List<Path> ConvertPath(List<Planet> path)
+        List<Path> ConvertPath(List<Planet> pathOfPlanets)
         {
-            // to do
+            List<Path> resultPath = new List<Path>();
             
-            return null;
+            for(int i = 0; i < pathOfPlanets.Count - 1; i++)
+            {
+                Path path = Map.mapData.paths.Where(p => (p.planetFrom == pathOfPlanets[i] && p.planetTo == pathOfPlanets[i + 1])
+                    || (p.planetTo == pathOfPlanets[i] && p.planetFrom == pathOfPlanets[i + 1])).First();
+                resultPath.Add(path);
+            }
+
+            return resultPath;
         }
 
         void SetmissionAsIncompletable(Mission mission)
@@ -319,9 +228,6 @@ namespace Assets.GameplayControl
 
         private void BuildPath(Path path)
         {
-            //dist[planetIds[path.planetFrom], planetIds[path.planetTo]] = 0;
-            //dist[planetIds[path.planetTo], planetIds[path.planetFrom]] = 0;
-
             curentPoints += Board.pointsPerLength[path.length];
             if (path.length <= numOfCardsInColor[path.color])
             {
@@ -358,27 +264,37 @@ namespace Assets.GameplayControl
         }
 
         // wybieranie najlepszych misji
-        List<Mission> PickBestMissions(List<Mission> missions)
+        List<Mission> PickBestMissions(List<Mission> missionsToDraw)
         {
-            // to do
+            List<Mission> pickedMissions = new List<Mission>();
+            List<Mission> missionsPool = missionsToDraw;
+            missionsPool.AddRange(missions);
             
-            /*
-             * dobranie pierwszych misji
-             - szukamy par misji, których trasy się pokrywają
-            */
+            foreach(Mission mission1 in missionsPool)
+            {
+                foreach(Mission mission2 in missionsPool)
+                {
+                    if (mission1 == mission2)
+                        continue;
+                    if (mission1.start == mission2.start || mission1.start == mission2.end ||
+                        mission1.end == mission2.start || mission1.end == mission2.end)
+                    {
+                        if (!missions.Contains(mission1) && !pickedMissions.Contains(mission1))
+                            pickedMissions.Add(mission1);
+                        if (!missions.Contains(mission2) && !pickedMissions.Contains(mission1))
+                            pickedMissions.Add(mission2);
+                    }
+                }
+            }
 
-            return missions;
-        }
+            while (pickedMissions.Count > 3)
+                pickedMissions.RemoveAt(0);
 
-        /*
-        public List<Path> QuickestWayWithLongestPaths(Mission mission)
-        {
-            // szukamy najkrótszej ścieżki pod względem liczby połączeń
-            // jeśli dwie mają tyle samo połączeń to wybieramy to krótsze
-            
-            return null;
+            if (pickedMissions.Count == 0)
+                pickedMissions.Add(missionsToDraw.First());
+
+            return pickedMissions;
         }
-        */
 
         private void DrawCards()
         {
