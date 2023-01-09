@@ -354,6 +354,7 @@ GameObject:
   - component: {fileID: 132717942}
   - component: {fileID: 132717941}
   - component: {fileID: 132717944}
+  - component: {fileID: 132717945}
   m_Layer: 5
   m_Name: MissionsPanel
   m_TagString: Untagged
@@ -465,6 +466,22 @@ MonoBehaviour:
   panelState: 0
   missionsToChoose: []
   missionButtonsAndConfirmButton: []
+--- !u!114 &132717945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132717939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2007907003
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &139743424
 GameObject:
   m_ObjectHideFlags: 0
@@ -3779,6 +3796,7 @@ GameObject:
   - component: {fileID: 1223933408}
   - component: {fileID: 1223933407}
   - component: {fileID: 1223933410}
+  - component: {fileID: 1223933411}
   m_Layer: 5
   m_Name: PlayersPanel
   m_TagString: Untagged
@@ -3825,26 +3843,36 @@ MonoBehaviour:
     Name: Ziutek225
     Id: 0
     IsAI: 0
+    SpaceshipsLeft: 0
+    PlayerTileId: 0
   - Position: 2
     Points: 0
     Name: AI
     Id: 0
     IsAI: 0
+    SpaceshipsLeft: 0
+    PlayerTileId: 0
   - Position: 3
     Points: 0
     Name: AI
     Id: 0
     IsAI: 0
+    SpaceshipsLeft: 0
+    PlayerTileId: 0
   - Position: 4
     Points: 0
     Name: AI
     Id: 0
     IsAI: 0
+    SpaceshipsLeft: 0
+    PlayerTileId: 0
   - Position: 5
     Points: 0
     Name: AI
     Id: 0
     IsAI: 0
+    SpaceshipsLeft: 0
+    PlayerTileId: 0
 --- !u!114 &1223933408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3909,6 +3937,22 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &1223933411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1223933405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1064120640
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1258013663
 GameObject:
   m_ObjectHideFlags: 0
@@ -7338,6 +7382,7 @@ GameObject:
   - component: {fileID: 1934100726}
   - component: {fileID: 1934100725}
   - component: {fileID: 1934100727}
+  - component: {fileID: 1934100728}
   m_Layer: 0
   m_Name: Space
   m_TagString: Untagged
@@ -7446,6 +7491,22 @@ MonoBehaviour:
   - {fileID: 343829207376835345, guid: b98b5c8ff0ce5154fae56c08274d81e2, type: 3}
   - {fileID: 4691723990619664147, guid: 5e8bc481d5ee6e34ea9302fde732f9ca, type: 3}
   planetNameText: {fileID: 6340760844309741922, guid: bd708020bf741714a9eead77a55b2df6, type: 3}
+--- !u!114 &1934100728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934100724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 73574753
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1001 &2077764211
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7565,6 +7626,7 @@ GameObject:
   - component: {fileID: 2106781422}
   - component: {fileID: 2106781424}
   - component: {fileID: 2106781425}
+  - component: {fileID: 2106781426}
   m_Layer: 5
   m_Name: CardDeck
   m_TagString: Untagged
@@ -7684,6 +7746,22 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &2106781426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2106781420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 466204022
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &2120158606
 GameObject:
   m_ObjectHideFlags: 0
@@ -7696,6 +7774,7 @@ GameObject:
   - component: {fileID: 2120158608}
   - component: {fileID: 2120158609}
   - component: {fileID: 2120158610}
+  - component: {fileID: 2120158611}
   m_Layer: 5
   m_Name: PathsPanel
   m_TagString: Untagged
@@ -7779,6 +7858,22 @@ MonoBehaviour:
   panelState: 1
   pathButtonPrefab: {fileID: 8818678304912476882, guid: 6a81663fec66bf24d9dd7d7588f92478, type: 3}
   missionsFromClickedMissionsCards: []
+--- !u!114 &2120158611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2120158606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1771948920
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1001 &2329796705193565231
 PrefabInstance:
   m_ObjectHideFlags: 0

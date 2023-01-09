@@ -7,7 +7,7 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
- [Serializable]
+[Serializable]
 public class PlayerInfo
 {
     public int Position;
@@ -17,22 +17,6 @@ public class PlayerInfo
     public bool IsAI;
     public int SpaceshipsLeft;
     public int PlayerTileId;
-
-    public PlayerInfo()
-    {
-        Position = 0;
-        Points = 0;
-        Name = "Gracz";
-        Id = 0;
-    }
-
-    public PlayerInfo(int position, int points, string name, int id)
-    {
-        Position = position;
-        Points = points;
-        Name = name;
-        Id = id;  
-    }
 }
 
 public class PlayerPanel : NetworkBehaviour, IDataPersistence
@@ -45,7 +29,10 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     // Start is called before the first frame update
     void Start()
     {
-        players = Server.allPlayersInfo;
+        if (Communication.loadOnStart)
+            players = new();
+        else
+            players = Server.allPlayersInfo;
         
         playersTiles = new();
 
@@ -61,7 +48,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             playerTile = Instantiate(playerTextTemplate, transform);
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (players[i].Position + 1).ToString();
             playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = players[i].Name;
-            playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].SpaceshipsLeft.ToString();
+            playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].Points.ToString();
             playerTile.transform.GetChild(3).GetComponent<TMP_Text>().text = players[i].SpaceshipsLeft.ToString();
             playersTiles.Enqueue(playerTile);
 
@@ -83,8 +70,48 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
 
     public void LoadData(GameData data)
     {
-        players = data.players;
-        for(int i=0; i < players.Count; i++)
+        if (IsHost)
+        {
+            players = data.players;
+            foreach(PlayerInfo player in players)
+            {
+                LoadPlayersListClientRpc(player.Position, player.Points, player.Name, player.Id, player.IsAI, player.SpaceshipsLeft, player.PlayerTileId);
+            }
+            LoadPlayerPanelClientRpc();
+            /*
+            for (int i = 0; i < players.Count; i++)
+            {
+                var playerTile = playersTiles.Dequeue();
+                playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = players[i].Position.ToString();
+                playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = players[i].Name;
+                playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].Points.ToString();
+                playerTile.transform.SetSiblingIndex(players[i].Position);
+                playersTiles.Enqueue(playerTile);
+            }
+            */
+        }
+    }
+
+    [ClientRpc]
+    void LoadPlayersListClientRpc(int position,int points,string name,int id,bool isAI, int spaceshipsLeft, int playerTileId)
+    {
+        PlayerInfo playerInfo = new()
+        {
+            Position = position,
+            Points = points,
+            Name= name,
+            Id = id,
+            IsAI = isAI,
+            SpaceshipsLeft = spaceshipsLeft,
+            PlayerTileId = playerTileId
+        };
+        players.Add(playerInfo);
+    }
+
+    [ClientRpc]
+    void LoadPlayerPanelClientRpc()
+    {
+        for (int i = 0; i < players.Count; i++)
         {
             var playerTile = playersTiles.Dequeue();
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = players[i].Position.ToString();
@@ -97,8 +124,12 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
 
     public void SaveData(ref GameData data)
     {
-        data.actualPlayer = players.Single(player => player.Position == 0);
-        data.players = players;
+        if(IsHost)
+        {
+            //Debug.Log(players.Count);
+            data.players = players;
+            data.curPlayerId = Server.curPlayerId;
+        } 
     }
 
     [ServerRpc(RequireOwnership = false)]

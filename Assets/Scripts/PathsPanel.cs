@@ -7,35 +7,49 @@ using System.Linq;
 using System;
 using System.Drawing;
 using Assets.GameplayControl;
+using Unity.Netcode;
 
 public class PathsPanel : Panel
 {
     public GameObject pathButtonPrefab;
     public List<Mission> missionsFromClickedMissionsCards;
 
-    private List<Mission> missionsChoosed;
-    public List<Mission> MissionsChoosed
+    private List<Mission> missionsChosen;
+    public List<Mission> MissionsChosen
     {
         get
         {
-            return missionsChoosed;
+            return missionsChosen;
         }
         set
         {
-            //Debug.Log($"New missions : {value.Count}");
-            //Debug.Log($"Mission Choosed (old) : {missionsChoosed.Count}");
-            missionsChoosed.AddRange(value);
-            //Debug.Log($"Mission Choosed (new) : {missionsChoosed.Count}");
-
+            missionsChosen.AddRange(value);
+            
+            // zapis posiadanych misji przez gracza na bie¿¹co
+            foreach(Mission m in value)
+            {
+                SendMissionsChosenServerRpc(m.start.name, m.end.name, m.points);
+            }
+            
             SpawnMissionsButtons(value);
         }
     }
 
     private bool firstClick;
+    private List<MissionData>[] receivedMissions;
 
     // Start is called before the first frame update
     void Start()
     {
+        if (IsHost)
+        {
+            receivedMissions = new List<MissionData>[Server.allPlayersInfo.Count];
+            for (int i = 0; i < Server.allPlayersInfo.Count; i++)
+            {
+                receivedMissions[i] = new();
+            }
+        }
+
         firstClick = true;
 
         missionsFromClickedMissionsCards = new();
@@ -44,9 +58,9 @@ public class PathsPanel : Panel
 
         //missionsChoosed = GetRandomElementsFromList(GameObject.Find("Space").GetComponent<Map>().Missions, 3);
 
-        missionsChoosed = new();
+        missionsChosen = new();
 
-        Debug.Log($"Missions choosed: {missionsChoosed.Count}");
+        Debug.Log($"Missions choosed: {missionsChosen.Count}");
 
         AssignValues(368.62f, 611.61f, PanelState.Maximized, true);
 
@@ -69,10 +83,10 @@ public class PathsPanel : Panel
         if (firstClick)
         {
             ChangePlanetsColor(UnityEngine.Color.green);
-            missionsFromClickedMissionsCards.AddRange(missionsChoosed.Except(missionsFromClickedMissionsCards, new MissionComparer()).ToList());
+            missionsFromClickedMissionsCards.AddRange(missionsChosen.Except(missionsFromClickedMissionsCards, new MissionComparer()).ToList());
 
             // zmiana koloru przycisków
-            for (int i = 0; i < missionsChoosed.Count; i++)
+            for (int i = 0; i < missionsChosen.Count; i++)
                 transform.GetChild(i).GetComponent<Image>().color = UnityEngine.Color.green;
 
             firstClick = false;
@@ -80,10 +94,10 @@ public class PathsPanel : Panel
         else
         {
             ChangePlanetsColor(UnityEngine.Color.white);
-            missionsFromClickedMissionsCards = missionsFromClickedMissionsCards.Except(missionsChoosed, new MissionComparer()).ToList();
+            missionsFromClickedMissionsCards = missionsFromClickedMissionsCards.Except(missionsChosen, new MissionComparer()).ToList();
 
             // zmiana koloru przycisków
-            for (int i = 0; i < missionsChoosed.Count; i++)
+            for (int i = 0; i < missionsChosen.Count; i++)
                 transform.GetChild(i).GetComponent<Image>().color = UnityEngine.Color.white;
 
             firstClick = true;
@@ -139,13 +153,13 @@ public class PathsPanel : Panel
 
     void ChangePlanetsColor(UnityEngine.Color color)
     {
-        for (int i = 0; i < missionsChoosed.Count; i++)
+        for (int i = 0; i < missionsChosen.Count; i++)
         {
             //Debug.Log($"{paths[i].planetFrom.name} - {paths[i].planetTo.name}");
-            if (CheckIfPlanetCanBeExtinguished(missionsChoosed[i].start.name, missionsChoosed[i].end.name))
-                ChangePlanetColor(color, missionsChoosed[i].start.name);
-            if (CheckIfPlanetCanBeExtinguished(missionsChoosed[i].end.name, missionsChoosed[i].start.name))
-                ChangePlanetColor(color, missionsChoosed[i].end.name);
+            if (CheckIfPlanetCanBeExtinguished(missionsChosen[i].start.name, missionsChosen[i].end.name))
+                ChangePlanetColor(color, missionsChosen[i].start.name);
+            if (CheckIfPlanetCanBeExtinguished(missionsChosen[i].end.name, missionsChosen[i].start.name))
+                ChangePlanetColor(color, missionsChosen[i].end.name);
         }
     }
 
@@ -206,14 +220,38 @@ public class PathsPanel : Panel
 
     public override void LoadData(GameData data)
     {
-        MissionsChoosed = data.missionsForEachPalyer[PlayerGameData.Id];
+        if (IsHost)
+        {
+            //MissionsChoosed = data.missionsForEachPalyer[PlayerGameData.Id];
+        }
     }
 
     public override void SaveData(ref GameData data)
     {
-        if (!data.missionsForEachPalyer.ContainsKey(PlayerGameData.Id))
-            data.missionsForEachPalyer.Add(PlayerGameData.Id, missionsChoosed);
-        else
-            data.missionsForEachPalyer[PlayerGameData.Id] = missionsChoosed;
+        if (IsHost)
+        {
+            for (int i = 0; i < Server.allPlayersInfo.Count; i++)
+            {
+                //Debug.Log("Received missions:" + receivedMissions[i].Count);
+                if (!data.missionsForEachPalyer.ContainsKey(i))
+                    data.missionsForEachPalyer.Add(i, receivedMissions[i]);
+                else
+                    data.missionsForEachPalyer[i] = receivedMissions[i];
+            }
+        }
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    void SendMissionsChosenServerRpc(string startPlanetName, string endPlanetName, int points,ServerRpcParams serverRpcParams = default)
+    {
+        int id = (int)serverRpcParams.Receive.SenderClientId;
+        receivedMissions[id].Add(new MissionData()
+        {
+            startPlanetName = startPlanetName,
+            endPlanetName = endPlanetName,
+            points = points,
+        });
+        //Debug.Log("Server Rpc received missions: "+ receivedMissions[id].Count);    
+    }
+
 }

@@ -19,9 +19,11 @@ public class DrawCardsPanel : NetworkBehaviour
     Button drawCardsButton;
     GameObject card;
     public int[] actualCardColor = new int[5];
-
+    CardDeck cardDeck;
     void Start()
     {
+        cardDeck = GameObject.Find("CardDeck").GetComponent<CardDeck>();
+        
         drawCardsButton = GameObject.Find("DrawCardsButton").GetComponent<Button>();
         
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -89,8 +91,17 @@ public class DrawCardsPanel : NetworkBehaviour
             // rozpoczyna siê animacja doboru karty danego koloru przez gracza
             gameManager.SpawnCards(cards[index].transform, actualCardColor[index], names[actualCardColor[index]]);
             gameManager.iSendSpawnCardsServerRpc = true;
+            
+            // zapis stanu kart "na rêce" na bie¿¹co
+            string cardsStacks = "";
+            for(int i=0; i < gameManager.cardStackCounterList.Count;i++)
+            {
+                cardsStacks += i == actualCardColor[index] ? (int.Parse(gameManager.cardStackCounterList[i].text)+1).ToString() : gameManager.cardStackCounterList[i].text;
+            }
+            cardDeck.SendCardsStacksServerRpc(cardsStacks);
+
             // animacja dla pozosta³ych graczy
-            gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]], index);
+            gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]]+"BelongToOtherPlayer", index);
             ChooseRandomColor(index);
         }
         return selectedColor;

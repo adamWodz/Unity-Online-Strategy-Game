@@ -28,9 +28,10 @@ public class MissionsPanel : Panel
         pathsPanel = GameObject.Find("PathsPanel").GetComponent<PathsPanel>();
         
         AssignValues(0, 242.9984f, PanelState.Minimized, false);
-        
-        missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions.Except(pathsPanel.MissionsChoosed,new MissionComparer()).ToList());
-        
+
+        //missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions.Except(pathsPanel.MissionsChoosed,new MissionComparer()).ToList());
+        missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions);
+
         Debug.Log($"Missions To Choose: {missionsToChoose.Count}");
         missionButtonsAndConfirmButton = transform.GetComponentsInChildren<Button>();
         
@@ -57,7 +58,15 @@ public class MissionsPanel : Panel
     {
         SyncMissionsToChooseClientRpc(startPlanetName, endPlanetName);
     }
-    
+    /*
+    [ClientRpc]
+    void SyncLoadMissionsToChoose(string startPlanetName, string endPlanetName,int points)
+    {
+        Mission m = ScriptableObject.CreateInstance<Mission>();
+        m.start = Planets;
+        missionsToChoose.Add();
+    }
+    */
     private void DrawMissions()
     {
         if (missionsToChoose.Count < 3)
@@ -83,13 +92,13 @@ public class MissionsPanel : Panel
     void AddMissions()
     {
         // misje, kt�re dobrali�my
-        var missionsChoosed = pathsPanel.missionsFromClickedMissionsCards.Except(pathsPanel.MissionsChoosed, new MissionComparer()).ToList();
+        var missionsChoosed = pathsPanel.missionsFromClickedMissionsCards.Except(pathsPanel.MissionsChosen, new MissionComparer()).ToList();
 
         Communication.DrawMissions(missionsChoosed);
 
         if (missionsChoosed.Count > 0) // gracz musi dobra� co najmniej jedn� kart� misji
         {
-            pathsPanel.MissionsChoosed = missionsChoosed;
+            pathsPanel.MissionsChosen = missionsChoosed;
 
             // wygaszamy planety i przyciski
             foreach (Mission m in missionsChoosed)
@@ -122,12 +131,27 @@ public class MissionsPanel : Panel
     }
     public override void LoadData(GameData data)
     {
-        missionsToChoose = data.missionsToChoose;
+        if (IsHost)
+        {
+            //missionsToChoose = data.missionsToChoose;
+            /*
+            foreach (PlayerInfo playerInfo in Server.allPlayersInfo)
+            {
+                var missionsChoosed = data.missionsForEachPalyer[playerInfo.Id];
+                foreach (MissionData m in missionsChoosed)
+                    SyncMissionsToChooseClientRpc(m.startPlanetName, m.endPlanetName);
+            }
+            */
+        }
     }
 
     public override void SaveData(ref GameData data)
     {
-        data.missionsToChoose = missionsToChoose;
+        if (IsHost)
+        {
+            //data.missionsToChoose = missionsToChoose;
+            //var missionschoosed
+        }
     }
 
 }

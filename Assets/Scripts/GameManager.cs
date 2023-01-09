@@ -34,7 +34,7 @@ public class GameManager : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("GameManager Client ID:"+OwnerClientId);
+        //Debug.Log("GameManager Client ID:"+OwnerClientId);
         drawCardsPanel = GameObject.Find("DrawCardsPanel");
         cardGoal = GameObject.Find("CardGoal");
 

@@ -30,7 +30,8 @@ public static class Communication
     }
     public static int mapDataNumber;
     private static bool isLastTurn = false;
-
+    public static bool loadOnStart = false;
+    public static List<MapData> availableMapsData;
 
     private static (BuildPath buildPath, Path path) chosenPath;
 

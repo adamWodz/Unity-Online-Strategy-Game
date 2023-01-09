@@ -17,8 +17,9 @@ public class StartGameButton : NetworkBehaviour
 
     public void StartGame()
     {
+        //Communication.loadOnStart = true;
         //Debug.Log("StartGame; " + NetworkManager.Singleton.IsServer);
-        SetMapDataClientRpc(Communication.mapDataNumber);
+        SetMapDataClientRpc(Communication.mapDataNumber,Communication.loadOnStart);
         string name = "Scenes/Main Game";
         Debug.Log($"[ChooseMapMenu.StartGame] {NetworkManager != null} {NetworkManager.SceneManager != null}");
         var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
@@ -92,11 +93,13 @@ public class StartGameButton : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void SetMapDataClientRpc(int mapNumber)
+    public void SetMapDataClientRpc(int mapNumber,bool loadOnStart)
     {
         Debug.Log("SetMapDataClientRpc");
         Map.mapData = availableMapsData[mapNumber];
         Debug.Log(Map.mapData);
+        Communication.availableMapsData = availableMapsData;
+        Communication.loadOnStart = loadOnStart;
     }
 
     [ServerRpc]

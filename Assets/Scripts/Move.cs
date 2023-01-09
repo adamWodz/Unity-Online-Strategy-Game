@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
@@ -40,6 +41,8 @@ public class Move : MonoBehaviour
                     Destroy(gameObject);
                 }
             }
+            else if(gameObject.name.EndsWith("CardBelongToOtherPlayer"))
+                Destroy(gameObject);
         }
     }
 }

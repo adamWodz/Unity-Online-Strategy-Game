@@ -16,20 +16,20 @@ public class GameData
     Dictionary<int, int[]> cardsForEachPlayer;
     */
     public int mapNumber;
-    public PlayerInfo actualPlayer;
+    public int curPlayerId;
     public List<PlayerInfo> players;
     public List<Path> paths;
-    public List<Mission> missionsToChoose;
-    public Dictionary<int, int[]> cardsForEachPalyer;
-    public Dictionary<int, List<Mission>> missionsForEachPalyer;
+    //public List<Mission> missionsToChoose;
+    public Dictionary<int, string> cardsForEachPalyer;
+    public Dictionary<int, List<MissionData>> missionsForEachPalyer;
 
     public GameData()
     {
         mapNumber = 0;
-        actualPlayer = new();
+        curPlayerId = 0;
         players = new();
         paths = new();
-        missionsToChoose = new();
+        //missionsToChoose = new();
         cardsForEachPalyer = new();
         missionsForEachPalyer = new();
     }
