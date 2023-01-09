@@ -13,6 +13,7 @@ using UnityEngine.UI;
 public class MissionsPanel : Panel
 {
     public List<Mission> missionsToChoose = new();
+    public int missionsDrawNumber = 3;
     
     public Button[] missionButtonsAndConfirmButton; // 3 pierwsze przyciski to karty misji, a ostatni to zatwierdzenie
 
@@ -53,7 +54,7 @@ public class MissionsPanel : Panel
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void SyncMissionsToChooseServerRpc(string startPlanetName, string endPlanetName)
+    public void SyncMissionsToChooseServerRpc(string startPlanetName, string endPlanetName)
     {
         SyncMissionsToChooseClientRpc(startPlanetName, endPlanetName);
     }
@@ -68,14 +69,14 @@ public class MissionsPanel : Panel
         {
             popUpPanel.SetActive(true);
 
-            var randomPaths = pathsPanel.GetRandomElementsFromList(missionsToChoose, 3);
+            var randomMissions = GetRandomMissions();
 
-            Debug.Log($"RandomPaths: {randomPaths.Count}");
+            Debug.Log($"RandomPaths: {randomMissions.Count}");
             for (int i = 0; i < missionButtonsAndConfirmButton.Length - 1; i++)
             {
                 int copy = i;
-                missionButtonsAndConfirmButton[copy].name = missionButtonsAndConfirmButton[copy].transform.GetChild(0).GetComponent<TMP_Text>().text = randomPaths[copy].start.name + "-" + randomPaths[copy].end.name;
-                missionButtonsAndConfirmButton[copy].onClick.AddListener(() => pathsPanel.HighlightPlanet(randomPaths[copy]));
+                missionButtonsAndConfirmButton[copy].name = missionButtonsAndConfirmButton[copy].transform.GetChild(0).GetComponent<TMP_Text>().text = randomMissions[copy].start.name + "-" + randomMissions[copy].end.name;
+                missionButtonsAndConfirmButton[copy].onClick.AddListener(() => pathsPanel.HighlightPlanet(randomMissions[copy]));
             }
         }
 
@@ -119,5 +120,10 @@ public class MissionsPanel : Panel
         {
             gameManager.SetPopUpWindow("Musisz wybra� co najmniej jedn� kart� misji!");
         }
+    }
+
+    public List<Mission> GetRandomMissions()
+    {
+        return missionsToChoose.OrderBy(arg => Guid.NewGuid()).Take(missionsDrawNumber).ToList();
     }
 }

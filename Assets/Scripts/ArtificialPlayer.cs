@@ -33,6 +33,18 @@ namespace Assets.GameplayControl
             }
         }
 
+        private static PlayerPanel _playersPanel;
+        private static PlayerPanel _PlayersPanel
+        {
+
+            get
+            {
+                if(_playersPanel == null)
+                    _playersPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
+                return _playersPanel;
+            }
+        }
+
         public int Id { set;  get; }
         public string Name { set; get; }
         public int curentPoints { get; set; } = 0;
@@ -89,16 +101,16 @@ namespace Assets.GameplayControl
             - przy czym połączona miasta sąsiadują ze sobą
              */
 
-            int cardIndex = 0;
-            /*drawCardsPanel.SpawnCardOfIndex(cardIndex);
-            drawCardsPanel.ChooseRandomColor(cardIndex);
-            drawCardsPanel.WaitForAnimation();*/
+            DrawMissions();
 
-            drawCardsPanel.AiDrawCardAndEndTurn(cardIndex, this);
+            //int cardIndex = 0;
+            //drawCardsPanel.AiDrawCardAndEndTurn(cardIndex, this);
+
+            //BuildPath(Map.mapData.paths[0]);
 
             Debug.Log("Best Move");
 
-            //Communication.EndAITurn(this);
+            Communication.EndAITurn(this);
         }
 
         private void UpdateDistances()
@@ -147,17 +159,47 @@ namespace Assets.GameplayControl
             distanceBetweenPlanets[planetIds[path.planetFrom], planetIds[path.planetTo]] = 0;
             distanceBetweenPlanets[planetIds[path.planetTo], planetIds[path.planetFrom]] = 0;
 
-            _GameManager.SetBuildPathDataServerRpc(path.Id);
+            curentPoints += Board.pointsPerLength[path.length];
+            if (path.length <= numOfCardsInColor[path.color])
+            {
+                numOfCardsInColor[path.color] -= path.length;
+            }
+            else
+            {
+                int pathLenLeft = path.length - numOfCardsInColor[path.color];
+                numOfCardsInColor[path.color] = 0;
+                numOfCardsInColor[Color.special] -= pathLenLeft;
+            }
+            spaceshipsLeft -= path.length;
+
+            BuildPath buildPath = Server.buildPaths.Where(b => b.path == path).First();
+            buildPath.StartCoroutine(buildPath.BuildPathAnimation(Id));
+
+            _PlayersPanel.UpdatePointsAndSpeceshipsNumServerRpc(Id, curentPoints, spaceshipsLeft);
+            _GameManager.SetBuildPathDataServerRpc(path.Id, Id);
 
         }
 
+        private void DrawMissions()
+        {
+            MissionsPanel missionsPanel = GameObject.Find("MissionsPanel").GetComponent<MissionsPanel>();
+            List<Mission> bestMissions = PickBestMissions(missionsPanel.GetRandomMissions());
+
+            foreach (Mission m in bestMissions)
+            {
+                missionsPanel.SyncMissionsToChooseServerRpc(m.start.name, m.end.name);
+            }
+        }
+
         // wybieranie najlepszych misji
-        void PickBestMissions()
+        List<Mission> PickBestMissions(List<Mission> missions)
         {
             /*
              * dobranie pierwszych misji
              - szukamy par misji, których trasy się pokrywają
             */
+
+            return missions;
         }
 
         public List<Path> QuickestWayWithLongestPaths(Mission mission)

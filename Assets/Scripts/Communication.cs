@@ -65,10 +65,10 @@ public static class Communication
         PlayerGameData.BuildPath(path);
         Debug.Log("CurrentPoints: " + PlayerGameData.curentPoints);
 
-        buildPath.StartCoroutine(buildPath.BuildPathAnimation());
+        buildPath.StartCoroutine(buildPath.BuildPathAnimation(PlayerGameData.Id));
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
         playerPanel.UpdatePointsAndSpeceshipsNumServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.spaceshipsLeft);
-        _GameManager.SetBuildPathDataServerRpc(path.Id);
+        _GameManager.SetBuildPathDataServerRpc(path.Id, PlayerGameData.Id);
         EndTurn();
         chosenPath = (null, null);
         
@@ -88,7 +88,7 @@ public static class Communication
         }
         
         Color color = drawCardsPanel.MoveCard(index);
-        PlayerGameData.DrawCard(color);
+        PlayerGameData.DrawCard(color, index > 4);
         if (PlayerGameData.cardsDrewInTurn == 2)
             EndTurn();
     }

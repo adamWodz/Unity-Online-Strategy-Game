@@ -36,7 +36,7 @@ public class StartGameButton : NetworkBehaviour
         }
         for(int i = 0; i < aiPlayersNum; i++)
         {
-            AddAiPlayerClientRpc(position, position + 100);
+            AddAiPlayerClientRpc(position, nonAiPlayersNum + i);
             position++;
         }
 

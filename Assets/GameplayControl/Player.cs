@@ -143,14 +143,16 @@ namespace Assets.GameplayControl
 
         public static void DrawCards(Color firstCardsColor, Color secondCardColor)
         {
-            DrawCard(firstCardsColor);
-            DrawCard(secondCardColor);
+            DrawCard(firstCardsColor, true);
+            DrawCard(secondCardColor, true);
         }
 
-        public static void DrawCard(Color cardColor)
+        public static void DrawCard(Color cardColor, bool randomDraw)
         {
             numOfCardsInColor[cardColor]++;
             cardsDrewInTurn++;
+            if (cardColor == Color.special && !randomDraw)
+                cardsDrewInTurn++;
 
             //Debug.Log("special cards num: " + numOfCardsInColor[Color.special]);
         }

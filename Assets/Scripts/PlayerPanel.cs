@@ -96,6 +96,8 @@ public class PlayerPanel : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void StartNextPlayerTurnServerRpc()
     {
+        Debug.Log(players.Count);
+        Debug.Log(Server.allPlayersInfo);
         PlayerInfo nextPlayer = players.Where(p => p.Position == 0).First();
         if (nextPlayer.IsAI)
             Server.artificialPlayers.Where(ai => ai.Id == nextPlayer.Id).First().BestMove();

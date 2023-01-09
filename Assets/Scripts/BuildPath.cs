@@ -35,7 +35,7 @@ public class BuildPath : MonoBehaviour
         Communication.ChoosePath(this, path);
     }
 
-    public IEnumerator BuildPathAnimation()
+    public IEnumerator BuildPathAnimation(int playerId)
     {
         Debug.Log("Started Coroutine at timestamp : " + Time.time);
         for (int i = 0; i < tilesRenderers.Length; i++)
@@ -54,7 +54,7 @@ public class BuildPath : MonoBehaviour
             cardCounter.text = (int.Parse(cardCounter.text) - 1).ToString();
 
             // host spawni statki i je przemieszcza 
-            gameManager.SpawnShipsServerRpc(tilesTransforms[i + 1].position, tilesTransforms[i + 1].rotation);
+            gameManager.SpawnShipsServerRpc(playerId, tilesTransforms[i + 1].position, tilesTransforms[i + 1].rotation);
             
             yield return new WaitForSeconds(0.2f);
         }

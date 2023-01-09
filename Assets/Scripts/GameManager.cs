@@ -1,4 +1,5 @@
 using Assets.GameplayControl;
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -55,11 +56,12 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnShipsServerRpc(Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
+    public void SpawnShipsServerRpc(int playerId, Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
     {
-        int clientId = (int)serverRpcParams.Receive.SenderClientId;
+        Debug.Log("plauerId: " + playerId);
+        
         float angle = CalculateAngle(position,spaceshipsBase);
-        var spawnedShipGameObject = Instantiate(shipGameObjectList[clientId], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
+        var spawnedShipGameObject = Instantiate(shipGameObjectList[playerId], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
         // spawnuje si� dla wszystkich graczy bo network object
         spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
@@ -115,16 +117,17 @@ public class GameManager : NetworkBehaviour
 
 
     [ServerRpc(RequireOwnership = false)]
-    public void SetBuildPathDataServerRpc(int pathId)
+    public void SetBuildPathDataServerRpc(int pathId, int playerId)
     {
-        SetBuildPathDataClientRpc(pathId);
+        SetBuildPathDataClientRpc(pathId, playerId);
     }
 
     [ClientRpc]
-    public void SetBuildPathDataClientRpc(int pathId)
+    public void SetBuildPathDataClientRpc(int pathId, int playerId)
     {
         Path path = Map.mapData.paths.Where(p => p.Id == pathId).First();
         path.isBuilt = true;
+        path.builtById = playerId;
     }
 
     public void SetPopUpWindow(string message)
