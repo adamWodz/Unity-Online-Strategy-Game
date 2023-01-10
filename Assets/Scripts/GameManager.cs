@@ -61,7 +61,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void SpawnShipsServerRpc(int playerId, Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
     {
-        Debug.Log("plauerId: " + playerId);
+        //Debug.Log("plauerId: " + playerId);
         
         float angle = CalculateAngle(position,spaceshipsBase);
         var spawnedShipGameObject = Instantiate(shipGameObjectList[playerId], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
