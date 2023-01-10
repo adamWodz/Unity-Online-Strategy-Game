@@ -26,7 +26,6 @@ public class Map : NetworkBehaviour, IDataPersistence
     private List<Planet> planets;
     public List<Planet> Planets { get { return planets; } }
     public GameObject[] pathsPrefabs;
-    public GameObject[] planetsPrefabs;
     public GameObject planetNameText;
 
     // kolory sciezek
@@ -42,9 +41,13 @@ public class Map : NetworkBehaviour, IDataPersistence
     // canvas, na którym będą wyświetlane nazwy planet na planszy (world space)
     private Canvas canvasForPlanetsNames;
 
+    private GameManager gameManager;
+
     // Start is called before the first frame update
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
         if (!Communication.loadOnStart)
         {
             canvasForPlanetsNames = GameObject.Find("CanvasForPlanetsNames").GetComponent<Canvas>();
@@ -72,11 +75,11 @@ public class Map : NetworkBehaviour, IDataPersistence
         {
             //paths = data.paths;
             //Communication.mapDataNumber = data.mapNumber;
-            foreach(Path path in paths)
+            foreach(Path path in data.paths)
             {
-                SetPathsClientRpc(path.Id, path.planetFrom.name, path.planetTo.name, path.color, path.length, path.isBuilt, path.builtById);
+                SetPathsClientRpc(path.Id, path.planetFrom.name, path.planetTo.name, path.color, path.length, path.isBuilt, path.builtById,data.mapNumber);
             }
-            SetMapDataClientRpc(data.mapNumber);
+            SetMapDataClientRpc();
         }
 
     }
@@ -99,7 +102,7 @@ public class Map : NetworkBehaviour, IDataPersistence
         for (int i = 0; i < planets.Count; i++)
         {
             // spawneine planety
-            var planet = Instantiate(planetsPrefabs.Single(planet => planet.name.StartsWith(planets[i].name)), new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planetsPrefabs[i].transform.rotation);
+            var planet = Instantiate(planets[i].planetPrefab, new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planets[i].planetPrefab.transform.rotation);
             planet.name = planets[i].name;
 
             // spawnienie tekstu planety, znajdującego się nad nią, który na razie jest nieaktywny
@@ -125,29 +128,39 @@ public class Map : NetworkBehaviour, IDataPersistence
 
             Debug.Log(paths[i].length - 1);
             var pathGameObject = Instantiate(pathsPrefabs[paths[i].length - 1], position, Quaternion.Euler(new Vector3(0, 0, -angle)));
+            
 
             // przypisanie do build path
             var buildPath = pathGameObject.GetComponent<BuildPath>();
             buildPath.path = paths[i];
+            Debug.Log($"Czy path {paths[i].planetFrom.name}-{paths[i].planetTo.name} jest zbudowana? {paths[i].isBuilt}");
             Server.buildPaths.Add(buildPath);
 
+            var tilesTransforms = pathGameObject.GetComponentsInChildren<Transform>();
             var tilesRenderers = pathGameObject.GetComponentsInChildren<Renderer>();
             for (int j = 0; j < tilesRenderers.Length; j++)
             {
                 tilesRenderers[j].material.color = colors[(int)paths[i].color];
+                if (paths[i].isBuilt && IsHost)
+                {
+                    var pom = Instantiate(gameManager.shipGameObjectList[paths[i].builtById], tilesTransforms[j + 1].position, tilesTransforms[j + 1].rotation);
+                    Debug.Log(pom);
+                    pom.GetComponent<Move>().speed = 0;
+                    pom.GetComponent<NetworkObject>().Spawn(true);
+                }
             }
         }
         
     }
     [ClientRpc]
-    public void SetMapDataClientRpc(int mapNumber)
+    public void SetMapDataClientRpc()
     {
         //Debug.Log("SetMapDataClientRpc");
         canvasForPlanetsNames = GameObject.Find("CanvasForPlanetsNames").GetComponent<Canvas>();
         //Debug.Log(canvasForPlanetsNames);
-        mapData = Communication.availableMapsData[mapNumber];
+        //mapData = Communication.availableMapsData[mapNumber];
         //Debug.Log(mapData);
-        paths = mapData.paths;
+        //paths = mapData.paths;
         planets = mapData.planets;
         missions = mapData.missions;
         CreateMap();
@@ -155,11 +168,14 @@ public class Map : NetworkBehaviour, IDataPersistence
     }
 
     [ClientRpc]
-    public void SetPathsClientRpc(int id,string planetFromName,string planetToName, Color color, int length, bool isBuilt, int builtById)
+    public void SetPathsClientRpc(int id,string planetFromName,string planetToName, Color color, int length, bool isBuilt, int builtById,int mapNumber)
     {
-        Planet planetFrom = planets.Single(planet => planet.name == planetFromName);
-        Planet planetTo = planets.Single(planet => planet.name == planetToName);
+        paths ??= new();
+        mapData = mapData != null ? mapData : Communication.availableMapsData[mapNumber];
+        Planet planetFrom = mapData.planets.Single(planet => planet.name == planetFromName);
+        Planet planetTo = mapData.planets.Single(planet => planet.name == planetToName);
         Path path = Path.CreateInstance(id,planetFrom,planetTo, color,length,isBuilt,builtById);
+        //Debug.Log($"Path {path.planetFrom.name}-{path.planetTo.name} jest zbudowana? {path.isBuilt}");
         paths.Add(path);
     }
 }

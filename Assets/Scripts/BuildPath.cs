@@ -11,15 +11,17 @@ public class BuildPath : MonoBehaviour
     private Transform[] tilesTransforms;
     private Renderer[] tilesRenderers;
     public Path path;
+    private CardDeck cardDeck;
 
     // Start is called before the first frame update
     void Start()
     {
+        cardDeck = GameObject.Find("CardDeck").GetComponent<CardDeck>();   
         path.isBuilt = false;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         tilesRenderers = gameObject.GetComponentsInChildren<Renderer>();
         tilesTransforms = gameObject.GetComponentsInChildren<Transform>();
-
+        
         //PlayerGameData.EndTurn();
     }
 
@@ -51,7 +53,17 @@ public class BuildPath : MonoBehaviour
                 cardCounter = gameManager.cardStackCounterList[^1];
             }
             cardCounter.text = (int.Parse(cardCounter.text) - 1).ToString();
+            
+            
         }
+        // zapis stanu kart "na rêce" na bie¿¹co
+        string cardsStacks = "";
+        for (int j = 0; j < gameManager.cardStackCounterList.Count; j++)
+        {
+            cardsStacks += gameManager.cardStackCounterList[j].text;
+        }
+        Debug.Log(cardsStacks);
+        cardDeck.SendCardsStacksServerRpc(cardsStacks);
 
         StartCoroutine(BuildPathAnimation(playerId));
     }
