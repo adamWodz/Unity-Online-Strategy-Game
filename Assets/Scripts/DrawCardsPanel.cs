@@ -70,13 +70,18 @@ public class DrawCardsPanel : NetworkBehaviour
             cards[index].name = names[color];
         }
     }
-    
+
     Sprite RandomSprite(ref int index)
     {
-        index = UnityEngine.Random.Range(0, sprites.Length);
+        index = RandomColorIndex();
         return sprites[index];
     }
-    
+
+    public int RandomColorIndex()
+    {
+        return UnityEngine.Random.Range(0, sprites.Length); ;
+    }
+
     public Color MoveCard(int index)
     {
         Color selectedColor;
@@ -117,12 +122,12 @@ public class DrawCardsPanel : NetworkBehaviour
 
     public IEnumerator SpawnCardOfIndex(int index, ArtificialPlayer ai)
     {
-        //gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]], index);
+        gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]] + "BelongToOtherPlayer", index);
         ChooseRandomColor(index);
 
         yield return new WaitForSeconds(3);
 
-        Communication.EndAITurn(ai);
+        //Communication.EndAITurn(ai);
     }
 
     public void ChooseRandomColor(int index)
