@@ -30,11 +30,14 @@ public class DataPersistenceManager : MonoBehaviour
     {
         dataHandler = new(Application.persistentDataPath, fileName);
         
-        // znajdujemy listê skryptów, które posiadaj¹ dane do zapisu/wczytania
+        // znajdujemy listÃª skryptÃ³w, ktÃ³re posiadajÂ¹ dane do zapisu/wczytania
         dataPersistenceObjects = FindAllDataPersistenceObjects();
 
-        //LoadGame();
-        NewGame();
+        if (Communication.loadOnStart)
+            LoadGame();
+        else
+            NewGame();
+
     }
 
     public void NewGame()
@@ -68,12 +71,12 @@ public class DataPersistenceManager : MonoBehaviour
         
         dataHandler.Save(gameData);
     }
-
+    /*
     private void OnApplicationQuit()
     {
         SaveGame();
     }
-
+    */
     private List<IDataPersistence> FindAllDataPersistenceObjects()
     {
         IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<NetworkBehaviour>().OfType<IDataPersistence>();

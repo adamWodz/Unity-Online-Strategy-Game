@@ -24,6 +24,7 @@ public class Map : NetworkBehaviour, IDataPersistence
         set { missions = value; }
     }
     private List<Planet> planets;
+    public List<Planet> Planets { get { return planets; } }
     public GameObject[] pathsPrefabs;
     public GameObject[] planetsPrefabs;
     public GameObject planetNameText;
@@ -44,23 +45,52 @@ public class Map : NetworkBehaviour, IDataPersistence
     // Start is called before the first frame update
     void Start()
     {
-        canvasForPlanetsNames = GameObject.Find("CanvasForPlanetsNames").GetComponent<Canvas>();
-        Debug.Log(mapData);
-        paths = mapData.paths;
-        planets = mapData.planets; 
-        missions = mapData.missions;
-        //buildPaths = new List<BuildPath>();
-        CreateMap();
+        if (!Communication.loadOnStart)
+        {
+            canvasForPlanetsNames = GameObject.Find("CanvasForPlanetsNames").GetComponent<Canvas>();
+            //Debug.Log(canvasForPlanetsNames);
+            //Debug.Log("Host?" + IsHost);
+            //Debug.Log("Client?" + IsClient);
+            //Debug.Log("Server?" + IsServer);
+            //Debug.Log(mapData);
+            paths = mapData.paths;
+            planets = mapData.planets;
+            missions = mapData.missions;
+            CreateMap();
+        }
+        else
+            paths = new();
+        
     }
 
     public void LoadData(GameData data)
     {
+        //Debug.Log("Host?"+IsHost);
+        //Debug.Log("Client?" + IsClient);
+        //Debug.Log("Server?" + IsServer);
+        if (IsHost)
+        {
+            //paths = data.paths;
+            //Communication.mapDataNumber = data.mapNumber;
+            foreach(Path path in paths)
+            {
+                SetPathsClientRpc(path.Id, path.planetFrom.name, path.planetTo.name, path.color, path.length, path.isBuilt, path.builtById);
+            }
+            SetMapDataClientRpc(data.mapNumber);
+        }
 
     }
 
     public void SaveData(ref GameData data)
     {
-        data.paths = paths;
+        if (IsHost)
+        {
+       // Debug.Log("Host?" + IsHost);
+        //Debug.Log("Client?" + IsClient);
+        //Debug.Log("Server?" + IsServer);
+            data.paths = paths;
+            data.mapNumber = Communication.mapDataNumber;
+        }
     }
 
     void CreateMap()
@@ -108,5 +138,28 @@ public class Map : NetworkBehaviour, IDataPersistence
             }
         }
         
+    }
+    [ClientRpc]
+    public void SetMapDataClientRpc(int mapNumber)
+    {
+        //Debug.Log("SetMapDataClientRpc");
+        canvasForPlanetsNames = GameObject.Find("CanvasForPlanetsNames").GetComponent<Canvas>();
+        //Debug.Log(canvasForPlanetsNames);
+        mapData = Communication.availableMapsData[mapNumber];
+        //Debug.Log(mapData);
+        paths = mapData.paths;
+        planets = mapData.planets;
+        missions = mapData.missions;
+        CreateMap();
+       // Debug.Log(mapData);
+    }
+
+    [ClientRpc]
+    public void SetPathsClientRpc(int id,string planetFromName,string planetToName, Color color, int length, bool isBuilt, int builtById)
+    {
+        Planet planetFrom = planets.Single(planet => planet.name == planetFromName);
+        Planet planetTo = planets.Single(planet => planet.name == planetToName);
+        Path path = Path.CreateInstance(id,planetFrom,planetTo, color,length,isBuilt,builtById);
+        paths.Add(path);
     }
 }

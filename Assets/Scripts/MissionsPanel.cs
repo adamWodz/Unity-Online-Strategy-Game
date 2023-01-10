@@ -21,17 +21,28 @@ public class MissionsPanel : Panel
 
     private GameManager gameManager;
 
+    Map map;
+
     // Start is called before the first frame update
     void Start()
     {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        //gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         
         pathsPanel = GameObject.Find("PathsPanel").GetComponent<PathsPanel>();
         
         AssignValues(0, 242.9984f, PanelState.Minimized, false);
-        
-        missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions.Except(pathsPanel.MissionsChoosed,new MissionComparer()).ToList());
-        
+
+        //missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions.Except(pathsPanel.MissionsChoosed,new MissionComparer()).ToList());
+        Debug.Log(GameObject.Find("Space").GetComponent<Map>().Missions);
+        missionsToChoose = new();
+        missionsToChoose.AddRange(Map.mapData.missions);
+        /*
+        if (!Communication.loadOnStart)
+        {
+            missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions);
+        }
+        */
+        Debug.Log(missionsToChoose);
         Debug.Log($"Missions To Choose: {missionsToChoose.Count}");
         missionButtonsAndConfirmButton = transform.GetComponentsInChildren<Button>();
         
@@ -39,6 +50,8 @@ public class MissionsPanel : Panel
         drawMissionsCardsButton.onClick.AddListener(DrawMissions);
 
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        Debug.Log(Map.mapData.missions);
     }
 
     // Update is called once per frame
@@ -58,7 +71,15 @@ public class MissionsPanel : Panel
     {
         SyncMissionsToChooseClientRpc(startPlanetName, endPlanetName);
     }
-    
+    /*
+    [ClientRpc]
+    void SyncLoadMissionsToChoose(string startPlanetName, string endPlanetName,int points)
+    {
+        Mission m = ScriptableObject.CreateInstance<Mission>();
+        m.start = Planets;
+        missionsToChoose.Add();
+    }
+    */
     private void DrawMissions()
     {
         if (missionsToChoose.Count < 3)
@@ -84,11 +105,11 @@ public class MissionsPanel : Panel
     void AddMissions()
     {
         // misje, kt�re dobrali�my
-        var missionsChoosed = pathsPanel.missionsFromClickedMissionsCards.Except(pathsPanel.MissionsChoosed, new MissionComparer()).ToList();
+        var missionsChoosed = pathsPanel.missionsFromClickedMissionsCards.Except(pathsPanel.MissionsChosen, new MissionComparer()).ToList();
 
         if (missionsChoosed.Count > 0) // gracz musi dobra� co najmniej jedn� kart� misji
         {
-            pathsPanel.MissionsChoosed = missionsChoosed;
+            pathsPanel.MissionsChosen = missionsChoosed;
 
             // wygaszamy planety i przyciski
             foreach (Mission m in missionsChoosed)
@@ -128,12 +149,34 @@ public class MissionsPanel : Panel
     }
     public override void LoadData(GameData data)
     {
-        missionsToChoose = data.missionsToChoose;
+        if (IsHost)
+        {
+            map = GameObject.Find("Space").GetComponent<Map>();
+            Debug.Log($"Mapa: {map}");
+            Debug.Log(missionsToChoose);
+            missionsToChoose ??= new();
+            Debug.Log(map.Missions);
+            Debug.Log(Map.mapData.missions);
+            //missionsToChoose.AddRange(map.Missions);
+            //missionsToChoose = data.missionsToChoose;
+            
+            foreach (PlayerInfo playerInfo in Server.allPlayersInfo)
+            {
+                var missionsChoosed = data.missionsForEachPalyer[playerInfo.Id];
+                foreach (MissionData m in missionsChoosed)
+                    SyncMissionsToChooseClientRpc(m.startPlanetName, m.endPlanetName);
+            }
+            
+        }
     }
 
     public override void SaveData(ref GameData data)
     {
-        data.missionsToChoose = missionsToChoose;
+        if (IsHost)
+        {
+            //data.missionsToChoose = missionsToChoose;
+            //var missionschoosed
+        }
     }
 
 }

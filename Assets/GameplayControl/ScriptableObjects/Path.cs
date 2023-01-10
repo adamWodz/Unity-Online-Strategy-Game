@@ -31,4 +31,21 @@ public class Path : ScriptableObject
         this.color = color;
         this.length = length;
     }
+
+    public void Init(int id, Planet planetFrom,Planet planetTo,Color color, int length, bool isBuilt, int builtBuId)
+    {
+        this.Id = id;
+        this.planetFrom = planetFrom;
+        this.planetTo = planetTo;
+        this.color = color;
+        this.length = length;
+        this.isBuilt = isBuilt;
+        this.builtById = builtBuId;
+    }
+    public static Path CreateInstance(int id, Planet planetFrom, Planet planetTo, Color color, int length, bool isBuilt, int builtBuId)
+    {
+        Path path = CreateInstance<Path>();
+        path.Init(id, planetFrom, planetTo, color, length, isBuilt, builtBuId);
+        return path;
+    }
 }

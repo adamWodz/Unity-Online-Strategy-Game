@@ -19,4 +19,12 @@ namespace Assets.GameplayControl
             return ConnectedPlanets.ArePlanetsInOneGroup(PlayerGameData.groupsOfConnectedPlanets, start, end);
         }
     }
+
+    [Serializable]
+    public struct MissionData
+    {
+        public string startPlanetName;
+        public string endPlanetName;
+        public int points;
+    }
 }
