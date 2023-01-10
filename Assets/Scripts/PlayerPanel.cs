@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using Unity.Netcode;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
 [Serializable]
@@ -25,6 +26,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     [SerializeField] public List<PlayerInfo> players;
     Queue<GameObject> playersTiles;
     Dictionary<int, GameObject> playerTilesByIds = new Dictionary<int, GameObject>();
+    public bool playersOrderChanged = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +43,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         GameObject playerTile;
 
         int playersCount = players.Count;
+
 
         for (int i = 0; i < playersCount; i++)
         {
@@ -61,11 +65,6 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     // Update is called once per frame
     void Update()
     {
-        // test
-        if(Input.GetKeyDown(KeyCode.T)) 
-        {
-            UpdatePlayersOrderServerRpc();
-        }   
     }
 
     public void LoadData(GameData data)
@@ -156,19 +155,23 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         int i = 0;
         foreach(var playerTile in playersTiles) 
         {
-            players[i].Position = (players[i].Position + 1) % players.Count;
-            //Debug.Log(players[i].Name + ". Position: " + players[i].Position);
+            players[i].Position = (players[i].Position - 1) % players.Count;
             i++;
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = i.ToString();
         }
+
+        playersOrderChanged = true;
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void StartNextPlayerTurnServerRpc()
     {
+        while(!playersOrderChanged) { }
+        
         PlayerInfo nextPlayer = players.Where(p => p.Position == 0).First();
+        //Debug.Log("StartNextPlayerTurnServerRpc; playerId: " + nextPlayer.Id);
         if (nextPlayer.IsAI)
-            Server.artificialPlayers.Where(ai => ai.Id == nextPlayer.Id).First().BestMove();
+            Communication.StartAiTurn(nextPlayer.Id);
         else
             StartNextPlayerTurnClientRpc(nextPlayer.Id);
     }
@@ -176,7 +179,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     [ClientRpc]
     public void StartNextPlayerTurnClientRpc(int playerId)
     {
-        Debug.Log("StartNextPlayerTurnClientRpc; playerId: " + playerId + " thisPlayerId: " + PlayerGameData.Id);
+        //Debug.Log("StartNextPlayerTurnClientRpc; playerId: " + playerId + " thisPlayerId: " + PlayerGameData.Id);
         Communication.StartTurn(playerId);
     }
 

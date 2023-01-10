@@ -40,7 +40,7 @@ public class DrawCardsPanel : NetworkBehaviour
                 i++;
                 cards.Add(child.gameObject);
                 
-                // Pocz¹tkowa synchronizacja kolorów kart
+                // PoczÂ¹tkowa synchronizacja kolorÃ³w kart
                 SyncSpritesServerRpc(color, copy);
             }
         }
@@ -64,7 +64,7 @@ public class DrawCardsPanel : NetworkBehaviour
         //Debug.Log($"Index: {index}");
         actualCardColor[index] = color;
         //Debug.Log($"Color: {color}");
-        if (cards.Count > index) // klient mo¿e nie utworzyæ listy w tym samym czasie co host
+        if (cards.Count > index) // klient moÂ¿e nie utworzyÃ¦ listy w tym samym czasie co host
         {
             cards[index].GetComponent<Image>().sprite = sprites[color];
             cards[index].name = names[color];
@@ -88,16 +88,18 @@ public class DrawCardsPanel : NetworkBehaviour
         {
             selectedColor = (Color)actualCardColor[index];
 
-            // rozpoczyna siê animacja doboru karty danego koloru przez gracza
+            // rozpoczyna siÃª animacja doboru karty danego koloru przez gracza
             gameManager.SpawnCards(cards[index].transform, actualCardColor[index], names[actualCardColor[index]]);
             gameManager.iSendSpawnCardsServerRpc = true;
             
-            // animacja dla pozosta³ych graczy
+            // animacja dla pozostaÂ³ych graczy
+
             gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]]+"BelongToOtherPlayer", index);
+
             ChooseRandomColor(index);
         }
 
-        // zapis stanu kart "na rêce" na bie¿¹co
+        // zapis stanu kart "na rÃªce" na bieÂ¿Â¹co
         string cardsStacks = "";
         for (int i = 0; i < gameManager.cardStackCounterList.Count; i++)
         {
@@ -108,14 +110,14 @@ public class DrawCardsPanel : NetworkBehaviour
         return selectedColor;
     }
     
-    public void AiDrawCardAndEndTurn(int index, ArtificialPlayer ai)
+    public void AiDrawCard(int index, ArtificialPlayer ai)
     {
-        StartCoroutine(SpawnCardOfIndexAndEndTurn(index, ai));
+        StartCoroutine(SpawnCardOfIndex(index, ai));
     }
 
-    public IEnumerator SpawnCardOfIndexAndEndTurn(int index, ArtificialPlayer ai)
+    public IEnumerator SpawnCardOfIndex(int index, ArtificialPlayer ai)
     {
-        gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]], index);
+        //gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]], index);
         ChooseRandomColor(index);
 
         yield return new WaitForSeconds(3);
@@ -142,7 +144,7 @@ public class DrawCardsPanel : NetworkBehaviour
 
     private Color MoveCard()
     {
-        // gracz dobiera losow¹ kartê z kupki z kartami (widoczne tylko lokalnie)
+        // gracz dobiera losowÂ¹ kartÃª z kupki z kartami (widoczne tylko lokalnie)
         int color = 0;
         RandomSprite(ref color);
         gameManager.SpawnCards(drawCardsButton.transform, color, names[color]);
@@ -150,4 +152,8 @@ public class DrawCardsPanel : NetworkBehaviour
         return (Color)color;
     }
     
+    public static bool IsCardRandom(int index)
+    {
+        return index > 4;
+    }
 }

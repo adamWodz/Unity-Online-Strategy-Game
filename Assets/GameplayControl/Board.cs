@@ -66,5 +66,34 @@ namespace Assets.GameplayControl
         {
             return GroupContainingPlanet(groups, planet1) == GroupContainingPlanet(groups, planet2);
         }
+
+        public static void AddPlanetsFromPathToPlanetsGrups(Path path, List<ConnectedPlanets> connectedPlanets)
+        {
+            // najpierw sprawdzamy czy planety są już w jakichs grupach
+            ConnectedPlanets groupPlanetFrom = ConnectedPlanets.GroupContainingPlanet(connectedPlanets, path.planetFrom);
+            ConnectedPlanets groupPlanetTo = ConnectedPlanets.GroupContainingPlanet(connectedPlanets, path.planetTo);
+
+            // jeśli obu planet nie ma w żadnej grupie, to tworzymy nową grupę
+            if (groupPlanetFrom == null && groupPlanetTo == null)
+            {
+                connectedPlanets.Add(new ConnectedPlanets(new List<Planet> { path.planetFrom, path.planetTo }));
+            }
+            // dodajemy nowo połączoną planetę do grupy
+            else if (groupPlanetFrom == null)
+            {
+                groupPlanetTo.planets.Add(path.planetFrom);
+            }
+            else if (groupPlanetTo == null)
+            {
+                groupPlanetFrom.planets.Add(path.planetTo);
+            }
+            // jesli obie planety należą do innej grupy, to łączymy te grupy
+            else if (groupPlanetFrom != groupPlanetTo)
+            {
+                connectedPlanets.Remove(groupPlanetTo);
+                connectedPlanets.Remove(groupPlanetFrom);
+                connectedPlanets.Add(ConnectedPlanets.MergeGroups(groupPlanetTo, groupPlanetFrom));
+            }
+        }
     }
 }

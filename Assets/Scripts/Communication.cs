@@ -1,6 +1,8 @@
 using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -29,9 +31,11 @@ public static class Communication
         }
     }
     public static int mapDataNumber;
+    
     private static bool isLastTurn = false;
     public static bool loadOnStart = false;
     public static List<MapData> availableMapsData;
+
 
     private static (BuildPath buildPath, Path path) chosenPath;
 
@@ -66,10 +70,11 @@ public static class Communication
         PlayerGameData.BuildPath(path);
         Debug.Log("CurrentPoints: " + PlayerGameData.curentPoints);
 
-        buildPath.StartCoroutine(buildPath.BuildPathAnimation());
+        //buildPath.StartCoroutine(buildPath.BuildPathAnimation(PlayerGameData.Id));
+        buildPath.DoBuildPath(PlayerGameData.Id);
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
         playerPanel.UpdatePointsAndSpeceshipsNumServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.spaceshipsLeft);
-        _GameManager.SetBuildPathDataServerRpc(path.Id);
+        _GameManager.SetBuildPathDataServerRpc(path.Id, PlayerGameData.Id);
         EndTurn();
         chosenPath = (null, null);
         
@@ -87,9 +92,14 @@ public static class Communication
             SetNotThisTurnPopUpWindow();
             return;
         }
-        
+        if (!DrawCardsPanel.IsCardRandom(index) && (Color)drawCardsPanel.actualCardColor[index] == Color.special && PlayerGameData.cardsDrewInTurn == 1)
+        {
+            _GameManager.SetPopUpWindow("Nie możesz dobrać tej karty!");
+            return;
+        }
+
         Color color = drawCardsPanel.MoveCard(index);
-        PlayerGameData.DrawCard(color);
+        PlayerGameData.DrawCard(color, DrawCardsPanel.IsCardRandom(index));
         if (PlayerGameData.cardsDrewInTurn == 2)
             EndTurn();
     }
@@ -107,53 +117,58 @@ public static class Communication
         Debug.Log("DrawMissions");
         foreach (var mission in missions)
             Debug.Log("missions: " + mission.start + " - " + mission.end);
+
+        EndTurn();
     }
 
     public static void EndTurn()
     {
         PlayerGameData.EndTurn();
-        Debug.Log("Before order update: ");
-        foreach (var player in Server.allPlayersInfo)
-        {
-            Debug.Log("name: " + player.Name + " posiotion: " + player.Position);
-        }
-        _PlayerPanel.UpdatePlayersOrderServerRpc();
-        Debug.Log("After order update: ");
-        foreach (var player in Server.allPlayersInfo)
-        {
-            Debug.Log("name: " + player.Name + " posiotion: " + player.Position);
-        }
-        _playerPanel.StartNextPlayerTurnServerRpc();
+        NextTurnActions();
         Debug.Log("EndTurn");
 
-        if (isLastTurn)
-        {
-            PlayerGameData.PrintMissions();
-            
-            _GameManager.EndGameServerRpc();
-        }
-
         if (PlayerGameData.spaceshipsLeft < Board.minSpaceshipsLeft)
-            isLastTurn = true;
-
+            PlayerGameData.isLastTurn = true;
     }
 
     public static void EndAITurn(ArtificialPlayer ai)
     {
-        _PlayerPanel.UpdatePlayersOrderServerRpc();
-        _playerPanel.StartNextPlayerTurnServerRpc();
+        NextTurnActions();
         Debug.Log("EndAiTurn");
 
-        if (isLastTurn)
-            _GameManager.EndGameServerRpc();
-
         if (ai.spaceshipsLeft < Board.minSpaceshipsLeft)
-            isLastTurn = true;
+            ai.isLastTurn = true;
+    }
+
+    static void NextTurnActions()
+    {
+        _PlayerPanel.playersOrderChanged = false;
+        _PlayerPanel.UpdatePlayersOrderServerRpc();
+        _playerPanel.StartNextPlayerTurnServerRpc();
+    }
+
+    public static void StartAiTurn(int id)
+    {
+        ArtificialPlayer ai = Server.artificialPlayers.Where(ai => ai.Id == id).First();
+        if (ai.isLastTurn)
+            _GameManager.EndGameServerRpc();
+        else
+            ai.BestMove();
     }
 
     public static void StartTurn(int playerId)
     {
-        if(playerId == PlayerGameData.Id)
-            PlayerGameData.StartTurn();
+        if (playerId == PlayerGameData.Id)
+        {
+            //PlayerGameData.PrintCards();
+
+            if (PlayerGameData.isLastTurn)
+            {
+                PlayerGameData.PrintMissions();
+                _GameManager.EndGameServerRpc();
+            }
+            else 
+                PlayerGameData.StartTurn();
+        }
     }
 }

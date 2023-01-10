@@ -412,7 +412,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts
+    - Assets/Scripts/ScriptableObjects/MapScriptableObjects
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 0
@@ -712,7 +712,7 @@ MonoBehaviour:
       floating: 0
       collapsed: 0
       displayed: 1
-      snapOffset: {x: 67.5, y: 44.399994}
+      snapOffset: {x: 67.5, y: 20.399994}
       snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 0
       id: Orientation

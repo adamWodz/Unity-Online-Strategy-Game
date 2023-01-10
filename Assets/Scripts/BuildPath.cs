@@ -35,9 +35,8 @@ public class BuildPath : MonoBehaviour
         Communication.ChoosePath(this, path);
     }
 
-    public IEnumerator BuildPathAnimation()
+    public void DoBuildPath(int playerId)
     {
-        Debug.Log("Started Coroutine at timestamp : " + Time.time);
         for (int i = 0; i < tilesRenderers.Length; i++)
         {
             // aktualizacja licznika dost�pnych statk�w 
@@ -47,14 +46,28 @@ public class BuildPath : MonoBehaviour
             var cardCounter = gameManager.cardStackCounterList[(int)path.color];
 
             // Jeśli nie mamy już kart danego koloru, to znaczy, że musimy użyć tęczowych
-            if(cardCounter.text == "0")
+            if (cardCounter.text == "0")
             {
                 cardCounter = gameManager.cardStackCounterList[^1];
             }
             cardCounter.text = (int.Parse(cardCounter.text) - 1).ToString();
+        }
 
+        StartCoroutine(BuildPathAnimation(playerId));
+    }
+
+    public void DoBuildPathByAI(int playerId)
+    {
+        StartCoroutine(BuildPathAnimation(playerId));
+    }
+
+    public IEnumerator BuildPathAnimation(int playerId)
+    {
+        Debug.Log("Started Coroutine at timestamp : " + Time.time);
+        for (int i = 0; i < tilesRenderers.Length; i++)
+        {
             // host spawni statki i je przemieszcza 
-            gameManager.SpawnShipsServerRpc(tilesTransforms[i + 1].position, tilesTransforms[i + 1].rotation);
+            gameManager.SpawnShipsServerRpc(playerId, tilesTransforms[i + 1].position, tilesTransforms[i + 1].rotation);
             
             yield return new WaitForSeconds(0.2f);
         }

@@ -30,13 +30,14 @@ public class DataPersistenceManager : MonoBehaviour
     {
         dataHandler = new(Application.persistentDataPath, fileName);
         
-        // znajdujemy listê skryptów, które posiadaj¹ dane do zapisu/wczytania
+        // znajdujemy listÃª skryptÃ³w, ktÃ³re posiadajÂ¹ dane do zapisu/wczytania
         dataPersistenceObjects = FindAllDataPersistenceObjects();
 
         if (Communication.loadOnStart)
             LoadGame();
         else
             NewGame();
+
     }
 
     public void NewGame()
