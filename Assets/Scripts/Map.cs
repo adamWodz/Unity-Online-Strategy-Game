@@ -10,6 +10,7 @@ public class Map : NetworkBehaviour, IDataPersistence
 {
     public static MapData mapData;
 
+
     private float mapZparam = -1;
     private List<Path> paths;
     public List<Path> Paths
@@ -48,6 +49,7 @@ public class Map : NetworkBehaviour, IDataPersistence
         paths = mapData.paths;
         planets = mapData.planets; 
         missions = mapData.missions;
+        //buildPaths = new List<BuildPath>();
         CreateMap();
     }
 
@@ -97,6 +99,7 @@ public class Map : NetworkBehaviour, IDataPersistence
             // przypisanie do build path
             var buildPath = pathGameObject.GetComponent<BuildPath>();
             buildPath.path = paths[i];
+            Server.buildPaths.Add(buildPath);
 
             var tilesRenderers = pathGameObject.GetComponentsInChildren<Renderer>();
             for (int j = 0; j < tilesRenderers.Length; j++)

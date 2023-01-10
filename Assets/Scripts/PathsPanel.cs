@@ -59,11 +59,6 @@ public class PathsPanel : Panel
         ChangeWidth();
     }
 
-    public List<Mission> GetRandomElementsFromList(List<Mission> list, int elementsCount)
-    {
-        return list.OrderBy(arg => Guid.NewGuid()).Take(elementsCount).ToList();
-    }
-
     private void HighlightPlanets()
     {
         if (firstClick)

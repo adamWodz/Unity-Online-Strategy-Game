@@ -1,4 +1,5 @@
 using Assets.GameplayControl;
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -20,7 +21,7 @@ public class GameManager : NetworkBehaviour
 
     private GameObject spawnedCardGameObject;
     public List<GameObject> shipGameObjectList = new();
-    public List<TMP_Text> cardStackCounterList = new();
+    public List<TMP_Text> cardStackCounterList { set; get; } = new();
     private Vector3 spaceshipsBase = new(-8, -4, -1);
     public TMP_Text spaceshipCounter;
     private TMP_Text satelliteCounter;
@@ -58,11 +59,12 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnShipsServerRpc(Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
+    public void SpawnShipsServerRpc(int playerId, Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
     {
-        int clientId = (int)serverRpcParams.Receive.SenderClientId;
+        Debug.Log("plauerId: " + playerId);
+        
         float angle = CalculateAngle(position,spaceshipsBase);
-        var spawnedShipGameObject = Instantiate(shipGameObjectList[clientId], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
+        var spawnedShipGameObject = Instantiate(shipGameObjectList[playerId], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
         // spawnuje si� dla wszystkich graczy bo network object
         spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
@@ -118,16 +120,17 @@ public class GameManager : NetworkBehaviour
 
 
     [ServerRpc(RequireOwnership = false)]
-    public void SetBuildPathDataServerRpc(int pathId)
+    public void SetBuildPathDataServerRpc(int pathId, int playerId)
     {
-        SetBuildPathDataClientRpc(pathId);
+        SetBuildPathDataClientRpc(pathId, playerId);
     }
 
     [ClientRpc]
-    public void SetBuildPathDataClientRpc(int pathId)
+    public void SetBuildPathDataClientRpc(int pathId, int playerId)
     {
         Path path = Map.mapData.paths.Where(p => p.Id == pathId).First();
         path.isBuilt = true;
+        path.builtById = playerId;
     }
 
     public void SetPopUpWindow(string message)
@@ -135,6 +138,17 @@ public class GameManager : NetworkBehaviour
         var popUp = GameObject.Find("Canvas").transform.GetChild(0);//transform.parent.GetChild(0);
         popUp.GetChild(0).GetComponent<TMP_Text>().text = message;
         popUp.gameObject.SetActive(true);
+    }
+
+    public void EndAiTurn(ArtificialPlayer ai)
+    {
+        StartCoroutine(EndAiTurnCoroutine(ai));
+    }
+
+    IEnumerator EndAiTurnCoroutine(ArtificialPlayer ai)
+    {
+        yield return new WaitForSeconds(3);
+        Communication.EndAITurn(ai);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -146,6 +160,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     private void EndGameClientRpc()
     {
+        Debug.Log("Quit");
         Application.Quit();
     }
 }

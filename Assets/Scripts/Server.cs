@@ -8,5 +8,6 @@ public static class Server
 {
     public static List<PlayerInfo> allPlayersInfo { get; set; }
     public static List<ArtificialPlayer> artificialPlayers { get; set; }
-    public static int curPlayerId = 1;
+    public static List<BuildPath> buildPaths = new List<BuildPath>();
+
 }
