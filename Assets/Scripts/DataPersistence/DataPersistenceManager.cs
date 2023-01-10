@@ -33,11 +33,11 @@ public class DataPersistenceManager : MonoBehaviour
         // znajdujemy listê skryptów, które posiadaj¹ dane do zapisu/wczytania
         dataPersistenceObjects = FindAllDataPersistenceObjects();
 
-        if (Communication.loadOnStart)
+        /*if (Communication.loadOnStart)
             LoadGame();
         else
-            NewGame();
-
+            NewGame();*/
+        NewGame();
     }
 
     public void NewGame()

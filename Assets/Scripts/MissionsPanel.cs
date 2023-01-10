@@ -109,6 +109,8 @@ public class MissionsPanel : Panel
 
         if (missionsChoosed.Count > 0) // gracz musi dobra� co najmniej jedn� kart� misji
         {
+            Communication.DrawMissions(missionsChoosed);
+
             pathsPanel.MissionsChosen = missionsChoosed;
 
             // wygaszamy planety i przyciski
@@ -134,8 +136,6 @@ public class MissionsPanel : Panel
             ChangeState();
             pathsPanel.ChangeState();
             drawMissionsCardsButton.enabled = true;
-
-            Communication.DrawMissions(missionsChoosed);
         }
         else
         {
