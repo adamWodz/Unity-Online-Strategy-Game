@@ -57,6 +57,8 @@ public class Map : NetworkBehaviour, IDataPersistence
             missions = mapData.missions;
             CreateMap();
         }
+        else
+            paths = new();
         
     }
 
@@ -67,8 +69,12 @@ public class Map : NetworkBehaviour, IDataPersistence
         //Debug.Log("Server?" + IsServer);
         if (IsHost)
         {
-            paths = data.paths;
-            Communication.mapDataNumber = data.mapNumber;
+            //paths = data.paths;
+            //Communication.mapDataNumber = data.mapNumber;
+            foreach(Path path in paths)
+            {
+                SetPathsClientRpc(path.Id, path.planetFrom.name, path.planetTo.name, path.color, path.length, path.isBuilt, path.builtById);
+            }
             SetMapDataClientRpc(data.mapNumber);
         }
 
@@ -144,5 +150,14 @@ public class Map : NetworkBehaviour, IDataPersistence
         missions = mapData.missions;
         CreateMap();
        // Debug.Log(mapData);
+    }
+
+    [ClientRpc]
+    public void SetPathsClientRpc(int id,string planetFromName,string planetToName, Color color, int length, bool isBuilt, int builtById)
+    {
+        Planet planetFrom = planets.Single(planet => planet.name == planetFromName);
+        Planet planetTo = planets.Single(planet => planet.name == planetToName);
+        Path path = Path.CreateInstance(id,planetFrom,planetTo, color,length,isBuilt,builtById);
+        paths.Add(path);
     }
 }

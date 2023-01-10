@@ -37,10 +37,13 @@ public class PathsPanel : Panel
 
     private bool firstClick;
     private List<MissionData>[] receivedMissions;
+    private Map map;
 
     // Start is called before the first frame update
     void Start()
     {
+        map = GameObject.Find("Space").GetComponent<Map>();
+
         if (IsHost)
         {
             receivedMissions = new List<MissionData>[Server.allPlayersInfo.Count];
@@ -60,7 +63,7 @@ public class PathsPanel : Panel
 
         missionsChosen = new();
 
-        Debug.Log($"Missions choosed: {missionsChosen.Count}");
+        //Debug.Log($"Missions choosed: {missionsChosen.Count}");
 
         AssignValues(368.62f, 611.61f, PanelState.Maximized, true);
 
@@ -222,7 +225,40 @@ public class PathsPanel : Panel
     {
         if (IsHost)
         {
-            //MissionsChoosed = data.missionsForEachPalyer[PlayerGameData.Id];
+            // host wczytuje dane bez rpc
+            var missionsData = data.missionsForEachPalyer[PlayerGameData.Id];
+            var missions = map.Missions.Where(mission =>
+            {
+                foreach (MissionData m in missionsData)
+                {
+                    if(m.startPlanetName == mission.start.name && m.endPlanetName == mission.end.name && m.points == mission.points)
+                        return true;
+                }
+                return false;
+            });
+            MissionsChosen = missions.ToList();
+
+            // host wysy³a rpc innym graczom z danymi
+            for (int i = 0; i < Server.allPlayersInfo.Count; i++)
+            {
+                if (i != PlayerGameData.Id)
+                {
+                    // ustawiam rpc na wysy³anie do konkretnego gracza (kazdy gracz musi otrzymac inne dane)
+                    ClientRpcParams clientRpcParams = new()
+                    {
+                        Send = new ClientRpcSendParams
+                        {
+                            TargetClientIds = new ulong[] { (ulong)i }
+                        }
+                    };
+
+                    missionsData = data.missionsForEachPalyer[i];
+                    foreach(var mD in missionsData)
+                    {
+                        LoadMissionsChosenClientRpc(mD.startPlanetName,mD.endPlanetName,mD.points, clientRpcParams);
+                    }
+                }
+            }
         }
     }
 
@@ -252,6 +288,21 @@ public class PathsPanel : Panel
             points = points,
         });
         //Debug.Log("Server Rpc received missions: "+ receivedMissions[id].Count);    
+    }
+
+    [ClientRpc]
+    void LoadMissionsChosenClientRpc(string startPlanetName, string endPlanetName, int points, ClientRpcParams clientRpcParams = default)
+    {
+        map = GameObject.Find("Space").GetComponent<Map>();
+        Debug.Log(map);
+        Mission mission = map.Missions.Single(m => m.start.name == startPlanetName && m.end.name == endPlanetName && m.points == points);
+        Debug.Log(mission);
+        List<Mission> missions = new()
+        {
+            mission
+        };
+        missionsChosen ??= new();
+        MissionsChosen = missions;
     }
 
 }

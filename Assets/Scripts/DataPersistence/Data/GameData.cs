@@ -6,15 +6,6 @@ using UnityEngine;
 [System.Serializable]
 public class GameData
 {
-    /*
-    int mapNumber;
-    List<Path> paths;
-    List<PlayerInfo> playerInfos;
-    Queue<GameObject> playerTiles;
-    int actualPlayer;
-    Dictionary<int, List<Mission>> missionsForEachPlayer;
-    Dictionary<int, int[]> cardsForEachPlayer;
-    */
     public int mapNumber;
     public int curPlayerId;
     public List<PlayerInfo> players;

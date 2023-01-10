@@ -20,18 +20,28 @@ public class MissionsPanel : Panel
 
     private GameManager gameManager;
 
+    Map map;
+
     // Start is called before the first frame update
     void Start()
     {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        //gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         
         pathsPanel = GameObject.Find("PathsPanel").GetComponent<PathsPanel>();
         
         AssignValues(0, 242.9984f, PanelState.Minimized, false);
 
         //missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions.Except(pathsPanel.MissionsChoosed,new MissionComparer()).ToList());
-        missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions);
-
+        Debug.Log(GameObject.Find("Space").GetComponent<Map>().Missions);
+        missionsToChoose = new();
+        missionsToChoose.AddRange(Map.mapData.missions);
+        /*
+        if (!Communication.loadOnStart)
+        {
+            missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions);
+        }
+        */
+        Debug.Log(missionsToChoose);
         Debug.Log($"Missions To Choose: {missionsToChoose.Count}");
         missionButtonsAndConfirmButton = transform.GetComponentsInChildren<Button>();
         
@@ -39,6 +49,8 @@ public class MissionsPanel : Panel
         drawMissionsCardsButton.onClick.AddListener(DrawMissions);
 
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        Debug.Log(Map.mapData.missions);
     }
 
     // Update is called once per frame
@@ -133,15 +145,22 @@ public class MissionsPanel : Panel
     {
         if (IsHost)
         {
+            map = GameObject.Find("Space").GetComponent<Map>();
+            Debug.Log($"Mapa: {map}");
+            Debug.Log(missionsToChoose);
+            missionsToChoose ??= new();
+            Debug.Log(map.Missions);
+            Debug.Log(Map.mapData.missions);
+            //missionsToChoose.AddRange(map.Missions);
             //missionsToChoose = data.missionsToChoose;
-            /*
+            
             foreach (PlayerInfo playerInfo in Server.allPlayersInfo)
             {
                 var missionsChoosed = data.missionsForEachPalyer[playerInfo.Id];
                 foreach (MissionData m in missionsChoosed)
                     SyncMissionsToChooseClientRpc(m.startPlanetName, m.endPlanetName);
             }
-            */
+            
         }
     }
 

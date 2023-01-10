@@ -98,7 +98,8 @@ public class StartGameButton : NetworkBehaviour
         Debug.Log("SetMapDataClientRpc");
         Map.mapData = availableMapsData[mapNumber];
         Debug.Log(Map.mapData);
-        Communication.availableMapsData = availableMapsData;
+        Communication.availableMapsData = new();
+        Communication.availableMapsData.AddRange(availableMapsData);
         Communication.loadOnStart = loadOnStart;
     }
 

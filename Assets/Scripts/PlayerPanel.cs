@@ -29,9 +29,9 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     // Start is called before the first frame update
     void Start()
     {
-        if (Communication.loadOnStart)
-            players = new();
-        else
+        //if (Communication.loadOnStart)
+            //players = new();
+        //else
             players = Server.allPlayersInfo;
         
         playersTiles = new();
@@ -72,12 +72,14 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     {
         if (IsHost)
         {
-            players = data.players;
-            foreach(PlayerInfo player in players)
+            //players = data.players;
+            /*
+            foreach(PlayerInfo player in data.players)
             {
                 LoadPlayersListClientRpc(player.Position, player.Points, player.Name, player.Id, player.IsAI, player.SpaceshipsLeft, player.PlayerTileId);
             }
             LoadPlayerPanelClientRpc();
+            */
             /*
             for (int i = 0; i < players.Count; i++)
             {
