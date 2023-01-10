@@ -90,7 +90,7 @@ public class DrawCardsPanel : NetworkBehaviour
             gameManager.SpawnCards(cards[index].transform, actualCardColor[index], names[actualCardColor[index]]);
             gameManager.iSendSpawnCardsServerRpc = true;
             // animacja dla pozosta³ych graczy
-            gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]], index);
+            //gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]], index);
             ChooseRandomColor(index);
         }
         return selectedColor;
@@ -103,7 +103,7 @@ public class DrawCardsPanel : NetworkBehaviour
 
     public IEnumerator SpawnCardOfIndex(int index, ArtificialPlayer ai)
     {
-        gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]], index);
+        //gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]], index);
         ChooseRandomColor(index);
 
         yield return new WaitForSeconds(3);
@@ -138,4 +138,8 @@ public class DrawCardsPanel : NetworkBehaviour
         return (Color)color;
     }
     
+    public static bool IsCardRandom(int index)
+    {
+        return index > 4;
+    }
 }

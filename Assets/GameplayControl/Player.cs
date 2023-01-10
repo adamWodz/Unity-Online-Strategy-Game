@@ -26,6 +26,7 @@ namespace Assets.GameplayControl
         public static int curentPoints { get; set; } = 0;
         public static int spaceshipsLeft { get; set; } = Board.startSpaceshipsNumber;
         public static int satellitesSent { get; set; } = 0;
+        public static bool isLastTurn = false;
         public static List<Mission> missions = new List<Mission>();
         public static Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
@@ -43,12 +44,32 @@ namespace Assets.GameplayControl
 
         public static bool CanBuildPath(Path path)
         {
-            if (!isNowPlaying) return false;
-            if (cardsDrewInTurn > 0) return false;
-            if (path.isBuilt) return false;
-            if (path.length > spaceshipsLeft) return false;
-            if (numOfCardsInColor[path.color] < path.length 
-                && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length) return false;
+            if (!isNowPlaying)
+            {
+                Debug.Log("Brak obecnie ruchu");
+                return false;
+            }
+            if (cardsDrewInTurn > 0)
+            {
+                Debug.Log("W tym ruchu juz dobrano kartę");
+                return false;
+            }
+            if (path.isBuilt)
+            {
+                Debug.Log("Połączenie jest juz wybudowane");
+                return false;
+            }
+            if (path.length > spaceshipsLeft)
+            {
+                Debug.Log("Za mało statków");
+                return false;
+            }
+            if (numOfCardsInColor[path.color] < path.length
+                && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length)
+            {
+                Debug.Log("Za mało kart w odpowiednim kolorze");
+                return false;
+            }
 
             return true;
         }
@@ -98,6 +119,13 @@ namespace Assets.GameplayControl
                 Debug.Log(mission + "; " + mission.IsCompletedByPlayer());
         }
 
+        public static void PrintCards()
+        {
+            int n = numOfCardsInColor.Count;
+            for (int i = 0; i < n; i++)
+                Debug.Log(i + ". color: " + (Color)i + "; " + numOfCardsInColor[(Color)i]);
+        }
+
         public static bool CanSendSatellite(Planet planet, Path path, Color color)
         {
             if (planet.withSatellite) return false;
@@ -130,7 +158,7 @@ namespace Assets.GameplayControl
             cardsDrewInTurn++;
             if (cardColor == Color.special && !randomDraw)
                 cardsDrewInTurn++;
-
+            Debug.Log(cardColor + ", " + numOfCardsInColor[cardColor]);
             //Debug.Log("special cards num: " + numOfCardsInColor[Color.special]);
         }
 

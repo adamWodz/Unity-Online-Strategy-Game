@@ -21,7 +21,7 @@ public class GameManager : NetworkBehaviour
 
     private GameObject spawnedCardGameObject;
     public List<GameObject> shipGameObjectList = new();
-    public List<TMP_Text> cardStackCounterList = new();
+    public List<TMP_Text> cardStackCounterList { set; get; } = new();
     private Vector3 spaceshipsBase = new(-8, -4, -1);
     public TMP_Text spaceshipCounter;
     private TMP_Text satelliteCounter;
@@ -157,6 +157,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     private void EndGameClientRpc()
     {
+        Debug.Log("Quit");
         Application.Quit();
     }
 }

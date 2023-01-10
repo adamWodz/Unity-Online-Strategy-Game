@@ -86,8 +86,6 @@ public class MissionsPanel : Panel
         // misje, kt�re dobrali�my
         var missionsChoosed = pathsPanel.missionsFromClickedMissionsCards.Except(pathsPanel.MissionsChoosed, new MissionComparer()).ToList();
 
-        Communication.DrawMissions(missionsChoosed);
-
         if (missionsChoosed.Count > 0) // gracz musi dobra� co najmniej jedn� kart� misji
         {
             pathsPanel.MissionsChoosed = missionsChoosed;
@@ -115,6 +113,8 @@ public class MissionsPanel : Panel
             ChangeState();
             pathsPanel.ChangeState();
             drawMissionsCardsButton.enabled = true;
+
+            Communication.DrawMissions(missionsChoosed);
         }
         else
         {

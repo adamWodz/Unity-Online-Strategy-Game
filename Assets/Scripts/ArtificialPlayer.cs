@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Mono.Cecil.Cil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace Assets.GameplayControl
         public int curentPoints { get; set; } = 0;
         //public int satellitesSent { get; set; } = 0;
         public int spaceshipsLeft = Board.startSpaceshipsNumber;
-        public List<Mission> missions;
+        public List<Mission> missions = new List<Mission>();
         public Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
             { Color.pink, 1 },
@@ -65,6 +66,7 @@ namespace Assets.GameplayControl
         public int[,] dist = new int[Map.mapData.planets.Count,Map.mapData.planets.Count];
         public int[,] nextPlanet = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         public Dictionary<Planet, int> planetIds = new Dictionary<Planet, int>();
+        public bool isLastTurn = false;
         
         List<Path> pathsToBuild = new List<Path>();
 
@@ -80,19 +82,35 @@ namespace Assets.GameplayControl
 
         public void BestMove()
         {
+            Debug.Log("Best Move");
             SetQuickestPathForEveryPairOfPlantes();
             SetPathsToBuild();
-            
-            Path path = BestPathToBuild();
+
+            //BuildPath(Map.mapData.paths[0]);
+            //BuildPath(Map.mapData.paths[1]);
+
+            List<Color> colors = new List<Color>();
+            colors.Add(Color.red);
+            colors.Add(Color.blue);
+            //DrawCard(colors);
+
+
+            /*Path path = BestPathToBuild();
             if (path != null)
+            {
+                Debug.Log("AI builds path");
                 BuildPath(path);
+            }
             else if (missions.Count > 0)
+            {
+                Debug.Log("AI draws cards");
                 DrawCards();
+            }
             else
+            {
+                Debug.Log("AI draws missions");
                 DrawMissions();
-
-
-            Debug.Log("Best Move");
+            }*/
 
             _GameManager.EndAiTurn(this);
 
@@ -176,15 +194,32 @@ namespace Assets.GameplayControl
             pathsToBuild = new List<Path>();
 
             foreach (Mission mission in missions)
-                pathsToBuild.AddRange(GetQuickestPathForMission(mission));
+                pathsToBuild.AddRange(GetQuickestPathForMission(mission).Except(pathsToBuild));
         }
 
         List<Path> GetQuickestPathForMission(Mission mission)
         {
             List<Planet> quicketsPath;
+            List<Planet> startGropup, endGroup;
 
             ConnectedPlanets startPlanetGroup = ConnectedPlanets.GroupContainingPlanet(groupsOfConnectedPlanets, mission.start);
+            if (startPlanetGroup != null)
+                startGropup = startPlanetGroup.planets;
+            else
+            {
+                startGropup = new List<Planet>();
+                startGropup.Add(mission.start);
+            }
+
             ConnectedPlanets endPlanetGroup = ConnectedPlanets.GroupContainingPlanet(groupsOfConnectedPlanets, mission.end);
+            if (endPlanetGroup != null)
+                endGroup = endPlanetGroup.planets;
+            else
+            {
+                endGroup = new List<Planet>();
+                endGroup.Add(mission.end);
+            }
+
 
             int shortestDist = dist[planetIds[mission.start], planetIds[mission.end]];
             if(shortestDist == int.MaxValue)
@@ -194,8 +229,9 @@ namespace Assets.GameplayControl
             }
             quicketsPath = pathBetweenPlanets[(mission.start, mission.end)];
 
-            foreach(Planet planet1 in startPlanetGroup.planets)
-                foreach(Planet planet2 in endPlanetGroup.planets)
+
+            foreach(Planet planet1 in startGropup)
+                foreach(Planet planet2 in endGroup)
                 {
                     if (dist[planetIds[planet1], planetIds[planet2]] < shortestDist)
                     {
@@ -203,6 +239,8 @@ namespace Assets.GameplayControl
                         quicketsPath = pathBetweenPlanets[(planet1, planet2)];
                     }
                 }
+
+            Debug.Log("Mission " + mission.name + ", length: " + quicketsPath.Count + "" + dist[planetIds[mission.start],planetIds[mission.end]]);
 
             return ConvertPath(quicketsPath);
         }
@@ -213,6 +251,7 @@ namespace Assets.GameplayControl
             
             for(int i = 0; i < pathOfPlanets.Count - 1; i++)
             {
+                Debug.Log("path: " + pathOfPlanets[i] + " - " + pathOfPlanets[i + 1]);
                 Path path = Map.mapData.paths.Where(p => (p.planetFrom == pathOfPlanets[i] && p.planetTo == pathOfPlanets[i + 1])
                     || (p.planetTo == pathOfPlanets[i] && p.planetFrom == pathOfPlanets[i + 1])).First();
                 resultPath.Add(path);
@@ -244,7 +283,8 @@ namespace Assets.GameplayControl
             ConnectedPlanets.AddPlanetsFromPathToPlanetsGrups(path, groupsOfConnectedPlanets);
 
             BuildPath buildPath = Server.buildPaths.Where(b => b.path == path).First();
-            buildPath.StartCoroutine(buildPath.BuildPathAnimation(Id));
+            //buildPath.StartCoroutine(buildPath.BuildPathAnimation(Id));
+            buildPath.DoBuildPathByAI(Id);
 
             _PlayersPanel.UpdatePointsAndSpeceshipsNumServerRpc(Id, curentPoints, spaceshipsLeft);
             _GameManager.SetBuildPathDataServerRpc(path.Id, Id);
@@ -328,7 +368,7 @@ namespace Assets.GameplayControl
         {
             Color[] availableColors = drawCardsPanel.GetCurrentCardsToChoose();
             numOfCardsInColor[availableColors.Last()]++;
-            drawCardsPanel.AiDrawCard(5, this);
+            //drawCardsPanel.AiDrawCard(5, this);
         }
 
         private List<Color> BestCardColorsToDraw()

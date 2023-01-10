@@ -46,7 +46,7 @@ public class StartGameButton : NetworkBehaviour
     [ClientRpc]
     public void InitializePlayersListsClientRpc(int aiPlayersNum, int nonAiPlayersNum)
     {
-        Server.artificialPlayers = new List<Assets.GameplayControl.ArtificialPlayer>(aiPlayersNum);
+        Server.artificialPlayers = new List<ArtificialPlayer>(aiPlayersNum);
         Server.allPlayersInfo = new List<PlayerPanel.PlayerInfo>(aiPlayersNum + nonAiPlayersNum);
     }
 
