@@ -30,9 +30,12 @@ public class GameManager : NetworkBehaviour
     GameObject drawCardsPanel;
     GameObject cardGoal;
 
+    public int playerId = 0;
+
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("GameManager Client ID:"+OwnerClientId);
         drawCardsPanel = GameObject.Find("DrawCardsPanel");
         cardGoal = GameObject.Find("CardGoal");
 

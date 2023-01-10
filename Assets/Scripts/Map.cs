@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEngine;
 using TMPro;
 
-public class Map : MonoBehaviour
+public class Map : NetworkBehaviour, IDataPersistence
 {
     public static MapData mapData;
 
@@ -53,10 +53,14 @@ public class Map : MonoBehaviour
         CreateMap();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void LoadData(GameData data)
     {
 
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        data.paths = paths;
     }
 
     void CreateMap()

@@ -34,7 +34,7 @@ public class MissionComparer: IEqualityComparer<Mission>
     }
 }
 
-public class Panel : NetworkBehaviour
+public class Panel : NetworkBehaviour, IDataPersistence
 {
     private float speed = 500;
     
@@ -111,6 +111,14 @@ public class Panel : NetworkBehaviour
         popUpPanel.SetActive(false);
     }
 
-    
+    public virtual void LoadData(GameData gameData)
+    {
+
+    }
+
+    public virtual void SaveData(ref GameData gameData)
+    {
+
+    }
     
 }

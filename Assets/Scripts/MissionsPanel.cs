@@ -126,4 +126,14 @@ public class MissionsPanel : Panel
     {
         return missionsToChoose.OrderBy(arg => Guid.NewGuid()).Take(missionsDrawNumber).ToList();
     }
+    public override void LoadData(GameData data)
+    {
+        missionsToChoose = data.missionsToChoose;
+    }
+
+    public override void SaveData(ref GameData data)
+    {
+        data.missionsToChoose = missionsToChoose;
+    }
+
 }

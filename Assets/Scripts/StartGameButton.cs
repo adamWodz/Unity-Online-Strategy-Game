@@ -46,14 +46,14 @@ public class StartGameButton : NetworkBehaviour
     [ClientRpc]
     public void InitializePlayersListsClientRpc(int aiPlayersNum, int nonAiPlayersNum)
     {
-        Server.artificialPlayers = new List<ArtificialPlayer>(aiPlayersNum);
-        Server.allPlayersInfo = new List<PlayerPanel.PlayerInfo>(aiPlayersNum + nonAiPlayersNum);
+        Server.artificialPlayers = new List<Assets.GameplayControl.ArtificialPlayer>(aiPlayersNum);
+        Server.allPlayersInfo = new List<PlayerInfo>(aiPlayersNum + nonAiPlayersNum);
     }
 
     [ClientRpc]
     public void AddRealPlayerClientRpc(int position, int id)
     {
-        PlayerPanel.PlayerInfo playerState = new PlayerPanel.PlayerInfo
+        PlayerInfo playerState = new PlayerInfo
         {
             Position = position,
             Points = 0,
@@ -68,7 +68,7 @@ public class StartGameButton : NetworkBehaviour
     [ClientRpc]
     public void AddAiPlayerClientRpc(int position, int id)
     {
-        PlayerPanel.PlayerInfo playerState = new PlayerPanel.PlayerInfo
+        PlayerInfo playerState = new PlayerInfo
         {
             Position = position,
             Points = 0,
