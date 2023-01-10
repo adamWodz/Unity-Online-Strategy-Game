@@ -155,7 +155,7 @@ public static class Communication
     {
         if (playerId == PlayerGameData.Id)
         {
-            PlayerGameData.PrintCards();
+            //PlayerGameData.PrintCards();
 
             if (PlayerGameData.isLastTurn)
             {

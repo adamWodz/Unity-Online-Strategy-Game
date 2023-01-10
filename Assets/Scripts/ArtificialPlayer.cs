@@ -2,8 +2,10 @@
 using Mono.Cecil.Cil;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
@@ -41,13 +43,13 @@ namespace Assets.GameplayControl
 
             get
             {
-                if(_playersPanel == null)
+                if (_playersPanel == null)
                     _playersPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
                 return _playersPanel;
             }
         }
 
-        public int Id { set;  get; }
+        public int Id { set; get; }
         public string Name { set; get; }
         public int curentPoints { get; set; } = 0;
         //public int satellitesSent { get; set; } = 0;
@@ -63,17 +65,17 @@ namespace Assets.GameplayControl
             { Color.special, 1 },
         };
         public List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
-        public int[,] dist = new int[Map.mapData.planets.Count,Map.mapData.planets.Count];
+        public int[,] dist = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         public int[,] nextPlanet = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         public Dictionary<Planet, int> planetIds = new Dictionary<Planet, int>();
         public bool isLastTurn = false;
-        
+
         List<Path> pathsToBuild = new List<Path>();
 
         public ArtificialPlayer()
         {
             int ii = 0;
-            foreach(Planet planet in Map.mapData.planets)
+            foreach (Planet planet in Map.mapData.planets)
             {
                 planetIds.Add(planet, ii);
                 ii++;
@@ -86,6 +88,9 @@ namespace Assets.GameplayControl
             SetQuickestPathForEveryPairOfPlantes();
             SetPathsToBuild();
 
+            //PrintAllQuickestPaths();
+
+            /*
             //BuildPath(Map.mapData.paths[0]);
             //BuildPath(Map.mapData.paths[1]);
 
@@ -93,9 +98,9 @@ namespace Assets.GameplayControl
             colors.Add(Color.red);
             colors.Add(Color.blue);
             //DrawCard(colors);
+            */
 
-
-            /*Path path = BestPathToBuild();
+            Path path = BestPathToBuild();
             if (path != null)
             {
                 Debug.Log("AI builds path");
@@ -105,12 +110,13 @@ namespace Assets.GameplayControl
             {
                 Debug.Log("AI draws cards");
                 DrawCards();
+                return;
             }
             else
             {
                 Debug.Log("AI draws missions");
                 DrawMissions();
-            }*/
+            }
 
             _GameManager.EndAiTurn(this);
 
@@ -140,8 +146,36 @@ namespace Assets.GameplayControl
         Dictionary<(Planet, Planet), List<Planet>> pathBetweenPlanets = new Dictionary<(Planet, Planet), List<Planet>>();
         int[,] kay = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
 
+
+        /*
+        void PrintAllQuickestPaths()
+        {
+            foreach (Planet planet1 in Map.mapData.planets)
+                foreach (Planet planet2 in Map.mapData.planets)
+                {
+                    Debug.Log(planet1.name + " - " + planet2.name + ": " + dist[planetIds[planet1], planetIds[planet2]]);
+                    foreach (Planet planet in pathBetweenPlanets[(planet1, planet2)])
+                    {
+                        //Debug.Log(planet.name);
+                    }
+                }
+
+            Debug.Log("paths:");
+            foreach (Path path in Map.mapData.paths)
+                Debug.Log(path.planetFrom + " - " + path.planetTo);
+        }
+
+        Planet uran = Map.mapData.planets.First(p => p.name == "Uran");
+        Planet jowisz = Map.mapData.planets.First(p => p.name == "Jowisz");
+        Planet ceres = Map.mapData.planets.First(p => p.name == "Ceres");
+        */
+
         private void SetQuickestPathForEveryPairOfPlantes()
         {
+            for (int i = 0; i < Map.mapData.planets.Count; i++)
+                for (int j = 0; j < Map.mapData.planets.Count; j++)
+                    kay[i, j] = -1;
+            
             for (int i = 0; i < Map.mapData.planets.Count; i++)
                 for (int j = 0; j < Map.mapData.planets.Count; j++)
                     dist[i, j] = int.MaxValue;
@@ -180,7 +214,7 @@ namespace Assets.GameplayControl
         {
             if (i == j)
                 return;
-            if (kay[i, j] == 0)
+            if (kay[i, j] == -1)
                 path.Add(planetIds.First(p => p.Value == j).Key);
             else
             {
@@ -194,7 +228,14 @@ namespace Assets.GameplayControl
             pathsToBuild = new List<Path>();
 
             foreach (Mission mission in missions)
-                pathsToBuild.AddRange(GetQuickestPathForMission(mission).Except(pathsToBuild));
+            {
+                Debug.Log(mission.start.name + " " + mission.end.name);
+
+                foreach (Path path in GetQuickestPathForMission(mission))
+                    Debug.Log(path);
+
+                pathsToBuild.AddRange(GetQuickestPathForMission(mission));
+            }
         }
 
         List<Path> GetQuickestPathForMission(Mission mission)
@@ -240,7 +281,7 @@ namespace Assets.GameplayControl
                     }
                 }
 
-            Debug.Log("Mission " + mission.name + ", length: " + quicketsPath.Count + "" + dist[planetIds[mission.start],planetIds[mission.end]]);
+            Debug.Log("Mission " + mission.name + ", length: " + quicketsPath.Count + " " + dist[planetIds[mission.start],planetIds[mission.end]]);
 
             return ConvertPath(quicketsPath);
         }
@@ -251,7 +292,7 @@ namespace Assets.GameplayControl
             
             for(int i = 0; i < pathOfPlanets.Count - 1; i++)
             {
-                Debug.Log("path: " + pathOfPlanets[i] + " - " + pathOfPlanets[i + 1]);
+                //Debug.Log("path: " + pathOfPlanets[i] + " - " + pathOfPlanets[i + 1]);
                 Path path = Map.mapData.paths.Where(p => (p.planetFrom == pathOfPlanets[i] && p.planetTo == pathOfPlanets[i + 1])
                     || (p.planetTo == pathOfPlanets[i] && p.planetFrom == pathOfPlanets[i + 1])).First();
                 resultPath.Add(path);
@@ -338,6 +379,8 @@ namespace Assets.GameplayControl
 
         private void DrawCards()
         {
+            Debug.Log("start drawing cards");
+            
             var colors = BestCardColorsToDraw();
             
             if (!DrawCard(colors))
@@ -345,6 +388,8 @@ namespace Assets.GameplayControl
 
             if (!DrawCard(colors))
                 DrawRandomCard();
+
+            Debug.Log("end drawing cards");
         }
 
         private bool DrawCard(List<Color> colors)
@@ -355,6 +400,8 @@ namespace Assets.GameplayControl
             {
                 if (colors.Contains(availableColors[i]))
                 {
+                    Debug.Log(availableColors[i]);
+                    
                     numOfCardsInColor[availableColors[i]]++;
                     drawCardsPanel.AiDrawCard(i, this);
                     return true;
@@ -368,6 +415,9 @@ namespace Assets.GameplayControl
         {
             Color[] availableColors = drawCardsPanel.GetCurrentCardsToChoose();
             numOfCardsInColor[availableColors.Last()]++;
+
+            Debug.Log(availableColors.Last());
+
             //drawCardsPanel.AiDrawCard(5, this);
         }
 
