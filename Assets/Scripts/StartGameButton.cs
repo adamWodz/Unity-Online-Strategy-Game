@@ -25,23 +25,26 @@ public class StartGameButton : NetworkBehaviour
         var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
 
         SetClientIdClientRpc();
-        LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
-        int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
-        int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
-        InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
-        int position = 0;
-        foreach (var player in NetworkManager.Singleton.ConnectedClientsList)
-        {
-            AddRealPlayerClientRpc(position, (int)player.ClientId);
-            position++;
-        }
-        for(int i = 0; i < aiPlayersNum; i++)
-        {
-            AddAiPlayerClientRpc(position, nonAiPlayersNum + i);
-            position++;
-        }
-
-        PlayerGameData.StartTurn();
+        
+            LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
+            int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
+            int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
+            InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
+            int position = 0;
+            foreach (var player in NetworkManager.Singleton.ConnectedClientsList)
+            {
+                AddRealPlayerClientRpc(position, (int)player.ClientId);
+                position++;
+            }
+            for (int i = 0; i < aiPlayersNum; i++)
+            {
+                AddAiPlayerClientRpc(position, nonAiPlayersNum + i);
+                position++;
+            }
+            if (!Communication.loadOnStart)
+            {
+            PlayerGameData.StartTurn();
+            }
     }
 
     [ClientRpc]

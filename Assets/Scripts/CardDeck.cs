@@ -47,7 +47,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
 
         Destroy(cardTempalte);
 
-        //SendCardsStacksServerRpc(cardsQuantityPerColor);
+        SendCardsStacksServerRpc("111111");
     }
 
     public void LoadData(GameData data)
