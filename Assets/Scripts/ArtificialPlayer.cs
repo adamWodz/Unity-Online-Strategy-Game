@@ -266,7 +266,7 @@ namespace Assets.GameplayControl
             if(shortestDist == int.MaxValue)
             {
                 SetmissionAsIncompletable(mission);
-                return null;
+                return new List<Path>();
             }
             quicketsPath = pathBetweenPlanets[(mission.start, mission.end)];
 

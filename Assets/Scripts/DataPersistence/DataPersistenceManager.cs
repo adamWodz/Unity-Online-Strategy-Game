@@ -32,8 +32,9 @@ public class DataPersistenceManager : MonoBehaviour
         
         // znajdujemy listê skryptów, które posiadaj¹ dane do zapisu/wczytania
         dataPersistenceObjects = FindAllDataPersistenceObjects();
-        
-        LoadGame();
+
+        //LoadGame();
+        NewGame();
     }
 
     public void NewGame()
