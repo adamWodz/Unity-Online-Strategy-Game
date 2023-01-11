@@ -305,5 +305,4 @@ public class PathsPanel : Panel
         missionsChosen ??= new();
         MissionsChosen = missions;
     }
-
 }
