@@ -56,10 +56,13 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
         {
             for (int i = 0; i < gameManager.cardStackCounterList.Count; i++)
             {
+                Debug.Log($"Color: {(Color)i}");
                 gameManager.cardStackCounterList[i].text = data.cardsForEachPalyer[PlayerGameData.Id][i].ToString();
+                PlayerGameData.numOfCardsInColor[(Color)i] = data.cardsForEachPalyer[PlayerGameData.Id][i];
+                Debug.Log($"Cards in this color: {PlayerGameData.numOfCardsInColor[(Color)i]}");
             }
 
-            for(int i = 1; i < Server.allPlayersInfo.Count; i++)
+            for (int i = 1; i < Server.allPlayersInfo.Count; i++)
             {
                 // ustawiam rpc na wysyłanie do konkretnego gracza (kazdy gracz musi otrzymac inne dane)
                 ClientRpcParams clientRpcParams = new()
@@ -104,8 +107,10 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     {
         for(int i = 0; i<cardStack.Length; i++)
         {
+            Debug.Log($"Color: {(Color)i}");
             gameManager.cardStackCounterList[i].text = cardStack[i].ToString();
             PlayerGameData.numOfCardsInColor[(Color)i] = cardStack[i];
+            Debug.Log($"Cards in this color: {PlayerGameData.numOfCardsInColor[(Color)i]}");
         }
     }
 }
