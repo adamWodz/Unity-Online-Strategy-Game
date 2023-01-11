@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f65f3c469f058624da124150cf48bbf9, type: 3}
   m_Name: HydraCharon
   m_EditorClassIdentifier: 
-  start: {fileID: 0}
-  end: {fileID: 0}
-  points: 0
+  start: {fileID: 11400000, guid: 285ee5bfac1676643a26e32626a33b38, type: 2}
+  end: {fileID: 11400000, guid: 043c52266ad60214aa53eac416fee24c, type: 2}
+  points: 6

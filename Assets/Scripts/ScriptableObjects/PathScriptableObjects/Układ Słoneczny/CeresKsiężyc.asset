@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: "CeresKsi\u0119\u017Cyc"
   m_EditorClassIdentifier: 
-  Id: 0
+  Id: 3
   planetFrom: {fileID: 11400000, guid: a69baaed7e2b5bd4098c16f95dfad41f, type: 2}
   planetTo: {fileID: 11400000, guid: 37d8bc3800dd8dd4aac8aa317dfede23, type: 2}
-  color: 0
+  color: 3
   length: 3
   builtById: 0

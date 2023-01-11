@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f65f3c469f058624da124150cf48bbf9, type: 3}
   m_Name: PlutonEuropa
   m_EditorClassIdentifier: 
-  start: {fileID: 0}
-  end: {fileID: 0}
-  points: 0
+  start: {fileID: 11400000, guid: 1917a24f443614d4a830c3891a6849ba, type: 2}
+  end: {fileID: 11400000, guid: 953dfc1f0fdb7914ea31e5d1a701747e, type: 2}
+  points: 20

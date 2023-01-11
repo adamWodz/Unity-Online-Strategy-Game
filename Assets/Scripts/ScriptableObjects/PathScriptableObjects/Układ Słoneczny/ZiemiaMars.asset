@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: ZiemiaMars
   m_EditorClassIdentifier: 
-  Id: 10
+  Id: 34
   planetFrom: {fileID: 11400000, guid: caf05907f71cd244ea4973478fe4f5a3, type: 2}
   planetTo: {fileID: 11400000, guid: 5f41180be78f17f459c02ce9ab26fe80, type: 2}
   color: 4
   length: 3
-  builtBy: {fileID: 0}
-  playerOfSatellite: {fileID: 0}
+  builtById: 2

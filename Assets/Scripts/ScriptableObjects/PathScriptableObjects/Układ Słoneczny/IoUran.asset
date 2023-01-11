@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: IoUran
   m_EditorClassIdentifier: 
-  Id: 0
-  planetFrom: {fileID: 0}
-  planetTo: {fileID: 0}
+  Id: 10
+  planetFrom: {fileID: 11400000, guid: 32cd840e64e36954e92d14301297ea04, type: 2}
+  planetTo: {fileID: 11400000, guid: 0d64057ff8e989b448df2b4d46a8074d, type: 2}
   color: 0
-  length: 0
+  length: 2
   builtById: 0

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f65f3c469f058624da124150cf48bbf9, type: 3}
   m_Name: MakemakeCeres
   m_EditorClassIdentifier: 
-  start: {fileID: 0}
-  end: {fileID: 0}
-  points: 0
+  start: {fileID: 11400000, guid: ae57841b4b4173d4e8d8ddcb1ec1b167, type: 2}
+  end: {fileID: 11400000, guid: a69baaed7e2b5bd4098c16f95dfad41f, type: 2}
+  points: 6

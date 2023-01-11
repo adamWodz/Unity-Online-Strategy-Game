@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f65f3c469f058624da124150cf48bbf9, type: 3}
   m_Name: DelmosIo
   m_EditorClassIdentifier: 
-  start: {fileID: 0}
-  end: {fileID: 0}
-  points: 0
+  start: {fileID: 11400000, guid: 8127da86ee5f2444e9143da260065264, type: 2}
+  end: {fileID: 11400000, guid: 32cd840e64e36954e92d14301297ea04, type: 2}
+  points: 18

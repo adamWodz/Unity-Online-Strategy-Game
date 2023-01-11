@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Tytan
   m_EditorClassIdentifier: 
   name: Tytan
-  positionX: 0.5
+  positionX: -0.3
   positionY: 1.6
   planetPrefab: {fileID: 4329754044473220178, guid: 76e75427c19f53c488c9adfde258652a, type: 3}

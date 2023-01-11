@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   start: {fileID: 11400000, guid: 5f41180be78f17f459c02ce9ab26fe80, type: 2}
   end: {fileID: 11400000, guid: 0d64057ff8e989b448df2b4d46a8074d, type: 2}
-  points: 0
+  points: 9

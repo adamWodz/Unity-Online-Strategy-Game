@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f65f3c469f058624da124150cf48bbf9, type: 3}
   m_Name: TytanMiranda
   m_EditorClassIdentifier: 
-  start: {fileID: 0}
-  end: {fileID: 0}
-  points: 0
+  start: {fileID: 11400000, guid: 11f494e3c59492c47b3daf2d26002260, type: 2}
+  end: {fileID: 11400000, guid: 1c8ba8a17eb326f478d61df862f3929c, type: 2}
+  points: 8
