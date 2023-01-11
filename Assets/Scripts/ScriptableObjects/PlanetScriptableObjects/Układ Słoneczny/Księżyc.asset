@@ -15,4 +15,4 @@ MonoBehaviour:
   name: "Ksi\u0119\u017Cyc"
   positionX: 1.009
   positionY: -1.07
-  adjacentPaths: []
+  planetPrefab: {fileID: 3704164352148207490, guid: fc7e4c73372083c438b95bfa231aa001, type: 3}

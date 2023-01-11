@@ -15,4 +15,4 @@ MonoBehaviour:
   name: Uran
   positionX: -2.85
   positionY: 0.96
-  adjacentPaths: []
+  planetPrefab: {fileID: 1641136667520140012, guid: bb2245e7b02d1cf448f1034345b6e0ab, type: 3}
