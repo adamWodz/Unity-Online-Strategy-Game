@@ -16,7 +16,8 @@ namespace UnitTests
         {
             PlayerGameData.numOfCardsInColor[cardsColor] = cardsQuantity;
             Path path = new Path(pathColor, pathLength);
-            Assert.AreEqual(PlayerGameData.CanBuildPath(path), expected);
+            string errorMessage;
+            Assert.AreEqual(PlayerGameData.CanBuildPath(path, out errorMessage), expected);
         }
 
         [TestCase(Color.red, 2, Color.red, 2, true)]
@@ -29,7 +30,8 @@ namespace UnitTests
             PlayerGameData.numOfCardsInColor[cardsColor] = cardsQuantity;
             PlayerGameData.StartTurn();
             Path path = new Path(pathColor, pathLength);
-            Assert.AreEqual(PlayerGameData.CanBuildPath(path), expected);
+            string errorMessage;
+            Assert.AreEqual(PlayerGameData.CanBuildPath(path, out errorMessage), expected);
         }
 
         [TestCase(Color.red, 2, 3, 1)]
