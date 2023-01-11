@@ -12,13 +12,13 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     public Sprite[] sprites; // kolory kart
     // nazwy zbiorów kart
     public string[] names = {"RedCards","GreenCards","BlueCards","YellowCards","PinkCards","RainbowCards"};
-
+    int[] startHand = new int[] {1,1,1,1,1,1};
     private GameManager gameManager;
 
     //private int[][] cardsQuantityPerPlayerPerColor;
-    private Dictionary<int,string> cardsQuantityPerPlayerPerColor;
+    private Dictionary<int, int[]> cardsQuantityPerPlayerPerColor;
 
-    void Start()
+    void Awake()
     {
         cardsQuantityPerPlayerPerColor = new();//new int[Server.allPlayersInfo.Count][];
 
@@ -47,7 +47,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
 
         Destroy(cardTempalte);
 
-        SendCardsStacksServerRpc("111111");
+        SendCardsStacksServerRpc(startHand);
     }
 
     public void LoadData(GameData data)
@@ -57,6 +57,20 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
             for (int i = 0; i < gameManager.cardStackCounterList.Count; i++)
             {
                 gameManager.cardStackCounterList[i].text = data.cardsForEachPalyer[PlayerGameData.Id][i].ToString();
+            }
+
+            for(int i = 1; i < Server.allPlayersInfo.Count; i++)
+            {
+                // ustawiam rpc na wysyłanie do konkretnego gracza (kazdy gracz musi otrzymac inne dane)
+                ClientRpcParams clientRpcParams = new()
+                {
+                    Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = new ulong[] { (ulong)i }
+                    }
+                };
+
+                LoadCardsStacksClientRpc(data.cardsForEachPalyer[i],clientRpcParams);
             }
         }
     }
@@ -76,12 +90,22 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SendCardsStacksServerRpc(string cards, ServerRpcParams serverRpcParams = default)//int redCards, int greenCards, int blueCards, int yellowCards, int pinkCards, int rainbowCards, ServerRpcParams serverRpcParams = default)
+    public void SendCardsStacksServerRpc(int[] cards, ServerRpcParams serverRpcParams = default)//int redCards, int greenCards, int blueCards, int yellowCards, int pinkCards, int rainbowCards, ServerRpcParams serverRpcParams = default)
     {
         int id = (int)serverRpcParams.Receive.SenderClientId;
         if(!cardsQuantityPerPlayerPerColor.ContainsKey(id))
             cardsQuantityPerPlayerPerColor.Add(id, cards);
         else
             cardsQuantityPerPlayerPerColor[id] = cards;
+    }
+
+    [ClientRpc]
+    void LoadCardsStacksClientRpc(int[] cardStack ,ClientRpcParams clientRpcParams = default)
+    {
+        for(int i = 0; i<cardStack.Length; i++)
+        {
+            gameManager.cardStackCounterList[i].text = cardStack[i].ToString();
+            PlayerGameData.numOfCardsInColor[(Color)i] = cardStack[i];
+        }
     }
 }

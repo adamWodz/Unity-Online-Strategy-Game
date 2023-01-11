@@ -15,4 +15,4 @@ MonoBehaviour:
   name: Mars
   positionX: 2.84
   positionY: 1.29
-  adjacentPaths: []
+  planetPrefab: {fileID: 2355625766475068295, guid: a9fede7d8f750514cb6da808d6967324, type: 3}

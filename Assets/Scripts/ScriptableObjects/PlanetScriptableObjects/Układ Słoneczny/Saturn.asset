@@ -15,4 +15,4 @@ MonoBehaviour:
   name: Saturn
   positionX: 5.75
   positionY: -2.16
-  adjacentPaths: []
+  planetPrefab: {fileID: 1782041701090604632, guid: e79f5ca8ab12b4447b60133813d08556, type: 3}

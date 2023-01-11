@@ -75,9 +75,9 @@ public class Map : NetworkBehaviour, IDataPersistence
         {
             //paths = data.paths;
             //Communication.mapDataNumber = data.mapNumber;
-            foreach(Path path in data.paths)
+            foreach(PathData path in data.paths)
             {
-                SetPathsClientRpc(path.Id, path.planetFrom.name, path.planetTo.name, path.color, path.length, path.isBuilt, path.builtById,data.mapNumber);
+                SetPathsClientRpc(path.id, path.planetFromName, path.planetToName, path.color, path.length, path.isBuilt, path.builtById,data.mapNumber);
             }
             SetMapDataClientRpc();
         }
@@ -88,10 +88,25 @@ public class Map : NetworkBehaviour, IDataPersistence
     {
         if (IsHost)
         {
-       // Debug.Log("Host?" + IsHost);
-        //Debug.Log("Client?" + IsClient);
-        //Debug.Log("Server?" + IsServer);
-            data.paths = paths;
+            // Debug.Log("Host?" + IsHost);
+            //Debug.Log("Client?" + IsClient);
+            //Debug.Log("Server?" + IsServer);
+            //data.paths = paths;
+            data.paths ??= new();
+            foreach(Path path in paths)
+            {
+                PathData pathData = new()
+                {
+                    id = path.Id,
+                    planetFromName = path.planetFrom.name,
+                    planetToName= path.planetTo.name,
+                    color = path.color,
+                    length = path.length,
+                    isBuilt = path.isBuilt,
+                    builtById = path.builtById,
+                };
+                data.paths.Add(pathData);
+            }
             data.mapNumber = Communication.mapDataNumber;
         }
     }

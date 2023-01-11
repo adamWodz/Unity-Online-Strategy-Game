@@ -105,10 +105,10 @@ public class DrawCardsPanel : NetworkBehaviour
         }
 
         // zapis stanu kart "na rêce" na bie¿¹co
-        string cardsStacks = "";
+        int[] cardsStacks = new int[gameManager.cardStackCounterList.Count];
         for (int i = 0; i < gameManager.cardStackCounterList.Count; i++)
         {
-            cardsStacks += i == (int)selectedColor ? (int.Parse(gameManager.cardStackCounterList[i].text) + 1).ToString() : gameManager.cardStackCounterList[i].text;
+            cardsStacks[i] = i == (int)selectedColor ? int.Parse(gameManager.cardStackCounterList[i].text) + 1 : int.Parse(gameManager.cardStackCounterList[i].text);
         }
         cardDeck.SendCardsStacksServerRpc(cardsStacks);
 

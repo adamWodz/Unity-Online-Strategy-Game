@@ -20,6 +20,34 @@ public class PlayerInfo
     public int PlayerTileId;
 }
 
+public class PlayerInfoComparer: IComparer<PlayerInfo>
+{
+    public int Compare(PlayerInfo x, PlayerInfo y)
+    {
+        if(x == null)
+        {
+            if (y == null)
+                return 0;
+            else
+                return -1;
+        }
+        else
+        {
+            if(y == null) 
+                return 1;
+            else
+            {
+                if (x.Position < y.Position)
+                    return -1;
+                else if (x.Position == y.Position)
+                    return 0;
+                else
+                    return 1;
+            }
+        }
+    }
+}
+
 public class PlayerPanel : NetworkBehaviour, IDataPersistence
 {
    
@@ -28,14 +56,15 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     Queue<GameObject> playersTiles;
     Dictionary<int, GameObject> playerTilesByIds = new Dictionary<int, GameObject>();
     public bool playersOrderChanged = false;
-
+    GameManager gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         if (Communication.loadOnStart)
         {
-            players = new();
+            //players = new();
             //Server.allPlayersInfo = new();
         }
         else
@@ -77,14 +106,10 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     {
         if (IsHost)
         {
-            //players = data.players;
-            //Server.allPlayersInfo = data.players;
-           
             foreach(var player in data.players) 
             {
                 LoadPlayersListClientRpc(player.Position, player.Points, player.Name, player.Id, player.IsAI, player.SpaceshipsLeft, player.PlayerTileId);
             }
-           
             
             int id = data.players.Single(player => player.Position == 0).Id;
             ClientRpcParams clientRpcParams = new()
@@ -95,19 +120,9 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
                 }
             };
             SendStartTurnClientRpc(clientRpcParams);
-            
-            /*
-            for (int i = 0; i < players.Count; i++)
-            {
-                var playerTile = playersTiles.Dequeue();
-                playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = players[i].Position.ToString();
-                playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = players[i].Name;
-                playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].Points.ToString();
-                playerTile.transform.SetSiblingIndex(players[i].Position);
-                playersTiles.Enqueue(playerTile);
-            }
-            */
         }
+
+        gameManager.spaceshipCounter.text = Server.allPlayersInfo.Single(p => p.Id == PlayerGameData.Id).SpaceshipsLeft.ToString();
     }
 
     [ClientRpc]
@@ -127,8 +142,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         Server.allPlayersInfo ??= new();
         players.Add(playerInfo);
         Server.allPlayersInfo.Add(playerInfo);
-        Debug.Log($"Players: {players.Count}");
-        Debug.Log($"ServerPlayers: {Server.allPlayersInfo.Count}");
+        //Debug.Log($"Players: {players.Count}");
+        //Debug.Log($"ServerPlayers: {Server.allPlayersInfo.Count}");
         //GameObject playerTextTemplate = transform.GetChild(0).gameObject;
         playersTiles ??= new();
         var playerTile = Instantiate(playerTilePrefab, transform);
@@ -137,16 +152,23 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = playerInfo.Points.ToString();
         playerTile.transform.GetChild(3).GetComponent<TMP_Text>().text = playerInfo.SpaceshipsLeft.ToString();
         playerTile.transform.SetSiblingIndex(playerInfo.Position);
+        
+        var player = players.Where(p => p.Position == playerInfo.Position).First();
+        player.PlayerTileId = playerTile.GetInstanceID();
+        playerTilesByIds ??= new();
+        playerTilesByIds.Add(player.PlayerTileId, playerTile);
         playersTiles.Enqueue(playerTile);
 
+        PlayerGameData.spaceshipsLeft = player.SpaceshipsLeft;
+        PlayerGameData.curentPoints = player.Points;
     }
 
     public void SaveData(ref GameData data)
     {
         if(IsHost)
         {
-            //Debug.Log(players.Count);
             data.players = Server.allPlayersInfo;
+            data.players.Sort(new PlayerInfoComparer());
             data.curPlayerId = Server.curPlayerId;
         } 
     }
@@ -154,31 +176,35 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     [ServerRpc(RequireOwnership = false)]
     public void UpdatePlayersOrderServerRpc()
     {
+        Debug.Log("UpdatePlayersOrder: "+PlayerGameData.Id);
         UpdatePlayersOrderClientRpc();
     }
 
     [ClientRpc]
     public void UpdatePlayersOrderClientRpc()
     {
+        //Debug.Log("Tiles: " + playersTiles.Count);
         // pobieram pierwszego gracza z kolejki (tego, ktorego tura sie zakonczyla)
         var firstElement = playersTiles.Dequeue();
-
+        //Debug.Log("Index tile:" + firstElement.transform.GetSiblingIndex());
+        var secondElement = playersTiles.Peek();
+        //Debug.Log("Index tile 2:" + secondElement.transform.GetSiblingIndex());
         // ustawiam go na koniec w panelu graczy
         firstElement.transform.SetAsLastSibling();
-        
+        //Debug.Log("Index tile:" + firstElement.transform.GetSiblingIndex());
         // dodaje go na koniec kolejki
         playersTiles.Enqueue(firstElement);
 
         // poprawiam pozycje wszystkich graczy
         int i = 0;
-        Debug.Log($"Players: {players.Count}");
-        Debug.Log($"ServerPlayers: {Server.allPlayersInfo.Count}");
-        Debug.Log($"playerTiles: {playersTiles.Count}");
+        //Debug.Log($"Players: {players.Count}");
+        //Debug.Log($"ServerPlayers: {Server.allPlayersInfo.Count}");
+        //Debug.Log($"playerTiles: {playersTiles.Count}");
         foreach (var playerTile in playersTiles) 
         {
-            Debug.Log($"i :{i}");
-            players[i].Position = Math.Abs(players[i].Position - 1) % players.Count;
-            Debug.Log(players[i].Name);
+            //Debug.Log($"i :{i}");
+            Server.allPlayersInfo[i].Position = Math.Abs(Server.allPlayersInfo[i].Position - 1) % Server.allPlayersInfo.Count;
+            //Debug.Log(players[i].Name);
             i++;
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = i.ToString();
         }
@@ -218,7 +244,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         var player = players.Where(p => p.Id == playerId).First();
         player.Points = playerPoints;
         player.SpaceshipsLeft = spaceshipsLeft;
-        playerTilesByIds[player.PlayerTileId].transform.GetChild(2).GetComponent<TMP_Text>().text = player.SpaceshipsLeft.ToString();
+        playerTilesByIds[player.PlayerTileId].transform.GetChild(2).GetComponent<TMP_Text>().text = player.Points.ToString();
+        playerTilesByIds[player.PlayerTileId].transform.GetChild(3).GetComponent<TMP_Text>().text = player.SpaceshipsLeft.ToString();
     }
 
     [ClientRpc]

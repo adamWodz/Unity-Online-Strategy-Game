@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using System.Linq;
 
-public class DataPersistenceManager : MonoBehaviour
+public class DataPersistenceManager : NetworkBehaviour
 {
     [Header("File Storage Config")]
     [SerializeField] private string fileName;
@@ -33,11 +33,11 @@ public class DataPersistenceManager : MonoBehaviour
         // znajdujemy listê skryptów, które posiadaj¹ dane do zapisu/wczytania
         dataPersistenceObjects = FindAllDataPersistenceObjects();
 
-        /*if (Communication.loadOnStart)
+        if (Communication.loadOnStart)
             LoadGame();
         else
-            NewGame();*/
-        NewGame();
+            NewGame();
+        //NewGame();
     }
 
     public void NewGame()
