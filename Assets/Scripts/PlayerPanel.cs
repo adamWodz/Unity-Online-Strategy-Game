@@ -159,8 +159,11 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         playerTilesByIds.Add(player.PlayerTileId, playerTile);
         playersTiles.Enqueue(playerTile);
 
-        PlayerGameData.spaceshipsLeft = player.SpaceshipsLeft;
-        PlayerGameData.curentPoints = player.Points;
+        if (PlayerGameData.Id == playerInfo.Id)
+        {
+            PlayerGameData.spaceshipsLeft = playerInfo.SpaceshipsLeft;
+            PlayerGameData.curentPoints = playerInfo.Points;
+        }
     }
 
     public void SaveData(ref GameData data)
@@ -203,7 +206,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         foreach (var playerTile in playersTiles) 
         {
             //Debug.Log($"i :{i}");
-            Server.allPlayersInfo[i].Position = Math.Abs(Server.allPlayersInfo[i].Position - 1) % Server.allPlayersInfo.Count;
+            players[i].Position = Math.Abs(players[i].Position - 1) % players.Count;
             //Debug.Log(players[i].Name);
             i++;
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = i.ToString();

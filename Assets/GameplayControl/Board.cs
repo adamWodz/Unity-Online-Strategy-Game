@@ -16,6 +16,8 @@ namespace Assets.GameplayControl
             {4, 7},
             {5, 10},
             {6, 15},
+            {7, 22},
+            {8, 29}
         };
         public static Dictionary<int, int> cardsPerSatelliteSend = new Dictionary<int, int>()
         {
