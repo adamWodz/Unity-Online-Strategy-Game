@@ -187,7 +187,6 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         // pobieram pierwszego gracza z kolejki (tego, ktorego tura sie zakonczyla)
         var firstElement = playersTiles.Dequeue();
         //Debug.Log("Index tile:" + firstElement.transform.GetSiblingIndex());
-        var secondElement = playersTiles.Peek();
         //Debug.Log("Index tile 2:" + secondElement.transform.GetSiblingIndex());
         // ustawiam go na koniec w panelu graczy
         firstElement.transform.SetAsLastSibling();

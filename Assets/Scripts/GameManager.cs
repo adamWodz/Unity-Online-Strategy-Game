@@ -49,8 +49,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
     // Update is called once per frame
     void Update()
-    {
-
+    { 
     }
 
     [ClientRpc]
@@ -164,19 +163,11 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         Debug.Log("Quit");
         Application.Quit();
     }
-    
-    public void LoadData(GameData data)
+
+    public void MarkMissionDone(Mission mission)
     {
-        //if (IsHost)
-        //{
-            spaceshipCounter.text = Server.allPlayersInfo.Single(p => p.Id == PlayerGameData.Id).SpaceshipsLeft.ToString();
-            //satelliteCounter.text = "3";
-        //}
+        GameObject missionButton = GameObject.Find(mission.start.name + "-" + mission.end.name);
+        missionButton.transform.GetChild(1).gameObject.SetActive(true);
     }
 
-    public void SaveData(ref GameData data)
-    {
-
-    }
-    
 }
