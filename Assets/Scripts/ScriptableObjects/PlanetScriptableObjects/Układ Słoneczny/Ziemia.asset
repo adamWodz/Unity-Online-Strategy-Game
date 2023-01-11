@@ -15,4 +15,4 @@ MonoBehaviour:
   name: Ziemia
   positionX: 0.48
   positionY: 0.06
-  adjacentPaths: []
+  planetPrefab: {fileID: 120509872218864145, guid: 289c78308ccf9a445b1a3763e62e897f, type: 3}

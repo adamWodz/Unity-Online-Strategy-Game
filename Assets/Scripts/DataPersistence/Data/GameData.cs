@@ -9,9 +9,9 @@ public class GameData
     public int mapNumber;
     public int curPlayerId;
     public List<PlayerInfo> players;
-    public List<Path> paths;
+    public List<PathData> paths;
     //public List<Mission> missionsToChoose;
-    public Dictionary<int, string> cardsForEachPalyer;
+    public Dictionary<int, int[]> cardsForEachPalyer;
     public Dictionary<int, List<MissionData>> missionsForEachPalyer;
 
     public GameData()
