@@ -2,6 +2,7 @@ using Assets.GameplayControl;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using TMPro;
@@ -13,7 +14,7 @@ using UnityEngine;
 using UnityEngine.Networking.Types;
 using UnityEngine.UI;
 
-public class GameManager : NetworkBehaviour
+public class GameManager : NetworkBehaviour//, IDataPersistence
 {
     public List<Sprite> cardSprites;
     //public GameObject shipGameObject;
@@ -41,7 +42,7 @@ public class GameManager : NetworkBehaviour
         cardGoal = GameObject.Find("CardGoal");
 
         spaceshipCounter = GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>();
-        spaceshipCounter.text = "50";
+        spaceshipCounter.text = "50";//Server.allPlayersInfo.Single(p => p.Id == PlayerGameData.Id).SpaceshipsLeft.ToString();
 
         satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
         satelliteCounter.text = "3";
@@ -49,8 +50,7 @@ public class GameManager : NetworkBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-
+    { 
     }
 
     [ClientRpc]
@@ -189,4 +189,11 @@ public class GameManager : NetworkBehaviour
         Debug.Log("Quit");
         Application.Quit();
     }
+
+    public void MarkMissionDone(Mission mission)
+    {
+        GameObject missionButton = GameObject.Find(mission.start.name + "-" + mission.end.name);
+        missionButton.transform.GetChild(1).gameObject.SetActive(true);
+    }
+
 }

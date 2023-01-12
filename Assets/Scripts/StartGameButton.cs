@@ -25,13 +25,15 @@ public class StartGameButton : NetworkBehaviour
         Debug.Log($"[ChooseMapMenu.StartGame] {NetworkManager != null} {NetworkManager.SceneManager != null}");
         var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
 
-        SetClientIdClientRpc();
-        
+            SetClientIdClientRpc();
             LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
             int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
             int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
             InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
-            int position = 0;
+            
+            if (!Communication.loadOnStart)
+            {
+                int position = 0;
             foreach (var player in NetworkManager.Singleton.ConnectedClientsList)
             {
                 AddRealPlayerClientRpc(position, (int)player.ClientId);
@@ -42,8 +44,6 @@ public class StartGameButton : NetworkBehaviour
                 AddAiPlayerClientRpc(position, nonAiPlayersNum + i);
                 position++;
             }
-            if (!Communication.loadOnStart)
-            {
             PlayerGameData.StartTurn();
             //ShowFadingPopUpWindow("Twój ruch");
             }
@@ -68,8 +68,16 @@ public class StartGameButton : NetworkBehaviour
     [ClientRpc]
     public void InitializePlayersListsClientRpc(int aiPlayersNum, int nonAiPlayersNum)
     {
-        Server.artificialPlayers = new List<Assets.GameplayControl.ArtificialPlayer>(aiPlayersNum);
-        Server.allPlayersInfo = new List<PlayerInfo>(aiPlayersNum + nonAiPlayersNum);
+        if (!Communication.loadOnStart)
+        {
+            Server.artificialPlayers = new List<Assets.GameplayControl.ArtificialPlayer>(aiPlayersNum);
+            Server.allPlayersInfo = new List<PlayerInfo>(aiPlayersNum + nonAiPlayersNum);
+        }
+        else
+        {
+            Server.artificialPlayers = new();
+            Server.allPlayersInfo = new();
+        }
     }
 
     [ClientRpc]

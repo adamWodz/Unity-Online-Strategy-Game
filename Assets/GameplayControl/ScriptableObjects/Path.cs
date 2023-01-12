@@ -49,3 +49,15 @@ public class Path : ScriptableObject
         return path;
     }
 }
+
+[Serializable]
+public struct PathData
+{
+    public int id;
+    public string planetFromName;
+    public string planetToName;
+    public Color color;
+    public int length;
+    public bool isBuilt;
+    public int builtById;
+}

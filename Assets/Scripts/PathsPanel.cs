@@ -44,7 +44,7 @@ public class PathsPanel : Panel
     {
         map = GameObject.Find("Space").GetComponent<Map>();
 
-        if (IsHost)
+        if (IsHost && !Communication.loadOnStart)
         {
             receivedMissions = new List<MissionData>[Server.allPlayersInfo.Count];
             for (int i = 0; i < Server.allPlayersInfo.Count; i++)
@@ -220,6 +220,12 @@ public class PathsPanel : Panel
     {
         if (IsHost)
         {
+            receivedMissions = new List<MissionData>[Server.allPlayersInfo.Count];
+            for (int i = 0; i < Server.allPlayersInfo.Count; i++)
+            {
+                receivedMissions[i] = new();
+            }
+
             // host wczytuje dane bez rpc
             var missionsData = data.missionsForEachPalyer[PlayerGameData.Id];
             var missions = map.Missions.Where(mission =>
@@ -299,5 +305,4 @@ public class PathsPanel : Panel
         missionsChosen ??= new();
         MissionsChosen = missions;
     }
-
 }
