@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,35 +43,41 @@ namespace Assets.GameplayControl
 
         public static List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
-        public static bool CanBuildPath(Path path)
+        public static bool CanBuildPath(Path path, out string errorMessage)
         {
             if (!isNowPlaying)
             {
+                errorMessage = "Brak obecnie ruchu";
                 Debug.Log("Brak obecnie ruchu");
                 return false;
             }
             if (cardsDrewInTurn > 0)
             {
+                errorMessage = "W tym ruchu juz dobrano kartę";
                 Debug.Log("W tym ruchu juz dobrano kartę");
                 return false;
             }
             if (path.isBuilt)
             {
+                errorMessage = "Połączenie jest juz wybudowane";
                 Debug.Log("Połączenie jest juz wybudowane");
                 return false;
             }
             if (path.length > spaceshipsLeft)
             {
+                errorMessage = "Za mało ruchów";
                 Debug.Log("Za mało statków");
                 return false;
             }
             if (numOfCardsInColor[path.color] < path.length
                 && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length)
             {
+                errorMessage = "Za mało kart w odpowiednim kolorze";
                 Debug.Log("Za mało kart w odpowiednim kolorze");
                 return false;
             }
 
+            errorMessage = "No error";
             return true;
         }
 
@@ -171,12 +178,12 @@ namespace Assets.GameplayControl
         public static void StartTurn()
         {
             isNowPlaying = true;
+            cardsDrewInTurn = 0;
         }
 
         public static void EndTurn()
         {
             isNowPlaying = false;
-            cardsDrewInTurn = 0;
         }
 
         public static void SetPathIsBuild(int pathId)

@@ -1,4 +1,5 @@
 using Assets.GameplayControl;
+using Newtonsoft.Json.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,31 +31,30 @@ public static class Communication
             return _playerPanel;
         }
     }
-    public static int mapDataNumber;
     
-    private static bool isLastTurn = false;
     public static bool loadOnStart = false;
+    public static int mapDataNumber;
     public static List<MapData> availableMapsData;
 
+    private static BuildPath chosenPath;
 
-    private static (BuildPath buildPath, Path path) chosenPath;
-
-    public static void ChoosePath(BuildPath buildPath, Path path)
+    public static void ChoosePath(BuildPath buildPath)
     {
-        chosenPath = (buildPath, path);
+        chosenPath = (buildPath);
     }
 
     public static void ChooseCard(Color color)
     {
-        if(chosenPath.buildPath != null && chosenPath.path != null)
+        if(chosenPath != null && chosenPath.path != null)
         {
             if (chosenPath.path.color == color || chosenPath.path.color == Color.any || color == Color.special)
             {
                 //Debug.Log("CanBuildPath" + PlayerGameData.CanBuildPath(chosenPath.path));
-                if (PlayerGameData.CanBuildPath(chosenPath.path))
-                    BuildPath(chosenPath.buildPath, chosenPath.path);
+                string errorMessage;
+                if (PlayerGameData.CanBuildPath(chosenPath.path, out errorMessage))
+                    BuildPath(chosenPath, chosenPath.path);
                 else
-                    _GameManager.SetPopUpWindow("Nie możnesz wybudować tej ścieżki!");
+                    _GameManager.SetPopUpWindow(errorMessage);
             }
         }
     }
@@ -76,7 +76,7 @@ public static class Communication
         playerPanel.UpdatePointsAndSpeceshipsNumServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.spaceshipsLeft);
         _GameManager.SetBuildPathDataServerRpc(path.Id, PlayerGameData.Id);
         EndTurn();
-        chosenPath = (null, null);
+        chosenPath = null;
         
     }
 
@@ -154,7 +154,7 @@ public static class Communication
         if (ai.isLastTurn)
             _GameManager.EndGameServerRpc();
         else
-            ai.BestMove();
+            ai.StartAiTurn();
     }
 
     public static void StartTurn(int playerId)
@@ -168,8 +168,11 @@ public static class Communication
                 PlayerGameData.PrintMissions();
                 _GameManager.EndGameServerRpc();
             }
-            else 
+            else
+            {
+                _GameManager.ShowFadingPopUpWindow("Początek twojej tury");
                 PlayerGameData.StartTurn();
+            }
         }
     }
 }

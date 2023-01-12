@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
@@ -44,8 +45,25 @@ public class StartGameButton : NetworkBehaviour
                 position++;
             }
             PlayerGameData.StartTurn();
+            //ShowFadingPopUpWindow("Twój ruch");
             }
     }
+
+    /*
+    public void ShowFadingPopUpWindow(string message)
+    {
+        var popUp = GameObject.Find("Canvas").transform.Find("FadingPopUpPanel");
+        popUp.transform.Find("InfoText").GetComponent<TMP_Text>().text = message;
+        StartCoroutine(ShowFadingPopUpWindowCoroutine(popUp.transform.Find("FadeScript").GetComponent<FadePanel>()));
+    }
+
+    IEnumerator ShowFadingPopUpWindowCoroutine(FadePanel fade)
+    {
+        fade.ShowUp();
+        yield return new WaitForSeconds(2);
+        fade.FadeOut();
+    }
+    */
 
     [ClientRpc]
     public void InitializePlayersListsClientRpc(int aiPlayersNum, int nonAiPlayersNum)
