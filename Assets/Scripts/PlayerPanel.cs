@@ -87,8 +87,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
                 playerTile = Instantiate(playerTilePrefab, transform);
                 playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (players[i].Position + 1).ToString();
                 playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = players[i].Name;
-                playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].Points.ToString();
-                playerTile.transform.GetChild(3).GetComponent<TMP_Text>().text = players[i].SpaceshipsLeft.ToString();
+                playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].SpaceshipsLeft.ToString();
+                playerTile.transform.GetChild(3).GetComponent<TMP_Text>().text = players[i].Points.ToString();
                 playersTiles.Enqueue(playerTile);
 
                 player.PlayerTileId = playerTile.GetInstanceID();
@@ -168,8 +168,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         var playerTile = Instantiate(playerTilePrefab, transform);
         playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (playerInfo.Position + 1).ToString();
         playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = playerInfo.Name;
-        playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = playerInfo.Points.ToString();
-        playerTile.transform.GetChild(3).GetComponent<TMP_Text>().text = playerInfo.SpaceshipsLeft.ToString();
+        playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = playerInfo.SpaceshipsLeft.ToString();
+        playerTile.transform.GetChild(3).GetComponent<TMP_Text>().text = playerInfo.Points.ToString();
         playerTile.transform.SetSiblingIndex(playerInfo.Position);
         
         var player = players.Where(p => p.Position == playerInfo.Position).First();
@@ -224,7 +224,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         foreach (var playerTile in playersTiles) 
         {
             //Debug.Log($"i :{i}");
-            players[i].Position = Math.Abs(players[i].Position - 1) % players.Count;
+            players[i].Position = (players[i].Position - 1 + players.Count) % players.Count;
             //Debug.Log(players[i].Name);
             i++;
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = i.ToString();
@@ -265,8 +265,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         var player = players.Where(p => p.Id == playerId).First();
         player.Points = playerPoints;
         player.SpaceshipsLeft = spaceshipsLeft;
-        playerTilesByIds[player.PlayerTileId].transform.GetChild(2).GetComponent<TMP_Text>().text = player.Points.ToString();
-        playerTilesByIds[player.PlayerTileId].transform.GetChild(3).GetComponent<TMP_Text>().text = player.SpaceshipsLeft.ToString();
+        playerTilesByIds[player.PlayerTileId].transform.GetChild(2).GetComponent<TMP_Text>().text = player.SpaceshipsLeft.ToString();
+        playerTilesByIds[player.PlayerTileId].transform.GetChild(3).GetComponent<TMP_Text>().text = player.Points.ToString();
     }
 
     [ClientRpc]

@@ -26,7 +26,7 @@ namespace Assets.GameplayControl
             {3, 3},
         };
         public static int maxSatellitesSent = 3;
-        public static int startSpaceshipsNumber = 50;
+        public static int startSpaceshipsNumber = 30;
         public static int minSpaceshipsLeft = 3;
     }
 
@@ -66,6 +66,11 @@ namespace Assets.GameplayControl
 
         public static bool ArePlanetsInOneGroup(List<ConnectedPlanets> groups, Planet planet1, Planet planet2)
         {
+            ConnectedPlanets groupOfPlanet1 = GroupContainingPlanet(groups, planet1);
+            ConnectedPlanets groupOfPlanet2 = GroupContainingPlanet(groups, planet2);
+
+            if (groupOfPlanet1 == null && groupOfPlanet2 == null) return false;
+
             return GroupContainingPlanet(groups, planet1) == GroupContainingPlanet(groups, planet2);
         }
 

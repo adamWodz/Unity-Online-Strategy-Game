@@ -77,7 +77,20 @@ public static class Communication
         _GameManager.SetBuildPathDataServerRpc(path.Id, PlayerGameData.Id);
         EndTurn();
         chosenPath = null;
-        
+
+        CheckIfNewMissionIsCompleted();
+    }
+
+    static void CheckIfNewMissionIsCompleted()
+    {
+        List<Mission> newCompletedMissions = PlayerGameData.GetNewCompletedMissions();
+
+        if (newCompletedMissions.Count > 0)
+            foreach (Mission mission in newCompletedMissions)
+            {
+                _GameManager.ShowFadingPopUpWindow($"Wykonałeś misję {mission.start.name} - {mission.end.name}");
+                _GameManager.MarkMissionDone(mission);
+            }
     }
 
     public static void SetNotThisTurnPopUpWindow()
@@ -133,11 +146,11 @@ public static class Communication
 
     public static void EndAITurn(ArtificialPlayer ai)
     {
+        if (ai.spaceshipsLeft < Board.minSpaceshipsLeft)
+            ai.isLastTurn = true; 
+        
         NextTurnActions();
         Debug.Log("EndAiTurn");
-
-        if (ai.spaceshipsLeft < Board.minSpaceshipsLeft)
-            ai.isLastTurn = true;
     }
 
     static void NextTurnActions()
