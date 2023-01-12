@@ -23,7 +23,6 @@ public class FadePanel : MonoBehaviour
     {
         if(showingUp)
         {
-            Debug.Log("Shwoing up");
             if (panel.alpha < 1)
             {
                 panel.alpha += Time.deltaTime;
@@ -34,7 +33,6 @@ public class FadePanel : MonoBehaviour
 
         else if(fadingOut)
         {
-            Debug.Log("Fading out");
             if (panel.alpha >= 0)
             {
                 panel.alpha -= Time.deltaTime;
