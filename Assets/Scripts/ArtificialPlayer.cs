@@ -85,6 +85,12 @@ namespace Assets.GameplayControl
             }
         }
 
+        public void StartAiTurn()
+        {
+            Debug.Log("Best Move");
+            _GameManager.DelayAiMove(this);
+        }
+
         public void BestMove()
         {
             SetQuickestPathForEveryPairOfPlantes();
@@ -109,7 +115,7 @@ namespace Assets.GameplayControl
                 Debug.Log("AI builds path");
                 BuildPath(path);
             }
-            else if (missions.Count > 0)
+            else if (missionsToDo.Count > 0)
             {
                 Debug.Log("AI draws cards");
                 DrawCards();
@@ -123,11 +129,6 @@ namespace Assets.GameplayControl
             _GameManager.EndAiTurn(this);
         }
 
-        public void StartAiTurn()
-        {
-            Debug.Log("Best Move");
-            _GameManager.DelayAiMove(this);
-        }
 
         // sprawdzamy czy możemy wybudować jakąkiekolwiek połączenie
         Path BestPathToBuild()
@@ -219,7 +220,7 @@ namespace Assets.GameplayControl
                 foreach (Path path in quickestPath)
                     Debug.Log(path + " " + path.color);
 
-                pathsToBuild.AddRange(quickestPath);
+                pathsToBuild.AddRange(quickestPath.Where(p => p.isBuilt == false));
             }
         }
 
@@ -301,11 +302,21 @@ namespace Assets.GameplayControl
                 }
 
                 List<Path> missionPath = GetQuickestPathForMission(mission);
+
                 if (missionPath.Count == 0) // misja jest już wykonana
                 {
                     missionsDone.Add(mission);
                     missionsToRemove.Add(mission);
+                    continue;
                 }
+
+                // misji nie opłaca się wykonać - za duży koszt w stosunku do zysku
+                if (missionPath.Count > 5 && mission.points < 10) 
+                    missionsToRemove.Add(mission);
+                else if (missionPath.Count > 7 && mission.points < 16)
+                    missionsToRemove.Add(mission);
+                else if (missionPath.Count > 9)
+                    missionsToRemove.Add(mission);
             }
             missionsToDo = missionsToDo.Except(missionsToRemove).ToList();
         }
@@ -355,8 +366,15 @@ namespace Assets.GameplayControl
             List<Mission> pickedMissions = new List<Mission>();
             List<Mission> missionsPool = missionsToDraw;
             missionsPool.AddRange(missions);
-            
-            foreach(Mission mission1 in missionsPool)
+
+            // podobieństwo do jednej z misji
+            Dictionary<Mission, int> similarity = new Dictionary<Mission, int>();
+            foreach(Mission mission in missionsToDraw)
+            {
+                similarity.Add(mission, 0);
+            }
+
+            foreach(Mission mission1 in missionsToDraw)
             {
                 foreach(Mission mission2 in missionsPool)
                 {
@@ -367,13 +385,24 @@ namespace Assets.GameplayControl
                     if (mission1.start == mission2.start || mission1.start == mission2.end ||
                         mission1.end == mission2.start || mission1.end == mission2.end)
                     {
-                        if (!missions.Contains(mission1) && !pickedMissions.Contains(mission1))
+                        if (!pickedMissions.Contains(mission1))
                             pickedMissions.Add(mission1);
-                        if (!missions.Contains(mission2) && !pickedMissions.Contains(mission1))
+                        if (!pickedMissions.Contains(mission1))
                             pickedMissions.Add(mission2);
                     }
                 }
             }
+
+            /*
+            var pickedMissionsSimilarity = similarity.OrderByDescending(s => s.Value).ToList();
+
+            int pickedMissionsNum = pickedMissionsSimilarity.Count <= 3 ? pickedMissionsSimilarity.Count : 3;
+
+            for(int i = 0; i < pickedMissionsNum; i++)
+            {
+
+            }
+            */
 
             while (pickedMissions.Count > 3)
                 pickedMissions.RemoveAt(0);

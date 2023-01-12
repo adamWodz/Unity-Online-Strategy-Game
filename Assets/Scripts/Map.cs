@@ -141,14 +141,14 @@ public class Map : NetworkBehaviour, IDataPersistence
             Vector2 position = Vector2.Lerp(new Vector2(paths[i].planetTo.positionX, paths[i].planetTo.positionY), 
                 new Vector2(paths[i].planetFrom.positionX, paths[i].planetFrom.positionY), 0.5f);
 
-            Debug.Log(paths[i].length - 1);
+            //Debug.Log(paths[i].length - 1);
             var pathGameObject = Instantiate(pathsPrefabs[paths[i].length - 1], position, Quaternion.Euler(new Vector3(0, 0, -angle)));
             
 
             // przypisanie do build path
             var buildPath = pathGameObject.GetComponent<BuildPath>();
             buildPath.path = paths[i];
-            Debug.Log($"Czy path {paths[i].planetFrom.name}-{paths[i].planetTo.name} jest zbudowana? {paths[i].isBuilt}");
+            //Debug.Log($"Czy path {paths[i].planetFrom.name}-{paths[i].planetTo.name} jest zbudowana? {paths[i].isBuilt}");
             Server.buildPaths.Add(buildPath);
 
             var tilesTransforms = pathGameObject.GetComponentsInChildren<Transform>();

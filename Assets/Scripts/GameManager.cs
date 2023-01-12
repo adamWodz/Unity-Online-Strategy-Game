@@ -53,16 +53,10 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     { 
     }
 
-    [ClientRpc]
-    public void TestClientRpc()
-    {
-        Debug.Log("TestClientRpc;");
-    }
-
     [ServerRpc(RequireOwnership = false)]
     public void SpawnShipsServerRpc(int playerId, Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
     {
-        Debug.Log("playerId: " + playerId);
+        //Debug.Log("playerId: " + playerId);
         
         float angle = CalculateAngle(position,spaceshipsBase);
         var spawnedShipGameObject = Instantiate(shipGameObjectList[playerId], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
@@ -162,7 +156,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
     IEnumerator DelayAiMoveCoroutine(ArtificialPlayer ai)
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(3);
         ai.BestMove();
     }
 
@@ -173,7 +167,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
     IEnumerator EndAiTurnCoroutine(ArtificialPlayer ai)
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         Communication.EndAITurn(ai);
     }
 
