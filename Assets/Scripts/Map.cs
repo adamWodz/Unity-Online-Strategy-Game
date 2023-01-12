@@ -134,10 +134,12 @@ public class Map : NetworkBehaviour, IDataPersistence
         // Tworzenie ?cie?ek
         for (int i = 0; i < paths.Count; i++)
         {
+            Debug.Log("Path was spawned?: " + pathWasSpawned[i]);
             if (!pathWasSpawned[i]) // sprawdzam czy ścieżka już nie powstała (w przypadku podwójnych ścieżek)
             {
+                pathWasSpawned[i] = true;
                 var path = paths[i];
-
+                Debug.Log("Spawnie path o id: "+ path.Id);
                 // k?t nachylenia mi?dzy dwoma planetami
                 float angle = Mathf.Atan2(
                               paths[i].planetTo.positionX - paths[i].planetFrom.positionX,
@@ -149,31 +151,33 @@ public class Map : NetworkBehaviour, IDataPersistence
                     new Vector2(paths[i].planetFrom.positionX, paths[i].planetFrom.positionY), 0.5f);
 
                 // szukam indeks drugiej ścieżki, która ma te same planety (w przypadku podwójnych ścieżek)
-                int k = paths.FindIndex(path => path.IsEqual(paths[i]) && path.Id != paths[i].Id);
+                int k = paths.FindIndex(path3 => path3.IsEqual(path) && path3.Id != path.Id);
+                Debug.Log("Double path:" +k);
                 
                 if (k != -1 && !pathWasSpawned[k])
                 {
-                    var path2 = paths[k];
-
+                    pathWasSpawned[k] = true;
+                    Debug.Log("Path was spawned?: " + pathWasSpawned[k]);var path2 = paths[k];
+                    Debug.Log("Spawnie path o id: " + path2.Id);
                     // przesuwam ścieżkę o distanceBetweenPaths względem punktu środkowego między planetami
                     Vector2 planetPosition = new(path2.planetTo.positionX, path2.planetTo.positionY);
                     Vector2 perpendicularDirection = Vector2.Perpendicular(planetPosition - position).normalized;
                     Vector2 target = position + perpendicularDirection * distanceBetweenPaths;
                     
-                    SpawnPath(ref path2, ref target, ref angle);
+                    SpawnPath(path2, target, angle);
 
                     // przesuwam drugą ścieżkę o distanceBetweenPaths względem punktu środkowego między planetami
                     position -= perpendicularDirection * distanceBetweenPaths;
 
-                    pathWasSpawned[k] = true;
+                    
                 }
-                SpawnPath(ref path, ref position, ref angle);
+                SpawnPath(path, position, angle);
                
-                pathWasSpawned[i] = true;
+                
             }
         }
     }
-    void SpawnPath(ref Path path, ref Vector2 position, ref float angle)
+    void SpawnPath(Path path, Vector2 position, float angle)
     {
         var pathGameObject = Instantiate(pathsPrefabs[path.length - 1], position, Quaternion.Euler(new Vector3(0, 0, -angle)));
 

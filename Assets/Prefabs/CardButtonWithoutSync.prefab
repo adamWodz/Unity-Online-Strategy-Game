@@ -136,7 +136,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  move: 0
   goalPosition: {x: 0, y: 0, z: 0}
   goalRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &4963611424646782044
@@ -207,8 +206,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 38081c69aaddbd042bb239dae7cfc5ed, type: 2}
+  m_sharedMaterial: {fileID: 3305430724998905446, guid: 38081c69aaddbd042bb239dae7cfc5ed, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

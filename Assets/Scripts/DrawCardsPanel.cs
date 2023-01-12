@@ -110,7 +110,7 @@ public class DrawCardsPanel : NetworkBehaviour
         {
             cardsStacks[i] = i == (int)selectedColor ? int.Parse(gameManager.cardStackCounterList[i].text) + 1 : int.Parse(gameManager.cardStackCounterList[i].text);
         }
-        cardDeck.SendCardsStacksServerRpc(cardsStacks);
+        cardDeck.SendCardsStacksServerRpc(cardsStacks, PlayerGameData.Id);
 
         return selectedColor;
     }

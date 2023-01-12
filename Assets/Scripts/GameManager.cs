@@ -193,7 +193,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     public void MarkMissionDone(Mission mission)
     {
         GameObject missionButton = GameObject.Find(mission.start.name + "-" + mission.end.name);
-        missionButton.transform.GetChild(1).gameObject.SetActive(true);
+        missionButton.transform.GetChild(3).gameObject.SetActive(true);
     }
 
 }
