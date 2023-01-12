@@ -56,8 +56,8 @@ namespace Assets.GameplayControl
         //public int satellitesSent { get; set; } = 0;
         public int spaceshipsLeft = Board.startSpaceshipsNumber;
         public List<Mission> missions = new List<Mission>();
-        List<Mission> missionsToDo = new List<Mission>();
-        List<Mission> missionsDone = new List<Mission>();
+        public List<Mission> missionsToDo = new List<Mission>();
+        public List<Mission> missionsDone = new List<Mission>();
         public Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
             { Color.pink, 1 },

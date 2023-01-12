@@ -63,7 +63,7 @@ public class BuildPath : MonoBehaviour
             cardsStacks[j] = int.Parse(gameManager.cardStackCounterList[j].text);
         }
         Debug.Log(cardsStacks);
-        cardDeck.SendCardsStacksServerRpc(cardsStacks);
+        cardDeck.SendCardsStacksServerRpc(cardsStacks,PlayerGameData.Id);
 
         StartCoroutine(BuildPathAnimation(playerId));
     }

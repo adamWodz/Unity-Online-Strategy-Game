@@ -7,6 +7,7 @@ using TMPro;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [Serializable]
 public class PlayerInfo
@@ -106,6 +107,24 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     {
         if (IsHost)
         {
+            var artificialPlayers = data.players.Where(player => player.IsAI).ToList();
+            foreach(var artificialPlayer in artificialPlayers)
+            {
+                ArtificialPlayer AI = new()
+                {
+                    Name = artificialPlayer.Name,
+                    Id = artificialPlayer.Id,
+                    curentPoints = artificialPlayer.Points,
+                    spaceshipsLeft = artificialPlayer.SpaceshipsLeft,
+                };
+
+                for(int i = 0;i< data.cardsForEachPalyer[artificialPlayer.Id].Length;i++)
+                {
+                    AI.numOfCardsInColor[(Color)i] = data.cardsForEachPalyer[artificialPlayer.Id][i];
+                }
+                Server.artificialPlayers.Add(AI);
+            }
+            
             foreach(var player in data.players) 
             {
                 LoadPlayersListClientRpc(player.Position, player.Points, player.Name, player.Id, player.IsAI, player.SpaceshipsLeft, player.PlayerTileId);
