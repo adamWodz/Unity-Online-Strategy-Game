@@ -14,24 +14,27 @@ namespace UnitTests
         [TestCase(Color.blue, 3, Color.red, 1, false)]
         public void CanBuildPathWhenNoPlayersTurnTest(Color pathColor, int pathLength, Color cardsColor, int cardsQuantity, bool expected)
         {
+            PlayerGameData.EndTurn();
             PlayerGameData.numOfCardsInColor[cardsColor] = cardsQuantity;
             Path path = new Path(pathColor, pathLength);
             string errorMessage;
-            Assert.AreEqual(PlayerGameData.CanBuildPath(path, out errorMessage), expected);
+            Assert.AreEqual(expected, PlayerGameData.CanBuildPath(path, out errorMessage));
         }
 
         [TestCase(Color.red, 2, Color.red, 2, true)]
-        [TestCase(Color.red, 2, Color.blue, 2, false)]
-        [TestCase(Color.red, 2, Color.red, 1, false)]
+        [TestCase(Color.red, 4, Color.blue, 2, false)]
+        [TestCase(Color.red, 3, Color.red, 1, false)]
         [TestCase(Color.red, 2, Color.red, 2, true)]
         [TestCase(Color.red, 2, Color.red, 4, true)]
         public void CanBuildPathTests(Color pathColor, int pathLength, Color cardsColor, int cardsQuantity, bool expected)
         {
             PlayerGameData.numOfCardsInColor[cardsColor] = cardsQuantity;
             PlayerGameData.StartTurn();
-            Path path = new Path(pathColor, pathLength);
+            Path path = ScriptableObject.CreateInstance<Path>();
+            path.color = pathColor;
+            path.length = pathLength;
             string errorMessage;
-            Assert.AreEqual(PlayerGameData.CanBuildPath(path, out errorMessage), expected);
+            Assert.AreEqual(expected, PlayerGameData.CanBuildPath(path, out errorMessage));
         }
 
         [TestCase(Color.red, 2, 3, 1)]
@@ -39,9 +42,11 @@ namespace UnitTests
         {
             PlayerGameData.numOfCardsInColor[color] = enterQuantity;
             PlayerGameData.StartTurn();
-            Path path = new Path(color, length);
+            Path path = ScriptableObject.CreateInstance<Path>();
+            path.color = color;
+            path.length = length;
             PlayerGameData.BuildPath(path);
-            Assert.AreEqual(PlayerGameData.numOfCardsInColor[color], finalQuantity);
+            Assert.AreEqual(finalQuantity, PlayerGameData.numOfCardsInColor[color]);
         }
 
         [TestCase(Color.green, 3, 0, true)]
@@ -55,8 +60,8 @@ namespace UnitTests
             PlayerGameData.satellitesSent = satellietesSent;
             PlayerGameData.StartTurn();
             Planet planet = new Planet();
-            Path path = new Path();
-            Assert.AreEqual(PlayerGameData.CanSendSatellite(planet, path, color), expected);
+            Path path = ScriptableObject.CreateInstance<Path>();
+            Assert.AreEqual(expected, PlayerGameData.CanSendSatellite(planet, path, color));
         }
 
         [TestCase(Color.green, 3, 3, false)]
@@ -69,8 +74,8 @@ namespace UnitTests
             PlayerGameData.StartTurn();
             Planet planet = new Planet();
             planet.withSatellite = true;
-            Path path = new Path();
-            Assert.AreEqual(PlayerGameData.CanSendSatellite(planet, path, color), expected);
+            Path path = ScriptableObject.CreateInstance<Path>();
+            Assert.AreEqual(expected, PlayerGameData.CanSendSatellite(planet, path, color));
         }
 
         /*
@@ -96,8 +101,8 @@ namespace UnitTests
             PlayerGameData.numOfCardsInColor[color1] = enterQuantity1;
             PlayerGameData.numOfCardsInColor[color2] = enterQuantity2;
             PlayerGameData.DrawCards(color1, color2);
-            Assert.AreEqual(PlayerGameData.numOfCardsInColor[color1], finalQuantity1);
-            Assert.AreEqual(PlayerGameData.numOfCardsInColor[color2], finalQuantity2);
+            Assert.AreEqual(finalQuantity1, PlayerGameData.numOfCardsInColor[color1]);
+            Assert.AreEqual(finalQuantity2, PlayerGameData.numOfCardsInColor[color2]);
         }
     }
 
@@ -112,10 +117,14 @@ namespace UnitTests
             Mission mission = new Mission();
             mission.start = planet1;
             mission.end = planet3;
-            Path path12 = new Path(Color.red, 2);
+            Path path12 = ScriptableObject.CreateInstance<Path>();
+            path12.color = Color.red;
+            path12.length = 2;
             path12.planetFrom = planet1;
             path12.planetTo = planet2;
-            Path path23 = new Path(Color.green, 3);
+            Path path23 = ScriptableObject.CreateInstance<Path>();
+            path23.color = Color.green;
+            path23.length = 3;
             path23.planetFrom = planet2;
             path23.planetTo = planet3;
 

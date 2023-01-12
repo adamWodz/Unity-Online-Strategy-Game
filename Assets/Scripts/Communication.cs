@@ -153,7 +153,7 @@ public static class Communication
         if (ai.isLastTurn)
             _GameManager.EndGameServerRpc();
         else
-            ai.BestMove();
+            ai.StartAiTurn();
     }
 
     public static void StartTurn(int playerId)
@@ -167,8 +167,11 @@ public static class Communication
                 PlayerGameData.PrintMissions();
                 _GameManager.EndGameServerRpc();
             }
-            else 
+            else
+            {
+                _GameManager.ShowFadingPopUpWindow("Początek twojej tury");
                 PlayerGameData.StartTurn();
+            }
         }
     }
 }

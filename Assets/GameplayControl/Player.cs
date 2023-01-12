@@ -178,12 +178,12 @@ namespace Assets.GameplayControl
         public static void StartTurn()
         {
             isNowPlaying = true;
+            cardsDrewInTurn = 0;
         }
 
         public static void EndTurn()
         {
             isNowPlaying = false;
-            cardsDrewInTurn = 0;
         }
 
         public static void SetPathIsBuild(int pathId)
