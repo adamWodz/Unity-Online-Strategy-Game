@@ -45,10 +45,10 @@ public class StartGameButton : NetworkBehaviour
                 position++;
             }
 
-            SetClientNamesClientRpc();
-
             PlayerGameData.StartTurn();
         }
+        SetClientNamesClientRpc();
+
     }
 
     [ClientRpc]

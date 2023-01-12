@@ -282,9 +282,9 @@ namespace Assets.GameplayControl
             for(int i = 0; i < pathOfPlanets.Count - 1; i++)
             {
                 //Debug.Log("path: " + pathOfPlanets[i] + " - " + pathOfPlanets[i + 1]);
-                Path path = Map.mapData.paths.Where(p => (p.planetFrom == pathOfPlanets[i] && p.planetTo == pathOfPlanets[i + 1])
-                    || (p.planetTo == pathOfPlanets[i] && p.planetFrom == pathOfPlanets[i + 1])).First();
-                resultPath.Add(path);
+                var paths = Map.mapData.paths.Where(p => (p.planetFrom == pathOfPlanets[i] && p.planetTo == pathOfPlanets[i + 1])
+                    || (p.planetTo == pathOfPlanets[i] && p.planetFrom == pathOfPlanets[i + 1]));
+                resultPath.AddRange(paths);
             }
 
             return resultPath;

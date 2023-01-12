@@ -8,6 +8,16 @@ using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
+
+enum PlayerColors
+{
+    blue,
+    red,
+    yellow,
+    pink,
+    green
+}
+
 [Serializable]
 public class PlayerInfo
 {
@@ -18,6 +28,7 @@ public class PlayerInfo
     public bool IsAI;
     public int SpaceshipsLeft;
     public int PlayerTileId;
+    public int PlayerColorNumber;
 }
 
 public class PlayerInfoComparer: IComparer<PlayerInfo>
