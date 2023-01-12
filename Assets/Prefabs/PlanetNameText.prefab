@@ -68,8 +68,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Planeta
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 65e574f82c3bcd148b79138de194f67c, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 65e574f82c3bcd148b79138de194f67c, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 38081c69aaddbd042bb239dae7cfc5ed, type: 2}
+  m_sharedMaterial: {fileID: 3305430724998905446, guid: 38081c69aaddbd042bb239dae7cfc5ed, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
