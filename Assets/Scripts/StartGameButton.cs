@@ -25,15 +25,15 @@ public class StartGameButton : NetworkBehaviour
         Debug.Log($"[ChooseMapMenu.StartGame] {NetworkManager != null} {NetworkManager.SceneManager != null}");
         var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
 
-            SetClientIdClientRpc();
-            LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
-            int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
-            int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
-            InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
+        SetClientIdClientRpc();
+        LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
+        int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
+        int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
+        InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
             
-            if (!Communication.loadOnStart)
-            {
-                int position = 0;
+        if (!Communication.loadOnStart)
+        {
+            int position = 0;
             foreach (var player in NetworkManager.Singleton.ConnectedClientsList)
             {
                 AddRealPlayerClientRpc(position, (int)player.ClientId);
@@ -44,26 +44,12 @@ public class StartGameButton : NetworkBehaviour
                 AddAiPlayerClientRpc(position, nonAiPlayersNum + i);
                 position++;
             }
+
+            SetClientNamesClientRpc();
+
             PlayerGameData.StartTurn();
-            //ShowFadingPopUpWindow("Twój ruch");
-            }
+        }
     }
-
-    /*
-    public void ShowFadingPopUpWindow(string message)
-    {
-        var popUp = GameObject.Find("Canvas").transform.Find("FadingPopUpPanel");
-        popUp.transform.Find("InfoText").GetComponent<TMP_Text>().text = message;
-        StartCoroutine(ShowFadingPopUpWindowCoroutine(popUp.transform.Find("FadeScript").GetComponent<FadePanel>()));
-    }
-
-    IEnumerator ShowFadingPopUpWindowCoroutine(FadePanel fade)
-    {
-        fade.ShowUp();
-        yield return new WaitForSeconds(2);
-        fade.FadeOut();
-    }
-    */
 
     [ClientRpc]
     public void InitializePlayersListsClientRpc(int aiPlayersNum, int nonAiPlayersNum)
@@ -119,6 +105,25 @@ public class StartGameButton : NetworkBehaviour
     public void SetClientIdClientRpc()
     {
         PlayerGameData.Id = (int)NetworkManager.Singleton.LocalClientId;
+    }
+
+    [ClientRpc]
+    public void SetClientNamesClientRpc()
+    {
+        SetNameServerRpc(PlayerGameData.Id, PlayerGameData.Name);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetNameServerRpc(int playerId, string name)
+    {
+        SetNameClientRpc(playerId, name);
+    }
+
+    [ClientRpc]
+    public void SetNameClientRpc(int playerId, string name)
+    {
+        var player = Server.allPlayersInfo.Where(p => p.Id == playerId).First();
+        player.Name = name;
     }
 
     [ClientRpc]

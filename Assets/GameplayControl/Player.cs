@@ -22,7 +22,7 @@ namespace Assets.GameplayControl
         }
 
         public static int Id { set;  get; }
-        public static string Name { set;  get; }
+        public static string Name { set; get; } = "Gracz";
         public static int curentPoints { get; set; } = 0;
         public static int spaceshipsLeft { get; set; } = Board.startSpaceshipsNumber;
         public static int satellitesSent { get; set; } = 0;
