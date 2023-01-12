@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Wenus
   positionX: 0.5
-  positionY: 3
+  positionY: 3.2
   planetPrefab: {fileID: 4403890721048219983, guid: 1d9b29c423eecb142b73096512150225, type: 3}

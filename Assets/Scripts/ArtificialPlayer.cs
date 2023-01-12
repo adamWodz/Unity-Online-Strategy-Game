@@ -87,7 +87,6 @@ namespace Assets.GameplayControl
 
         public void BestMove()
         {
-            Debug.Log("Best Move");
             SetQuickestPathForEveryPairOfPlantes();
             UpdateMissions();
             SetPathsToBuild();
@@ -122,7 +121,12 @@ namespace Assets.GameplayControl
             }
 
             _GameManager.EndAiTurn(this);
+        }
 
+        public void StartAiTurn()
+        {
+            Debug.Log("Best Move");
+            _GameManager.DelayAiMove(this);
         }
 
         // sprawdzamy czy możemy wybudować jakąkiekolwiek połączenie

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using TMPro;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEditor;
 
 using UnityEngine;
@@ -135,9 +136,34 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
     public void SetPopUpWindow(string message)
     {
-        var popUp = GameObject.Find("Canvas").transform.GetChild(0);//transform.parent.GetChild(0);
-        popUp.GetChild(0).GetComponent<TMP_Text>().text = message;
+        var popUp = GameObject.Find("Canvas").transform.Find("PopUpPanel");//transform.parent.GetChild(0);
+        popUp.transform.Find("InfoText").GetComponent<TMP_Text>().text = message;
         popUp.gameObject.SetActive(true);
+    }
+
+    public void ShowFadingPopUpWindow(string message)
+    {
+        var popUp = GameObject.Find("Canvas").transform.Find("FadingPopUpPanel");
+        popUp.transform.Find("InfoText").GetComponent<TMP_Text>().text = message;
+        StartCoroutine(ShowFadingPopUpWindowCoroutine(popUp.transform.Find("FadeScript").GetComponent<FadePanel>()));
+    }
+
+    IEnumerator ShowFadingPopUpWindowCoroutine(FadePanel fade)
+    {
+        fade.ShowUp();
+        yield return new WaitForSeconds(2);
+        fade.FadeOut();
+    }
+
+    public void DelayAiMove(ArtificialPlayer ai)
+    {
+        StartCoroutine(DelayAiMoveCoroutine(ai));
+    }
+
+    IEnumerator DelayAiMoveCoroutine(ArtificialPlayer ai)
+    {
+        yield return new WaitForSeconds(2);
+        ai.BestMove();
     }
 
     public void EndAiTurn(ArtificialPlayer ai)
@@ -147,7 +173,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
     IEnumerator EndAiTurnCoroutine(ArtificialPlayer ai)
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
         Communication.EndAITurn(ai);
     }
 
