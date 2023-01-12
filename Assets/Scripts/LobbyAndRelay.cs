@@ -28,6 +28,7 @@ public class LobbyAndRelay : MonoBehaviour
     public InputField input;
 
     public ChooseMapMenu mapMenu;
+    public List<bool> regularPlayers;
 
     // Start is called before the first frame update
     private async void Start()
@@ -46,6 +47,7 @@ public class LobbyAndRelay : MonoBehaviour
         };
         //AuthenticationService.Instance.ClearSessionToken();
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        Debug.Log($"{(int)NetworkManager.Singleton.LocalClientId}");
     }
     private void Update()
     {
@@ -117,6 +119,8 @@ public class LobbyAndRelay : MonoBehaviour
 
     // Lobby
 
+
+
     public async void CreatePrivateLobby()
     {
         try
@@ -147,6 +151,9 @@ public class LobbyAndRelay : MonoBehaviour
             PrintLobbyInfo(lobby);
             if (code.text != null) GUIUtility.systemCopyBuffer = code.text;
 
+            var playerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
+            regularPlayers = playerList.RegularPlayers;
+                
             //QueryResponse lobbies = await Lobbies.Instance.QueryLobbiesAsync();
             //Debug.Log(lobbies.Results.Count);
         }
@@ -182,7 +189,7 @@ public class LobbyAndRelay : MonoBehaviour
 
             joinedLobby = lobby;
 
-            if (!IsPlayerInLobby())
+            if (!ImInLobby())
             {
                 lobby = joinedLobby;
                 //joinedLobby = null;//
@@ -193,7 +200,7 @@ public class LobbyAndRelay : MonoBehaviour
 
             if (relaycode != "0")
             {
-                if (!IsLobbyHost())
+                if (!ImLobbyHost())
                 {
                     JoinRelay(relaycode);
                     Debug.Log($"[JoinByCode] 3/4 Joined a Relay");
@@ -204,12 +211,26 @@ public class LobbyAndRelay : MonoBehaviour
             }
             else Debug.Log($"[JoinByCode]! NOT CONNECTED to a Relay");
 
+            RpcRefreshPlayerList();
         }
         catch (LobbyServiceException e)
         {
             Debug.Log($"[JoinByCode]! {e}");
             onjoin.text = e.Message.ToString();
         }
+    }
+
+    [ClientRpc]
+    public void RpcRefreshPlayerList()
+    {
+        var playerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
+        if (!ImLobbyHost()) playerList.RegularPlayers = regularPlayers; 
+        playerList.RefreshList();
+    }
+
+    public void RefreshPlayerList()
+    {
+        if (ImLobbyHost()) RpcRefreshPlayerList();
     }
 
     public void PrintLobbyInfo(Lobby lobby)
@@ -235,16 +256,16 @@ public class LobbyAndRelay : MonoBehaviour
                 updateTimer = updateMax;
                 Lobby lobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
                 joinedLobby = lobby;
+                RefreshPlayerList();
             }
         }
     }
-
 
     public async void LeaveLobby()
     {
         try
         {
-            Debug.Log($"[LeaveLobby] 1/2 As A Host? {IsLobbyHost()}");
+            Debug.Log($"[LeaveLobby] 1/2 As A Host? {ImLobbyHost()}");
             await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId);
             Debug.Log($"[LeaveLobby] 2/2 I'm Leaving Lobby");
         }
@@ -281,12 +302,30 @@ public class LobbyAndRelay : MonoBehaviour
         }
     }
 
-    public bool IsLobbyHost()
+    public NetworkClient findClient(int clientID)
+    {
+        // jak null to wyrzuci³o klienta, mo¿na jeszcze w grze skorzystaæ z eventu NetworkManager.Singleton.OnClientDisconnect(clientID)? coœ takiego
+        var clients = NetworkManager.Singleton.ConnectedClients;
+        NetworkClient found;
+        clients.TryGetValue((ulong)clientID, out found);
+        return found;
+    }
+
+    public void printClients()
+    {
+        var clients = NetworkManager.Singleton.ConnectedClientsIds;
+        int i = 1;
+        foreach (var c in clients) Debug.Log($"[printClients] {i++}.clientID {c}");
+    }
+
+
+
+    public bool ImLobbyHost()
     {
         return joinedLobby != null && joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
     }
 
-    private bool IsPlayerInLobby()
+    private bool ImInLobby()
     {
         if (joinedLobby != null && joinedLobby.Players != null)
         {
