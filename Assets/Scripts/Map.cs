@@ -94,7 +94,7 @@ public class Map : NetworkBehaviour, IDataPersistence
             //Debug.Log("Server?" + IsServer);
             //data.paths = paths;
             data.paths = new();
-            Debug.Log("Liczba sciezek "+paths.Count);
+            //Debug.Log("Liczba sciezek "+paths.Count);
             foreach(Path path in paths)
             {
                 PathData pathData = new()
@@ -109,7 +109,7 @@ public class Map : NetworkBehaviour, IDataPersistence
                 };
                 data.paths.Add(pathData);
             }
-            Debug.Log("Liczba sciezek zapisanych" + data.paths.Count);
+            //Debug.Log("Liczba sciezek zapisanych" + data.paths.Count);
             data.mapNumber = Communication.mapDataNumber;
         }
     }
@@ -117,7 +117,7 @@ public class Map : NetworkBehaviour, IDataPersistence
     void CreateMap()
     {
         bool[] pathWasSpawned = new bool[paths.Count];
-        Debug.Log("Liczba sciezek: "+paths.Count);
+        //Debug.Log("Liczba sciezek: "+paths.Count);
         // Tworzenie planet
         for (int i = 0; i < planets.Count; i++)
         {
@@ -136,12 +136,12 @@ public class Map : NetworkBehaviour, IDataPersistence
         // Tworzenie ?cie?ek
         for (int i = 0; i < paths.Count; i++)
         {
-            Debug.Log("Path was spawned?: " + pathWasSpawned[i]);
+            //Debug.Log("Path was spawned?: " + pathWasSpawned[i]);
             if (!pathWasSpawned[i]) // sprawdzam czy ścieżka już nie powstała (w przypadku podwójnych ścieżek)
             {
                 pathWasSpawned[i] = true;
                 var path = paths[i];
-                Debug.Log("Spawnie path o id: "+ path.Id);
+                //Debug.Log("Spawnie path o id: "+ path.Id);
                 // k?t nachylenia mi?dzy dwoma planetami
                 float angle = Mathf.Atan2(
                               paths[i].planetTo.positionX - paths[i].planetFrom.positionX,
@@ -154,13 +154,14 @@ public class Map : NetworkBehaviour, IDataPersistence
 
                 // szukam indeks drugiej ścieżki, która ma te same planety (w przypadku podwójnych ścieżek)
                 int k = paths.FindIndex(path3 => path3.IsEqual(path) && path3.Id != path.Id);
-                Debug.Log("Double path:" +k);
+                //Debug.Log("Double path:" +k);
                 
                 if (k != -1 && !pathWasSpawned[k])
                 {
                     pathWasSpawned[k] = true;
-                    Debug.Log("Path was spawned?: " + pathWasSpawned[k]);var path2 = paths[k];
-                    Debug.Log("Spawnie path o id: " + path2.Id);
+                    //Debug.Log("Path was spawned?: " + pathWasSpawned[k]);
+                    var path2 = paths[k];
+                    //Debug.Log("Spawnie path o id: " + path2.Id);
                     // przesuwam ścieżkę o distanceBetweenPaths względem punktu środkowego między planetami
                     Vector2 planetPosition = new(path2.planetTo.positionX, path2.planetTo.positionY);
                     Vector2 perpendicularDirection = Vector2.Perpendicular(planetPosition - position).normalized;
@@ -183,7 +184,7 @@ public class Map : NetworkBehaviour, IDataPersistence
         // przypisanie do build path
         var buildPath = pathGameObject.GetComponent<BuildPath>();
         buildPath.path = path;
-        Debug.Log($"Czy path {path.planetFrom.name}-{path.planetTo.name} jest zbudowana? {path.isBuilt}");
+        //Debug.Log($"Czy path {path.planetFrom.name}-{path.planetTo.name} jest zbudowana? {path.isBuilt}");
         Server.buildPaths.Add(buildPath);
 
         var tilesTransforms = pathGameObject.GetComponentsInChildren<Transform>();
@@ -194,7 +195,7 @@ public class Map : NetworkBehaviour, IDataPersistence
             if (path.isBuilt && IsHost)
             {
                 var pom = Instantiate(gameManager.shipGameObjectList[path.builtById], tilesTransforms[j + 1].position, tilesTransforms[j + 1].rotation);
-                Debug.Log(pom);
+                //Debug.Log(pom);
                 pom.GetComponent<Move>().speed = 0;
                 pom.GetComponent<NetworkObject>().Spawn(true);
             }

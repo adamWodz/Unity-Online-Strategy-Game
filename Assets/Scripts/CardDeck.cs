@@ -17,9 +17,9 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     private GameManager gameManager;
 
     //private int[][] cardsQuantityPerPlayerPerColor;
-    private Dictionary<int, int[]> cardsQuantityPerPlayerPerColor;
+    private Dictionary<int, int[]> cardsQuantityPerPlayerPerColor = new();
 
-    void Awake()
+    void Start()
     {
         cardsQuantityPerPlayerPerColor = new();//new int[Server.allPlayersInfo.Count][];
 
@@ -47,7 +47,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
         }
 
         Destroy(cardTempalte);
-
+        Debug.Log("Ładuję card deck");
         SendCardsStacksServerRpc(startHand,PlayerGameData.Id);
     }
 
@@ -123,6 +123,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     [ServerRpc(RequireOwnership = false)]
     public void SendCardsStacksServerRpc(int[] cards,int id) //ServerRpcParams serverRpcParams = default)//int redCards, int greenCards, int blueCards, int yellowCards, int pinkCards, int rainbowCards, ServerRpcParams serverRpcParams = default)
     {
+        Debug.Log("Początkowa ręka");
         //int id = (int)serverRpcParams.Receive.SenderClientId;
         if(!cardsQuantityPerPlayerPerColor.ContainsKey(id))
             cardsQuantityPerPlayerPerColor.Add(id, cards);

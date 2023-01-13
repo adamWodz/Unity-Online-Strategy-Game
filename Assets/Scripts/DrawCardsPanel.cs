@@ -17,9 +17,9 @@ public class DrawCardsPanel : NetworkBehaviour
     public GameObject cardPrefab;
     GameManager gameManager;
     Button drawCardsButton;
-    GameObject card;
     public int[] actualCardColor = new int[5];
     CardDeck cardDeck;
+    private int numberOfRainbowCards = 0;
     void Start()
     {
         cardDeck = GameObject.Find("CardDeck").GetComponent<CardDeck>();
@@ -36,6 +36,8 @@ public class DrawCardsPanel : NetworkBehaviour
                 int copy = i;
                 int color = 3;
                 RandomSprite(ref color);
+                if ((Color)color == Color.special)
+                    numberOfRainbowCards++;
                 child.gameObject.GetComponent<Button>().onClick.AddListener(() => Communication.DrawCard(this, copy));
                 i++;
                 cards.Add(child.gameObject);
@@ -44,9 +46,15 @@ public class DrawCardsPanel : NetworkBehaviour
                 SyncSpritesServerRpc(color, copy);
             }
         }
+        
+        while(numberOfRainbowCards >=3)
+        {
+            ShuffleCards();
+        }
+        
         drawCardsButton.onClick.AddListener(() => Communication.DrawCard(this,10));
     }
-
+    
     [ClientRpc]
     void SyncSpritesClientRpc(int color, int index)
     {
@@ -102,6 +110,9 @@ public class DrawCardsPanel : NetworkBehaviour
             gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]]+"BelongToOtherPlayer", index);
 
             ChooseRandomColor(index);
+            if (numberOfRainbowCards >= 3)
+                ShuffleCards();
+            
         }
 
         // zapis stanu kart "na rêce" na bie¿¹co
@@ -135,6 +146,8 @@ public class DrawCardsPanel : NetworkBehaviour
         // wybierany jest nowy kolor i synchronizowany
         int color = 0;
         RandomSprite(ref color);
+        if((Color)color == Color.special)
+            numberOfRainbowCards++;
         actualCardColor[index] = color;
 
         // Synchronizacja nowego koloru z innymi graczami
@@ -153,6 +166,11 @@ public class DrawCardsPanel : NetworkBehaviour
         int color = 0;
         RandomSprite(ref color);
         gameManager.SpawnCards(drawCardsButton.transform, color, names[color]);
+        gameManager.iSendSpawnCardsServerRpc = true;
+
+        // animacja dla pozosta³ych graczy
+
+        gameManager.SpawnCardsServerRpc(drawCardsButton.transform.position, color, names[color] + "BelongToOtherPlayer",-1);
 
         return (Color)color;
     }
@@ -160,5 +178,14 @@ public class DrawCardsPanel : NetworkBehaviour
     public static bool IsCardRandom(int index)
     {
         return index > 4;
+    }
+
+    void ShuffleCards()
+    {
+        numberOfRainbowCards = 0;
+        for(int i = 0;i < cards.Count; i++)
+        {
+            ChooseRandomColor(i);
+        }
     }
 }
