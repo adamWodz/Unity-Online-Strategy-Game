@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Io
   positionX: -4.3
-  positionY: -0.1
+  positionY: -0.3
   planetPrefab: {fileID: 4329754044473220178, guid: cc185e1df9907f44099d0959ec64c4aa, type: 3}

@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Jowisz
   m_EditorClassIdentifier: 
   name: Jowisz
-  positionX: -5
+  positionX: -4.5
   positionY: -2.6
   planetPrefab: {fileID: 2771126958898736130, guid: 21ad6e90a3e921a44b98a8ab972204d1, type: 3}

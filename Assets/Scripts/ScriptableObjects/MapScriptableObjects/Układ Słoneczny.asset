@@ -78,6 +78,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 57c6671ca666431458801d1ecf3e741e, type: 2}
   - {fileID: 11400000, guid: 64cf2d32962cad447829b34117fccf9d, type: 2}
   - {fileID: 11400000, guid: f47d0851dc9762e43b50d7d6c8aa69c0, type: 2}
+  - {fileID: 11400000, guid: 229ab6109c238b946aca97cda24d7853, type: 2}
+  - {fileID: 11400000, guid: 227edc3c715e67147ae9e86f987013e6, type: 2}
+  - {fileID: 11400000, guid: 468b6ca740e7a1a4ab67723daf0b69a6, type: 2}
   missions:
   - {fileID: 11400000, guid: ada81515e2190bc4a9fd809ddee8e41c, type: 2}
   - {fileID: 11400000, guid: 8a7e9c4e46d09c742ab548a850e9839b, type: 2}

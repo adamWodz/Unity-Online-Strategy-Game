@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -77,8 +78,11 @@ public static class Communication
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
         playerPanel.UpdatePointsAndSpeceshipsNumServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.spaceshipsLeft);
         _GameManager.SetBuildPathDataServerRpc(path.Id, PlayerGameData.Id);
-        EndTurn();
         chosenPath = null;
+
+        _GameManager.SetInfoTextServerRpc($"{PlayerGameData.Name} wybudował(a) połączenie {path.planetFrom}-{path.planetTo}.");
+
+        _GameManager.EndTurn();
 
         CheckIfNewMissionIsCompleted();
     }
@@ -112,11 +116,36 @@ public static class Communication
             _GameManager.SetPopUpWindow("Nie możesz dobrać tej karty!");
             return;
         }
+        string errorMessage;
+        if (!PlayerGameData.CanDrawCard(out errorMessage))
+        {
+            _GameManager.SetPopUpWindow(errorMessage);
+            return;
+        }
 
         Color color = drawCardsPanel.MoveCard(index);
         PlayerGameData.DrawCard(color, DrawCardsPanel.IsCardRandom(index));
+
+        _GameManager.SetInfoTextServerRpc($"{PlayerGameData.Name} dobrał(a) kartę statku.");
+
         if (PlayerGameData.cardsDrewInTurn == 2)
-            EndTurn();
+            _GameManager.EndTurn();
+    }
+
+    public static bool TryStartDrawingMission()
+    {
+        string errorMessage;
+        
+        if(!PlayerGameData.CanDrawMission(out errorMessage))
+        {
+            _GameManager.SetPopUpWindow(errorMessage);
+            return false;
+        }
+        else
+        {
+            PlayerGameData.isDrawingMission = true;
+            return true;
+        }
     }
 
     public static void DrawMissions(List<Mission> missions)
@@ -128,19 +157,22 @@ public static class Communication
         }
 
         PlayerGameData.DrawMissions(missions);
+        PlayerGameData.isDrawingMission = false;
 
         Debug.Log("DrawMissions");
         foreach (var mission in missions)
             Debug.Log("missions: " + mission.start + " - " + mission.end);
 
-        EndTurn();
+        _GameManager.SetInfoTextServerRpc($"{PlayerGameData.Name} dobrał(a) karty misji.");
+
+        _GameManager.EndTurn();
     }
 
     public static void EndTurn()
     {
         PlayerGameData.EndTurn();
         NextTurnActions();
-        Debug.Log("EndTurn");
+        //Debug.Log("EndTurn");
 
         if (PlayerGameData.spaceshipsLeft < Board.minSpaceshipsLeft && !isLastTurn)
         {
@@ -191,7 +223,7 @@ public static class Communication
             }
             else
             {
-                _GameManager.ShowFadingPopUpWindow("Początek twojej tury");
+                _GameManager.ShowFadingPopUpWindow("Początek Twojej tury.");
                 PlayerGameData.StartTurn();
             }
         }
