@@ -121,7 +121,33 @@ public class LobbyAndRelay : MonoBehaviour
 
     // Lobby
 
-
+    public async void SetMyUserName()
+    {
+        var username = Assets.GameplayControl.PlayerGameData.Name;
+        var userId = AuthenticationService.Instance.PlayerId;
+        try
+        {
+            Lobby lobby = await LobbyService.Instance.UpdatePlayerAsync("mojeLobby", userId,
+            new UpdatePlayerOptions
+            {
+                Data = new Dictionary<string, PlayerDataObject> {
+                    {"userName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member,username)}
+                }
+            }
+            );
+            if (ImLobbyHost())
+            {
+                hostLobby = lobby;
+                joinedLobby = hostLobby;
+            }
+            else joinedLobby = lobby;
+            Debug.Log($"[SetMyUserName] @{username} has Id: {userId}");
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
+    }
 
     public async void CreatePrivateLobby()
     {
@@ -132,6 +158,7 @@ public class LobbyAndRelay : MonoBehaviour
 
             string relaycode = await CreateRelay(maxPlayers);
             Debug.Log($"[CreatePrivateLobby] 1/3 Created Relay with {maxPlayers} connections");
+            string username = Assets.GameplayControl.PlayerGameData.Name;
 
             Lobby lobby = await LobbyService.Instance.CreateLobbyAsync("mojeLobby", maxPlayers,
                 new CreateLobbyOptions
@@ -140,6 +167,14 @@ public class LobbyAndRelay : MonoBehaviour
                     Data = new Dictionary<string, DataObject> { 
                         {"RelayCode", new DataObject(DataObject.VisibilityOptions.Member,relaycode)},
                         {"IndexesAI", new DataObject(DataObject.VisibilityOptions.Member,AISeats)}
+                    },
+                    // ustawienie nazwy hosta
+                    Player = new Player
+                    {
+                        Data = new Dictionary<string, PlayerDataObject>
+                        {
+                            {"UserName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member,username)}
+                        }
                     }
                 }
             );
@@ -155,7 +190,7 @@ public class LobbyAndRelay : MonoBehaviour
             PrintLobbyInfo(lobby);
             if (code.text != null) GUIUtility.systemCopyBuffer = code.text;
 
-            Debug.Log($"[CreatePrivateLobby] 3/3 Firstly saved seats");
+            Debug.Log($"[CreatePrivateLobby] 3/3 PLAYER = {joinedLobby.Players[0].Data["UserName"].Value}");
 
             //QueryResponse lobbies = await Lobbies.Instance.QueryLobbiesAsync();
             //Debug.Log(lobbies.Results.Count);
@@ -177,9 +212,23 @@ public class LobbyAndRelay : MonoBehaviour
 
             //1. by code -//
             Lobby lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(input.text);
+            
             PrintLobbyInfo(lobby);
             PrintPlayers(lobby);
             Debug.Log($"[JoinByCode] 1/4 Joined to a Lobby {lobby.Id}");
+
+            var playerId = AuthenticationService.Instance.PlayerId;
+            string username = Assets.GameplayControl.PlayerGameData.Name;
+            var lobby2 = await LobbyService.Instance.UpdatePlayerAsync(lobby.Id, playerId, new UpdatePlayerOptions
+            {
+                Data = new Dictionary<string, PlayerDataObject>
+                {
+                    {"UserName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member,username)}
+                }
+            });
+
+            Debug.Log($"[JoinByCode] 1.2/4 UpdatePlayer {lobby.Id} {lobby2.Id}");
+            lobby = lobby2;
 
             //2. first created lobby +//
             //QueryResponse response = await Lobbies.Instance.QueryLobbiesAsync();
@@ -209,12 +258,12 @@ public class LobbyAndRelay : MonoBehaviour
                     Debug.Log($"[JoinByCode] 3/4 Joined a Relay");
                     //mapMenu.StartGame();//
                     Debug.Log($"[JoinByCode] 4/4 Joined Game");
+                    RpcRefreshPlayerList();
                 }
+                //else RefreshPlayerList();
                 //joinedLobby = null;//
             }
             else Debug.Log($"[JoinByCode]! NOT CONNECTED to a Relay");
-
-            RpcRefreshPlayerList();
         }
         catch (LobbyServiceException e)
         {
