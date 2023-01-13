@@ -13,6 +13,8 @@ using UnityEngine.UIElements;
 public class StartGameButton : NetworkBehaviour
 {
     public List<MapData> availableMapsData;
+    public List<GameObject> playerTilePrefabs;
+    public List<GameObject> spaceshipPrefabs;
     int allPlayersLimit = 5;
     int startSpaceshipsNumber = 10;
 

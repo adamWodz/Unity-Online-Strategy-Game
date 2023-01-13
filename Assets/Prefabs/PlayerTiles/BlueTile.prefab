@@ -282,7 +282,7 @@ GameObject:
   - component: {fileID: 1893695874489856951}
   - component: {fileID: 5413383486097322781}
   m_Layer: 5
-  m_Name: playerTile2
+  m_Name: BlueTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
