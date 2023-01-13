@@ -98,7 +98,7 @@ public class Map : NetworkBehaviour, IDataPersistence
             //Debug.Log("Server?" + IsServer);
             //data.paths = paths;
             data.paths = new();
-            Debug.Log("Liczba sciezek "+paths.Count);
+            //Debug.Log("Liczba sciezek "+paths.Count);
             foreach(Path path in paths)
             {
                 PathData pathData = new()
@@ -113,7 +113,7 @@ public class Map : NetworkBehaviour, IDataPersistence
                 };
                 data.paths.Add(pathData);
             }
-            Debug.Log("Liczba sciezek zapisanych" + data.paths.Count);
+            //Debug.Log("Liczba sciezek zapisanych" + data.paths.Count);
             data.mapNumber = Communication.mapDataNumber;
         }
     }
@@ -121,7 +121,7 @@ public class Map : NetworkBehaviour, IDataPersistence
     void CreateMap()
     {
         bool[] pathWasSpawned = new bool[paths.Count];
-        Debug.Log("Liczba sciezek: "+paths.Count);
+        //Debug.Log("Liczba sciezek: "+paths.Count);
         // Tworzenie planet
         for (int i = 0; i < planets.Count; i++)
         {
@@ -191,7 +191,7 @@ public class Map : NetworkBehaviour, IDataPersistence
         // przypisanie do build path
         var buildPath = pathGameObject.GetComponent<BuildPath>();
         buildPath.path = path;
-        Debug.Log($"Czy path {path.planetFrom.name}-{path.planetTo.name} jest zbudowana? {path.isBuilt}");
+        //Debug.Log($"Czy path {path.planetFrom.name}-{path.planetTo.name} jest zbudowana? {path.isBuilt}");
         Server.buildPaths.Add(buildPath);
 
         var tilesTransforms = pathGameObject.GetComponentsInChildren<Transform>();
@@ -202,7 +202,7 @@ public class Map : NetworkBehaviour, IDataPersistence
             if (path.isBuilt && IsHost)
             {
                 var pom = Instantiate(gameManager.shipGameObjectList[path.builtById], tilesTransforms[j + 1].position, tilesTransforms[j + 1].rotation);
-                Debug.Log(pom);
+                //Debug.Log(pom);
                 pom.GetComponent<Move>().speed = 0;
                 pom.GetComponent<NetworkObject>().Spawn(true);
             }
