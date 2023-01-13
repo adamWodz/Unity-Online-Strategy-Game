@@ -28,7 +28,9 @@ public class LobbyAndRelay : MonoBehaviour
     public InputField input;
 
     public ChooseMapMenu mapMenu;
-    public List<bool> regularPlayers;
+
+    // do zapisu przy utworzeniu lobby które seats z PlayerList s¹ AI
+    public string AISeats;
 
     // Start is called before the first frame update
     private async void Start()
@@ -129,14 +131,16 @@ public class LobbyAndRelay : MonoBehaviour
             //1. by code (private) + Relay//
 
             string relaycode = await CreateRelay(maxPlayers);
-            Debug.Log($"[CreatePrivateLobby] 1/2 Created Relay with {maxPlayers} connections");
+            Debug.Log($"[CreatePrivateLobby] 1/3 Created Relay with {maxPlayers} connections");
 
             Lobby lobby = await LobbyService.Instance.CreateLobbyAsync("mojeLobby", maxPlayers,
                 new CreateLobbyOptions
                 {
                     IsPrivate = true,
-                    Data = new Dictionary<string, DataObject>
-                { {"RelayCode", new DataObject(DataObject.VisibilityOptions.Member,relaycode)} }
+                    Data = new Dictionary<string, DataObject> { 
+                        {"RelayCode", new DataObject(DataObject.VisibilityOptions.Member,relaycode)},
+                        {"IndexesAI", new DataObject(DataObject.VisibilityOptions.Member,AISeats)}
+                    }
                 }
             );
             
@@ -147,13 +151,12 @@ public class LobbyAndRelay : MonoBehaviour
             joinedLobby = hostLobby;
             string relaycode2 = lobby.Data["RelayCode"].Value;
 
-            Debug.Log($"[CreatePrivateLobby] 2/2 Created Lobby {lobby.Name} ({lobby.Id}) with data {relaycode2}={relaycode}?");
+            Debug.Log($"[CreatePrivateLobby] 2/3 Created Lobby {lobby.Name} ({lobby.Id}) with data {relaycode2}={relaycode}?");
             PrintLobbyInfo(lobby);
             if (code.text != null) GUIUtility.systemCopyBuffer = code.text;
 
-            var playerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
-            regularPlayers = playerList.RegularPlayers;
-                
+            Debug.Log($"[CreatePrivateLobby] 3/3 Firstly saved seats");
+
             //QueryResponse lobbies = await Lobbies.Instance.QueryLobbiesAsync();
             //Debug.Log(lobbies.Results.Count);
         }
@@ -224,7 +227,14 @@ public class LobbyAndRelay : MonoBehaviour
     public void RpcRefreshPlayerList()
     {
         var playerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
-        if (!ImLobbyHost()) playerList.RegularPlayers = regularPlayers; 
+
+        Debug.Log($"[RpcRefreshPlayerList] 1/2 HOST:{ImLobbyHost()}");
+        if (playerList != null)
+        {
+            Debug.Log($"[RpcRefreshPlayerList] 2/2 {playerList.seats.Count} seats where {AISeats} are AI");
+        }
+        else Debug.Log($"[RpcRefreshPlayerList] 2/2 PlayerList gameObject is null");
+        
         playerList.RefreshList();
     }
 
@@ -256,6 +266,7 @@ public class LobbyAndRelay : MonoBehaviour
                 updateTimer = updateMax;
                 Lobby lobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
                 joinedLobby = lobby;
+
                 RefreshPlayerList();
             }
         }

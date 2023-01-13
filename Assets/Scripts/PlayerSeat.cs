@@ -52,7 +52,10 @@ public class PlayerSeat : MonoBehaviour
             AIPlayer.gameObject.SetActive(AI);
             joinedBackground.gameObject.SetActive(AI);
 
-            if (AI) Nickname.text = "@ AIplayer";
+            var list = GameObject.Find("PlayerList").GetComponent<PlayerList>();
+            //list.RefreshAIPlayers();
+            list.RefreshList();
+            
             Debug.Log($"[PlayerSeat.SwitchMode] AI:{AI}");
         }
         else Debug.Log($"[PlayerSeat.SwitchMode] Cannot edit playerType");

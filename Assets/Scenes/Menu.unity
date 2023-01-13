@@ -325,10 +325,11 @@ MonoBehaviour:
   - {fileID: 2126139896}
   - {fileID: 2018766483}
   - {fileID: 1845631598}
-  RegularPlayers: 
   lobbyData: {fileID: 1618899454}
   joined: {fileID: 0}
   remaining: {fileID: 0}
+  IndexesAI: 
+  IndexesReg: 
 --- !u!1 &14232784
 GameObject:
   m_ObjectHideFlags: 0
@@ -2615,10 +2616,11 @@ MonoBehaviour:
   - {fileID: 4733224}
   - {fileID: 1499006290}
   - {fileID: 2099734164}
-  RegularPlayers: 
   lobbyData: {fileID: 1618899454}
   joined: {fileID: 1791256362}
   remaining: {fileID: 904133287}
+  IndexesAI: 
+  IndexesReg: 
 --- !u!1 &295669882
 GameObject:
   m_ObjectHideFlags: 0
@@ -10905,6 +10907,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 277159479}
+        m_TargetAssemblyTypeName: PlayerList, Assembly-CSharp
+        m_MethodName: OnCreateLobby
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
       - m_Target: {fileID: 1618899454}
         m_TargetAssemblyTypeName: LobbyAndRelay, Assembly-CSharp
         m_MethodName: CreatePrivateLobby
@@ -10916,18 +10930,6 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 277159479}
-        m_TargetAssemblyTypeName: PlayerList, Assembly-CSharp
-        m_MethodName: NonAI
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 1297317364}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
@@ -13379,7 +13381,7 @@ MonoBehaviour:
   onjoin: {fileID: 2072693147}
   input: {fileID: 1606027824}
   mapMenu: {fileID: 313956242}
-  regularPlayers: 
+  AISeats: 
 --- !u!1 &1639613798
 GameObject:
   m_ObjectHideFlags: 0
