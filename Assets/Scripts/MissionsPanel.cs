@@ -90,6 +90,13 @@ public class MissionsPanel : Panel
         {
             popUpPanel.SetActive(true);
 
+            // "czy�cimy" przyciski z MissionsPanel
+            for (int i = 0; i < missionButtonsAndConfirmButton.Length - 1; i++)
+            {
+                missionButtonsAndConfirmButton[i].onClick.RemoveAllListeners();
+                missionButtonsAndConfirmButton[i].name = "";
+            }
+
             var randomMissions = GetRandomMissions();
 
             Debug.Log($"RandomPaths: {randomMissions.Count}");
