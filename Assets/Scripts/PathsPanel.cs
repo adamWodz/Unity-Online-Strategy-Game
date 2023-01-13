@@ -66,7 +66,7 @@ public class PathsPanel : Panel
 
         //Debug.Log($"Missions choosed: {missionsChosen.Count}");
 
-        AssignValues(368.62f, 611.61f, PanelState.Maximized, true);
+        AssignValues(349.4f, 585.4f, PanelState.Maximized, true);
 
         //SpawnMissionsButtons(missionsChoosed);
     }
@@ -294,18 +294,21 @@ public class PathsPanel : Panel
     {
         if (IsHost)
         {
+            
             // AI
             foreach (var artificialPlayer in Server.artificialPlayers)
             {
+                List<MissionData> pom = new();
                 foreach (var mission in artificialPlayer.missions)
                 {
-                    receivedMissions[artificialPlayer.Id].Add(new MissionData()
+                    pom.Add(new MissionData()
                     {
                         startPlanetName = mission.start.name,
                         endPlanetName = mission.end.name,
                         points = mission.points,
                     });
                 }
+                receivedMissions[artificialPlayer.Id] = new(pom);
             }
 
 

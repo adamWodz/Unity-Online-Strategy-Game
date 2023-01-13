@@ -93,7 +93,8 @@ public class Map : NetworkBehaviour, IDataPersistence
             //Debug.Log("Client?" + IsClient);
             //Debug.Log("Server?" + IsServer);
             //data.paths = paths;
-            data.paths ??= new();
+            data.paths = new();
+            Debug.Log("Liczba sciezek "+paths.Count);
             foreach(Path path in paths)
             {
                 PathData pathData = new()
@@ -108,6 +109,7 @@ public class Map : NetworkBehaviour, IDataPersistence
                 };
                 data.paths.Add(pathData);
             }
+            Debug.Log("Liczba sciezek zapisanych" + data.paths.Count);
             data.mapNumber = Communication.mapDataNumber;
         }
     }
@@ -115,7 +117,7 @@ public class Map : NetworkBehaviour, IDataPersistence
     void CreateMap()
     {
         bool[] pathWasSpawned = new bool[paths.Count];
-
+        Debug.Log("Liczba sciezek: "+paths.Count);
         // Tworzenie planet
         for (int i = 0; i < planets.Count; i++)
         {
@@ -171,12 +173,9 @@ public class Map : NetworkBehaviour, IDataPersistence
 
                     // przesuwam drugą ścieżkę o distanceBetweenPaths względem punktu środkowego między planetami
                     position -= perpendicularDirection * distanceBetweenPaths;
-
-                    
+  
                 }
                 SpawnPath(path, position, angle);
-               
-                
             }
         }
     }
