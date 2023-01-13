@@ -30,6 +30,7 @@ public class StartGameButton : NetworkBehaviour
         SetClientIdClientRpc();
         LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
         int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
+        Debug.Log("maxPlayers" + lobby.maxPlayers);
         int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
         InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
             

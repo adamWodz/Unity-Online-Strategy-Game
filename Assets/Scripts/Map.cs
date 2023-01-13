@@ -143,12 +143,12 @@ public class Map : NetworkBehaviour, IDataPersistence
         // Tworzenie ?cie?ek
         for (int i = 0; i < paths.Count; i++)
         {
-            Debug.Log("Path was spawned?: " + pathWasSpawned[i]);
+            //Debug.Log("Path was spawned?: " + pathWasSpawned[i]);
             if (!pathWasSpawned[i]) // sprawdzam czy ścieżka już nie powstała (w przypadku podwójnych ścieżek)
             {
                 pathWasSpawned[i] = true;
                 var path = paths[i];
-                Debug.Log("Spawnie path o id: "+ path.Id);
+                //Debug.Log("Spawnie path o id: "+ path.Id);
                 // k?t nachylenia mi?dzy dwoma planetami
                 float angle = Mathf.Atan2(
                               paths[i].planetTo.positionX - paths[i].planetFrom.positionX,
@@ -161,13 +161,14 @@ public class Map : NetworkBehaviour, IDataPersistence
 
                 // szukam indeks drugiej ścieżki, która ma te same planety (w przypadku podwójnych ścieżek)
                 int k = paths.FindIndex(path3 => path3.IsEqual(path) && path3.Id != path.Id);
-                Debug.Log("Double path:" +k);
+                //Debug.Log("Double path:" +k);
                 
                 if (k != -1 && !pathWasSpawned[k])
                 {
                     pathWasSpawned[k] = true;
-                    Debug.Log("Path was spawned?: " + pathWasSpawned[k]);var path2 = paths[k];
-                    Debug.Log("Spawnie path o id: " + path2.Id);
+                    //Debug.Log("Path was spawned?: " + pathWasSpawned[k]);
+                    var path2 = paths[k];
+                    //Debug.Log("Spawnie path o id: " + path2.Id);
                     // przesuwam ścieżkę o distanceBetweenPaths względem punktu środkowego między planetami
                     Vector2 planetPosition = new(path2.planetTo.positionX, path2.planetTo.positionY);
                     Vector2 perpendicularDirection = Vector2.Perpendicular(planetPosition - position).normalized;
