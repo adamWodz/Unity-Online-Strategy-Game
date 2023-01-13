@@ -172,7 +172,7 @@ public class PlayerList : MonoBehaviour
             var jj = int.Parse(j.ToString());
 
             if (!seats[jj].AI) seats[jj].ChangePlayerType();
-            seats[jj].Nickname.text = $"@ playerAI_{a++}";
+            seats[jj].Nickname.text = $"AIplayer{a++}";
         }
     }
 
@@ -220,14 +220,16 @@ public class PlayerList : MonoBehaviour
             playersLeft = r < players.Count;
             if (playersLeft && j <= '4' && j >= '0') 
             {
-                string pref = players.Count==1? "host" : "spaceman";
+                //string pref = players.Count==1? "host" : "spaceman";
+                string pref = players[r].Data["UserName"].Value;
                 var playerId = players[r++].Id;
 
                 var jj = int.Parse(j.ToString());
 
                 seats[jj].playerId = playerId;
                 seats[jj].DisplayJoined(false);
-                SetPlayerNick(jj, pref, playerId);
+                seats[jj].Nickname.text = pref;
+                //SetPlayerNick(jj, pref, playerId);
             }
         }
     }
