@@ -470,5 +470,24 @@ namespace Assets.GameplayControl
 
             return colors;
         }
+
+        public void CalculateFinalPoints()
+        {
+            foreach (Mission mission in missions)
+                if (mission.isDone)
+                    curentPoints += mission.points;
+                else
+                    curentPoints -= mission.points;
+        }
+
+        public int[] GetMissionIds()
+        {
+            int[] ids = new int[missions.Count];
+
+            for (int i = 0; i < missions.Count; i++)
+                ids[i] = missions[i].id;
+
+            return ids;
+        }
     }
 }

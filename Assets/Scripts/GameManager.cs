@@ -195,18 +195,42 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     public void EndGameServerRpc() // wyświetlanie ekranu końcowego
     {
         EndGameWithDelayClientRpc();
+
+        foreach (ArtificialPlayer ai in Server.artificialPlayers)
+        {
+            ai.CalculateFinalPoints();
+            SetFinalPointsAndMissionsNumClientRpc(ai.Id, ai.curentPoints, ai.GetMissionIds());
+        }
+        
+    }
+
+    [ClientRpc]
+    public void SetFinalPointsAndMissionsNumClientRpc(int playerId, int playerPoints, int[] missionIds)
+    {
+        var player = Server.allPlayersInfo.Where(p => p.Id == playerId).First();
+        player.Points = playerPoints;
+        player.missions = new List<Mission>();
+        for(int i = 0; i < missionIds.Length; i++)
+        {
+            Mission mission = Server.allMissions.First(m => m.id == missionIds[i]);
+            player.missions.Add(mission);
+        }
     }
 
     [ClientRpc]
     void EndGameWithDelayClientRpc()
     {
         ShowFadingPopUpWindow("Koniec gry!");
+
+        PlayerGameData.CalculateFinalPoints();
+        SetFinalPointsAndMissionsNumClientRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.GetMissionIds());
+
         StartCoroutine(EndGame());
     }
 
     IEnumerator EndGame()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(3);
 
         Debug.Log("Quit");
 

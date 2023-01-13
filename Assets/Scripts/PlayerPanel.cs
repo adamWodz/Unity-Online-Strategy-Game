@@ -32,6 +32,7 @@ public class PlayerInfo
     public int PlayerColorNumber;
     public GameObject TilePrefab;
     public GameObject SpaceshipPrefab;
+    public List<Mission> missions; // uzupe³niana na koniec gry
 }
 
 public class PlayerInfoComparer: IComparer<PlayerInfo>

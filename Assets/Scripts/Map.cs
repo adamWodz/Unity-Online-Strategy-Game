@@ -64,6 +64,10 @@ public class Map : NetworkBehaviour, IDataPersistence
         }
         else
             paths = new();
+
+        Server.allMissions = new List<Mission>();
+        foreach (Mission mission in mapData.missions)
+            Server.allMissions.Add(mission);
         
     }
 

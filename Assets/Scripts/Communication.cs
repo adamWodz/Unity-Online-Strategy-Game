@@ -144,7 +144,7 @@ public static class Communication
 
         if (PlayerGameData.spaceshipsLeft < Board.minSpaceshipsLeft && !isLastTurn)
         {
-            PlayerGameData.startedLastTurn = true;
+            PlayerGameData.lastTurn = true;
             _GameManager.LastTurnServerRpc();
         }
     }
@@ -184,7 +184,7 @@ public static class Communication
         {
             //PlayerGameData.PrintCards();
 
-            if (PlayerGameData.startedLastTurn)
+            if (PlayerGameData.lastTurn)
             {
                 PlayerGameData.PrintMissions();
                 _GameManager.EndGameServerRpc();
