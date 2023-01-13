@@ -79,6 +79,8 @@ public class StartGameButton : NetworkBehaviour
             Id = id,
             IsAI = false,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
+            TilePrefab = playerTilePrefabs[position],
+            SpaceshipPrefab = spaceshipPrefabs[position],
         };
         Server.allPlayersInfo.Add(playerState);
     }
@@ -94,6 +96,8 @@ public class StartGameButton : NetworkBehaviour
             Id = id,
             IsAI = true,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
+            TilePrefab = playerTilePrefabs[position],
+            SpaceshipPrefab = spaceshipPrefabs[position],
         };
         Server.allPlayersInfo.Add(playerState);
         Server.artificialPlayers.Add(new ArtificialPlayer

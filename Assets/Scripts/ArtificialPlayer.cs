@@ -71,7 +71,7 @@ namespace Assets.GameplayControl
         public int[,] dist = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         public int[,] nextPlanet = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         public Dictionary<Planet, int> planetIds = new Dictionary<Planet, int>();
-        public bool isLastTurn = false;
+        public bool startedLastTurn = false;
 
         List<Path> pathsToBuild = new List<Path>();
 
@@ -227,6 +227,9 @@ namespace Assets.GameplayControl
      
         List<Path> GetQuickestPathForMission(Mission mission)
         {
+            if (ConnectedPlanets.ArePlanetsInOneGroup(groupsOfConnectedPlanets, mission.start, mission.end))
+                return new List<Path>();
+            
             List<Planet> resultPath;
             List<Planet> startGropup, endGroup;
 
@@ -247,7 +250,6 @@ namespace Assets.GameplayControl
                 endGroup = new List<Planet>();
                 endGroup.Add(mission.end);
             }
-
 
             int shortestDist = dist[planetIds[mission.start], planetIds[mission.end]];
             resultPath = pathBetweenPlanets[(mission.start, mission.end)];
@@ -305,6 +307,7 @@ namespace Assets.GameplayControl
 
                 if (missionPath.Count == 0) // misja jest już wykonana
                 {
+                    mission.isDone = true;
                     missionsDone.Add(mission);
                     missionsToRemove.Add(mission);
                     continue;

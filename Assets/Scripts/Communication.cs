@@ -38,6 +38,8 @@ public static class Communication
 
     private static BuildPath chosenPath;
 
+    public static bool isLastTurn = false;
+
     public static void ChoosePath(BuildPath buildPath)
     {
         chosenPath = (buildPath);
@@ -140,14 +142,20 @@ public static class Communication
         NextTurnActions();
         Debug.Log("EndTurn");
 
-        if (PlayerGameData.spaceshipsLeft < Board.minSpaceshipsLeft)
-            PlayerGameData.isLastTurn = true;
+        if (PlayerGameData.spaceshipsLeft < Board.minSpaceshipsLeft && !isLastTurn)
+        {
+            PlayerGameData.startedLastTurn = true;
+            _GameManager.LastTurnServerRpc();
+        }
     }
 
     public static void EndAITurn(ArtificialPlayer ai)
     {
-        if (ai.spaceshipsLeft < Board.minSpaceshipsLeft)
-            ai.isLastTurn = true; 
+        if (ai.spaceshipsLeft < Board.minSpaceshipsLeft && !isLastTurn)
+        {
+            ai.startedLastTurn = true;
+            _GameManager.LastTurnServerRpc();
+        }
         
         NextTurnActions();
         Debug.Log("EndAiTurn");
@@ -164,7 +172,7 @@ public static class Communication
     public static void StartAiTurn(int id)
     {
         ArtificialPlayer ai = Server.artificialPlayers.Where(ai => ai.Id == id).First();
-        if (ai.isLastTurn)
+        if (ai.startedLastTurn)
             _GameManager.EndGameServerRpc();
         else
             ai.StartAiTurn();
@@ -176,7 +184,7 @@ public static class Communication
         {
             //PlayerGameData.PrintCards();
 
-            if (PlayerGameData.isLastTurn)
+            if (PlayerGameData.startedLastTurn)
             {
                 PlayerGameData.PrintMissions();
                 _GameManager.EndGameServerRpc();

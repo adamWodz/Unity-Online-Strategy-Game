@@ -129,6 +129,9 @@ public class Map : NetworkBehaviour, IDataPersistence
             planetNameText.name = planets[i].name + "Text";
             planetNameText.transform.SetParent(canvasForPlanetsNames.transform);
             //planetNameText.SetActive(false);
+
+            gameManager.spawnedObjects.Add(planet);
+            gameManager.spawnedObjects.Add(planetNameText);
         }
 
         // Tworzenie ?cie?ek
@@ -200,6 +203,8 @@ public class Map : NetworkBehaviour, IDataPersistence
                 pom.GetComponent<NetworkObject>().Spawn(true);
             }
         }
+
+        gameManager.spawnedObjects.Add(pathGameObject);
     }
 
     [ClientRpc]

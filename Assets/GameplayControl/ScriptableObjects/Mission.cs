@@ -14,6 +14,7 @@ namespace Assets.GameplayControl
         public Planet start;
         public Planet end;
         public int points;
+        public bool isDone = false;
         public bool IsCompletedByPlayer()
         {
             return ConnectedPlanets.ArePlanetsInOneGroup(PlayerGameData.groupsOfConnectedPlanets, start, end);

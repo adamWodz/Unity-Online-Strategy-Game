@@ -30,6 +30,8 @@ public class PlayerInfo
     public int SpaceshipsLeft;
     public int PlayerTileId;
     public int PlayerColorNumber;
+    public GameObject TilePrefab;
+    public GameObject SpaceshipPrefab;
 }
 
 public class PlayerInfoComparer: IComparer<PlayerInfo>
@@ -95,7 +97,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             {
                 var player = players.Where(p => p.Position == i).First();
 
-                playerTile = Instantiate(playerTilePrefab, transform);
+                playerTile = Instantiate(player.TilePrefab, transform);
                 playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (players[i].Position + 1).ToString();
                 playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = players[i].Name;
                 playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].SpaceshipsLeft.ToString();
