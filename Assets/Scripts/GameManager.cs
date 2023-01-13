@@ -19,6 +19,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     public List<Sprite> cardSprites;
     //public GameObject shipGameObject;
     public GameObject cardButton;
+    public GameObject cardBackButton;
     public GameObject cardButtonWithSync;
 
     private GameObject spawnedCardGameObject;
@@ -31,6 +32,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     public bool iSendSpawnCardsServerRpc;
     GameObject drawCardsPanel;
     GameObject cardGoal;
+    GameObject drawCardsButton;
 
     public int playerId = 0;
 
@@ -40,9 +42,14 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         //Debug.Log("GameManager Client ID:"+OwnerClientId);
         drawCardsPanel = GameObject.Find("DrawCardsPanel");
         cardGoal = GameObject.Find("CardGoal");
+        drawCardsButton = GameObject.Find("DrawCardsButton");
 
         spaceshipCounter = GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>();
-        spaceshipCounter.text = "50";//Server.allPlayersInfo.Single(p => p.Id == PlayerGameData.Id).SpaceshipsLeft.ToString();
+        //spaceshipCounter.text = Server.allPlayersInfo.Single(p => p.Id == PlayerGameData.Id).SpaceshipsLeft.ToString();
+
+        int index = Server.allPlayersInfo.FindIndex(p => p.Id == PlayerGameData.Id);
+        if(index != -1)
+            spaceshipCounter.text = Server.allPlayersInfo[index].SpaceshipsLeft.ToString();
 
         satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
         satelliteCounter.text = "3";
@@ -91,7 +98,10 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         if (!iSendSpawnCardsServerRpc)
         {
             cardButton.GetComponent<Image>().sprite = cardSprites[color];
-            spawnedCardGameObject = Instantiate(cardButton, drawCardsPanel.transform.GetChild(index));
+            if(index!=-1)
+                spawnedCardGameObject = Instantiate(cardButton, drawCardsPanel.transform.GetChild(index));
+            else
+                spawnedCardGameObject = Instantiate(cardBackButton, drawCardsButton.transform);
             spawnedCardGameObject.name = name;
             spawnedCardGameObject.transform.localScale = new(0.5f, 0.5f);
             //spawnedCardGameObject.transform.SetParent(canvas.transform);
