@@ -34,7 +34,7 @@ public class BuildPath : MonoBehaviour
     private void OnMouseDown()
     {
         Debug.Log("OnMouseDown");
-        Communication.ChoosePath(this, path);
+        Communication.ChoosePath(this);
     }
 
     public void DoBuildPath(int playerId)
@@ -57,13 +57,13 @@ public class BuildPath : MonoBehaviour
             
         }
         // zapis stanu kart "na rêce" na bie¿¹co
-        string cardsStacks = "";
+        int[] cardsStacks = new int[gameManager.cardStackCounterList.Count];
         for (int j = 0; j < gameManager.cardStackCounterList.Count; j++)
         {
-            cardsStacks += gameManager.cardStackCounterList[j].text;
+            cardsStacks[j] = int.Parse(gameManager.cardStackCounterList[j].text);
         }
         Debug.Log(cardsStacks);
-        cardDeck.SendCardsStacksServerRpc(cardsStacks);
+        cardDeck.SendCardsStacksServerRpc(cardsStacks,PlayerGameData.Id);
 
         StartCoroutine(BuildPathAnimation(playerId));
     }

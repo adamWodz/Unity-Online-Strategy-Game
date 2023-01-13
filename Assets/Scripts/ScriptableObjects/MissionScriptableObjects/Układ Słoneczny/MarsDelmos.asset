@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f65f3c469f058624da124150cf48bbf9, type: 3}
+  m_Name: MarsDelmos
+  m_EditorClassIdentifier: 
+  start: {fileID: 11400000, guid: 5f41180be78f17f459c02ce9ab26fe80, type: 2}
+  end: {fileID: 11400000, guid: 8127da86ee5f2444e9143da260065264, type: 2}
+  points: 5

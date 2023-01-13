@@ -15,4 +15,4 @@ MonoBehaviour:
   name: Pluton
   positionX: 6.67
   positionY: 0.07
-  adjacentPaths: []
+  planetPrefab: {fileID: 343829207376835345, guid: b98b5c8ff0ce5154fae56c08274d81e2, type: 3}

@@ -2,17 +2,19 @@ using Assets.GameplayControl;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using TMPro;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEditor;
 
 using UnityEngine;
 using UnityEngine.Networking.Types;
 using UnityEngine.UI;
 
-public class GameManager : NetworkBehaviour
+public class GameManager : NetworkBehaviour//, IDataPersistence
 {
     public List<Sprite> cardSprites;
     //public GameObject shipGameObject;
@@ -40,7 +42,7 @@ public class GameManager : NetworkBehaviour
         cardGoal = GameObject.Find("CardGoal");
 
         spaceshipCounter = GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>();
-        spaceshipCounter.text = "50";
+        spaceshipCounter.text = "50";//Server.allPlayersInfo.Single(p => p.Id == PlayerGameData.Id).SpaceshipsLeft.ToString();
 
         satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
         satelliteCounter.text = "3";
@@ -48,20 +50,13 @@ public class GameManager : NetworkBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-
-    }
-
-    [ClientRpc]
-    public void TestClientRpc()
-    {
-        Debug.Log("TestClientRpc;");
+    { 
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void SpawnShipsServerRpc(int playerId, Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
     {
-        Debug.Log("playerId: " + playerId);
+        //Debug.Log("playerId: " + playerId);
         
         float angle = CalculateAngle(position,spaceshipsBase);
         var spawnedShipGameObject = Instantiate(shipGameObjectList[playerId], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
@@ -135,9 +130,34 @@ public class GameManager : NetworkBehaviour
 
     public void SetPopUpWindow(string message)
     {
-        var popUp = GameObject.Find("Canvas").transform.GetChild(0);//transform.parent.GetChild(0);
-        popUp.GetChild(0).GetComponent<TMP_Text>().text = message;
+        var popUp = GameObject.Find("Canvas").transform.Find("PopUpPanel");//transform.parent.GetChild(0);
+        popUp.transform.Find("InfoText").GetComponent<TMP_Text>().text = message;
         popUp.gameObject.SetActive(true);
+    }
+
+    public void ShowFadingPopUpWindow(string message)
+    {
+        var popUp = GameObject.Find("Canvas").transform.Find("FadingPopUpPanel");
+        popUp.transform.Find("InfoText").GetComponent<TMP_Text>().text = message;
+        StartCoroutine(ShowFadingPopUpWindowCoroutine(popUp.transform.Find("FadeScript").GetComponent<FadePanel>()));
+    }
+
+    IEnumerator ShowFadingPopUpWindowCoroutine(FadePanel fade)
+    {
+        fade.ShowUp();
+        yield return new WaitForSeconds(2);
+        fade.FadeOut();
+    }
+
+    public void DelayAiMove(ArtificialPlayer ai)
+    {
+        StartCoroutine(DelayAiMoveCoroutine(ai));
+    }
+
+    IEnumerator DelayAiMoveCoroutine(ArtificialPlayer ai)
+    {
+        yield return new WaitForSeconds(3);
+        ai.BestMove();
     }
 
     public void EndAiTurn(ArtificialPlayer ai)
@@ -147,7 +167,7 @@ public class GameManager : NetworkBehaviour
 
     IEnumerator EndAiTurnCoroutine(ArtificialPlayer ai)
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1);
         Communication.EndAITurn(ai);
     }
 
@@ -163,4 +183,11 @@ public class GameManager : NetworkBehaviour
         Debug.Log("Quit");
         Application.Quit();
     }
+
+    public void MarkMissionDone(Mission mission)
+    {
+        GameObject missionButton = GameObject.Find(mission.start.name + "-" + mission.end.name);
+        missionButton.transform.GetChild(3).gameObject.SetActive(true);
+    }
+
 }

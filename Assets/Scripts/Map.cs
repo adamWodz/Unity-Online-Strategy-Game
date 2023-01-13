@@ -5,11 +5,11 @@ using Unity.Netcode;
 using System.Linq;
 using UnityEngine;
 using TMPro;
+using static UnityEngine.GraphicsBuffer;
 
 public class Map : NetworkBehaviour, IDataPersistence
 {
     public static MapData mapData;
-
 
     private float mapZparam = -1;
     private List<Path> paths;
@@ -43,6 +43,7 @@ public class Map : NetworkBehaviour, IDataPersistence
 
     private GameManager gameManager;
 
+    private float distanceBetweenPaths = 0.1f;
     // Start is called before the first frame update
     void Start()
     {
@@ -75,9 +76,9 @@ public class Map : NetworkBehaviour, IDataPersistence
         {
             //paths = data.paths;
             //Communication.mapDataNumber = data.mapNumber;
-            foreach(Path path in data.paths)
+            foreach(PathData path in data.paths)
             {
-                SetPathsClientRpc(path.Id, path.planetFrom.name, path.planetTo.name, path.color, path.length, path.isBuilt, path.builtById,data.mapNumber);
+                SetPathsClientRpc(path.id, path.planetFromName, path.planetToName, path.color, path.length, path.isBuilt, path.builtById,data.mapNumber);
             }
             SetMapDataClientRpc();
         }
@@ -88,16 +89,35 @@ public class Map : NetworkBehaviour, IDataPersistence
     {
         if (IsHost)
         {
-       // Debug.Log("Host?" + IsHost);
-        //Debug.Log("Client?" + IsClient);
-        //Debug.Log("Server?" + IsServer);
-            data.paths = paths;
+            // Debug.Log("Host?" + IsHost);
+            //Debug.Log("Client?" + IsClient);
+            //Debug.Log("Server?" + IsServer);
+            //data.paths = paths;
+            data.paths = new();
+            Debug.Log("Liczba sciezek "+paths.Count);
+            foreach(Path path in paths)
+            {
+                PathData pathData = new()
+                {
+                    id = path.Id,
+                    planetFromName = path.planetFrom.name,
+                    planetToName= path.planetTo.name,
+                    color = path.color,
+                    length = path.length,
+                    isBuilt = path.isBuilt,
+                    builtById = path.builtById,
+                };
+                data.paths.Add(pathData);
+            }
+            Debug.Log("Liczba sciezek zapisanych" + data.paths.Count);
             data.mapNumber = Communication.mapDataNumber;
         }
     }
 
     void CreateMap()
     {
+        bool[] pathWasSpawned = new bool[paths.Count];
+        Debug.Log("Liczba sciezek: "+paths.Count);
         // Tworzenie planet
         for (int i = 0; i < planets.Count; i++)
         {
@@ -116,42 +136,71 @@ public class Map : NetworkBehaviour, IDataPersistence
         // Tworzenie ?cie?ek
         for (int i = 0; i < paths.Count; i++)
         {
-            // k?t nachylenia mi?dzy dwoma planetami
-            float angle = Mathf.Atan2(
-                          paths[i].planetTo.positionX - paths[i].planetFrom.positionX,
-                          paths[i].planetTo.positionY - paths[i].planetFrom.positionY
-                          ) * Mathf.Rad2Deg;
-
-            // ?rodkowy punkt pomi?dzy planetami
-            Vector2 position = Vector2.Lerp(new Vector2(paths[i].planetTo.positionX, paths[i].planetTo.positionY), 
-                new Vector2(paths[i].planetFrom.positionX, paths[i].planetFrom.positionY), 0.5f);
-
-            Debug.Log(paths[i].length - 1);
-            var pathGameObject = Instantiate(pathsPrefabs[paths[i].length - 1], position, Quaternion.Euler(new Vector3(0, 0, -angle)));
-            
-
-            // przypisanie do build path
-            var buildPath = pathGameObject.GetComponent<BuildPath>();
-            buildPath.path = paths[i];
-            Debug.Log($"Czy path {paths[i].planetFrom.name}-{paths[i].planetTo.name} jest zbudowana? {paths[i].isBuilt}");
-            Server.buildPaths.Add(buildPath);
-
-            var tilesTransforms = pathGameObject.GetComponentsInChildren<Transform>();
-            var tilesRenderers = pathGameObject.GetComponentsInChildren<Renderer>();
-            for (int j = 0; j < tilesRenderers.Length; j++)
+            Debug.Log("Path was spawned?: " + pathWasSpawned[i]);
+            if (!pathWasSpawned[i]) // sprawdzam czy ścieżka już nie powstała (w przypadku podwójnych ścieżek)
             {
-                tilesRenderers[j].material.color = colors[(int)paths[i].color];
-                if (paths[i].isBuilt && IsHost)
+                pathWasSpawned[i] = true;
+                var path = paths[i];
+                Debug.Log("Spawnie path o id: "+ path.Id);
+                // k?t nachylenia mi?dzy dwoma planetami
+                float angle = Mathf.Atan2(
+                              paths[i].planetTo.positionX - paths[i].planetFrom.positionX,
+                              paths[i].planetTo.positionY - paths[i].planetFrom.positionY
+                              ) * Mathf.Rad2Deg;
+
+                // ?rodkowy punkt pomi?dzy planetami
+                Vector2 position = Vector2.Lerp(new Vector2(paths[i].planetTo.positionX, paths[i].planetTo.positionY),
+                    new Vector2(paths[i].planetFrom.positionX, paths[i].planetFrom.positionY), 0.5f);
+
+                // szukam indeks drugiej ścieżki, która ma te same planety (w przypadku podwójnych ścieżek)
+                int k = paths.FindIndex(path3 => path3.IsEqual(path) && path3.Id != path.Id);
+                Debug.Log("Double path:" +k);
+                
+                if (k != -1 && !pathWasSpawned[k])
                 {
-                    var pom = Instantiate(gameManager.shipGameObjectList[paths[i].builtById], tilesTransforms[j + 1].position, tilesTransforms[j + 1].rotation);
-                    Debug.Log(pom);
-                    pom.GetComponent<Move>().speed = 0;
-                    pom.GetComponent<NetworkObject>().Spawn(true);
+                    pathWasSpawned[k] = true;
+                    Debug.Log("Path was spawned?: " + pathWasSpawned[k]);var path2 = paths[k];
+                    Debug.Log("Spawnie path o id: " + path2.Id);
+                    // przesuwam ścieżkę o distanceBetweenPaths względem punktu środkowego między planetami
+                    Vector2 planetPosition = new(path2.planetTo.positionX, path2.planetTo.positionY);
+                    Vector2 perpendicularDirection = Vector2.Perpendicular(planetPosition - position).normalized;
+                    Vector2 target = position + perpendicularDirection * distanceBetweenPaths;
+                    
+                    SpawnPath(path2, target, angle);
+
+                    // przesuwam drugą ścieżkę o distanceBetweenPaths względem punktu środkowego między planetami
+                    position -= perpendicularDirection * distanceBetweenPaths;
+  
                 }
+                SpawnPath(path, position, angle);
             }
         }
-        
     }
+    void SpawnPath(Path path, Vector2 position, float angle)
+    {
+        var pathGameObject = Instantiate(pathsPrefabs[path.length - 1], position, Quaternion.Euler(new Vector3(0, 0, -angle)));
+
+        // przypisanie do build path
+        var buildPath = pathGameObject.GetComponent<BuildPath>();
+        buildPath.path = path;
+        Debug.Log($"Czy path {path.planetFrom.name}-{path.planetTo.name} jest zbudowana? {path.isBuilt}");
+        Server.buildPaths.Add(buildPath);
+
+        var tilesTransforms = pathGameObject.GetComponentsInChildren<Transform>();
+        var tilesRenderers = pathGameObject.GetComponentsInChildren<Renderer>();
+        for (int j = 0; j < tilesRenderers.Length; j++)
+        {
+            tilesRenderers[j].material.color = colors[(int)path.color];
+            if (path.isBuilt && IsHost)
+            {
+                var pom = Instantiate(gameManager.shipGameObjectList[path.builtById], tilesTransforms[j + 1].position, tilesTransforms[j + 1].rotation);
+                Debug.Log(pom);
+                pom.GetComponent<Move>().speed = 0;
+                pom.GetComponent<NetworkObject>().Spawn(true);
+            }
+        }
+    }
+
     [ClientRpc]
     public void SetMapDataClientRpc()
     {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,14 +21,14 @@ namespace Assets.GameplayControl
             }
         }
 
-
         public static int Id { set;  get; }
-        public static string Name { set;  get; }
+        public static string Name { set; get; } = "Gracz";
         public static int curentPoints { get; set; } = 0;
         public static int spaceshipsLeft { get; set; } = Board.startSpaceshipsNumber;
         public static int satellitesSent { get; set; } = 0;
         public static bool isLastTurn = false;
         public static List<Mission> missions = new List<Mission>();
+        static List<Mission> completedMissions = new List<Mission>();
         public static Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
             { Color.pink, 1 },
@@ -42,35 +43,41 @@ namespace Assets.GameplayControl
 
         public static List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
 
-        public static bool CanBuildPath(Path path)
+        public static bool CanBuildPath(Path path, out string errorMessage)
         {
             if (!isNowPlaying)
             {
+                errorMessage = "Brak obecnie ruchu";
                 Debug.Log("Brak obecnie ruchu");
                 return false;
             }
             if (cardsDrewInTurn > 0)
             {
+                errorMessage = "W tym ruchu juz dobrano kartę";
                 Debug.Log("W tym ruchu juz dobrano kartę");
                 return false;
             }
             if (path.isBuilt)
             {
+                errorMessage = "Połączenie jest juz wybudowane";
                 Debug.Log("Połączenie jest juz wybudowane");
                 return false;
             }
             if (path.length > spaceshipsLeft)
             {
+                errorMessage = "Za mało ruchów";
                 Debug.Log("Za mało statków");
                 return false;
             }
             if (numOfCardsInColor[path.color] < path.length
                 && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length)
             {
+                errorMessage = "Za mało kart w odpowiednim kolorze";
                 Debug.Log("Za mało kart w odpowiednim kolorze");
                 return false;
             }
 
+            errorMessage = "No error";
             return true;
         }
 
@@ -95,7 +102,7 @@ namespace Assets.GameplayControl
             // dodanie planet do grup połączonych planet
             ConnectedPlanets.AddPlanetsFromPathToPlanetsGrups(path, groupsOfConnectedPlanets);
 
-            //PrintConnectedPlanets();
+            PrintConnectedPlanets();
             //PrintMissions();
 
             return true;
@@ -117,6 +124,23 @@ namespace Assets.GameplayControl
             Debug.Log("Missions:");
             foreach (var mission in missions)
                 Debug.Log(mission + "; " + mission.IsCompletedByPlayer());
+        }
+
+        public static List<Mission> GetNewCompletedMissions()
+        {
+            List<Mission> newCompletedMissions = new List<Mission>();
+
+            foreach(var mission in missions)
+            {
+                if(mission.IsCompletedByPlayer())
+                    if(!completedMissions.Contains(mission))
+                    {
+                        completedMissions.Add(mission);
+                        newCompletedMissions.Add(mission);
+                    }
+            }
+
+            return newCompletedMissions;
         }
 
         public static void PrintCards()
@@ -171,12 +195,12 @@ namespace Assets.GameplayControl
         public static void StartTurn()
         {
             isNowPlaying = true;
+            cardsDrewInTurn = 0;
         }
 
         public static void EndTurn()
         {
             isNowPlaying = false;
-            cardsDrewInTurn = 0;
         }
 
         public static void SetPathIsBuild(int pathId)

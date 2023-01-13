@@ -15,4 +15,4 @@ MonoBehaviour:
   name: Merkury
   positionX: -5
   positionY: 3
-  adjacentPaths: []
+  planetPrefab: {fileID: 4329754044473220178, guid: d10038d6e1c051344a8540de69d15a67, type: 3}

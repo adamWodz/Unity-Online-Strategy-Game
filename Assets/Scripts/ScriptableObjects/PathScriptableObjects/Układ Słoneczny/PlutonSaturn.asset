@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: PlutonSaturn
   m_EditorClassIdentifier: 
-  Id: 6
+  Id: 26
   planetFrom: {fileID: 11400000, guid: 1917a24f443614d4a830c3891a6849ba, type: 2}
   planetTo: {fileID: 11400000, guid: 5b48ad211c15ba044913074654a54578, type: 2}
   color: 1
   length: 3
-  builtBy: {fileID: 0}
-  playerOfSatellite: {fileID: 0}
+  builtById: 2

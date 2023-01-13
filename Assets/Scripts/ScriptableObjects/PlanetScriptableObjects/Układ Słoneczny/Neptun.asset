@@ -15,4 +15,4 @@ MonoBehaviour:
   name: Neptun
   positionX: 5.75
   positionY: 2.56
-  adjacentPaths: []
+  planetPrefab: {fileID: 6582710055851895374, guid: 08df3b680e7dc494c866d305d229e845, type: 3}

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
@@ -25,11 +26,13 @@ public class StartGameButton : NetworkBehaviour
         var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
 
         SetClientIdClientRpc();
-        
-            LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
-            int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
-            int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
-            InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
+        LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
+        int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
+        int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
+        InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
+            
+        if (!Communication.loadOnStart)
+        {
             int position = 0;
             foreach (var player in NetworkManager.Singleton.ConnectedClientsList)
             {
@@ -41,17 +44,26 @@ public class StartGameButton : NetworkBehaviour
                 AddAiPlayerClientRpc(position, nonAiPlayersNum + i);
                 position++;
             }
-            if (!Communication.loadOnStart)
-            {
+
+            SetClientNamesClientRpc();
+
             PlayerGameData.StartTurn();
-            }
+        }
     }
 
     [ClientRpc]
     public void InitializePlayersListsClientRpc(int aiPlayersNum, int nonAiPlayersNum)
     {
-        Server.artificialPlayers = new List<Assets.GameplayControl.ArtificialPlayer>(aiPlayersNum);
-        Server.allPlayersInfo = new List<PlayerInfo>(aiPlayersNum + nonAiPlayersNum);
+        if (!Communication.loadOnStart)
+        {
+            Server.artificialPlayers = new List<Assets.GameplayControl.ArtificialPlayer>(aiPlayersNum);
+            Server.allPlayersInfo = new List<PlayerInfo>(aiPlayersNum + nonAiPlayersNum);
+        }
+        else
+        {
+            Server.artificialPlayers = new();
+            Server.allPlayersInfo = new();
+        }
     }
 
     [ClientRpc]
@@ -93,6 +105,25 @@ public class StartGameButton : NetworkBehaviour
     public void SetClientIdClientRpc()
     {
         PlayerGameData.Id = (int)NetworkManager.Singleton.LocalClientId;
+    }
+
+    [ClientRpc]
+    public void SetClientNamesClientRpc()
+    {
+        SetNameServerRpc(PlayerGameData.Id, PlayerGameData.Name);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetNameServerRpc(int playerId, string name)
+    {
+        SetNameClientRpc(playerId, name);
+    }
+
+    [ClientRpc]
+    public void SetNameClientRpc(int playerId, string name)
+    {
+        var player = Server.allPlayersInfo.Where(p => p.Id == playerId).First();
+        player.Name = name;
     }
 
     [ClientRpc]
