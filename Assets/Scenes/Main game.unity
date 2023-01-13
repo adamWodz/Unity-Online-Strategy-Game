@@ -6098,7 +6098,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Logi
+  m_text: Ostatni ruch
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 38081c69aaddbd042bb239dae7cfc5ed, type: 2}
   m_sharedMaterial: {fileID: 3305430724998905446, guid: 38081c69aaddbd042bb239dae7cfc5ed, type: 2}
@@ -8203,9 +8203,6 @@ PrefabInstance:
       propertyPath: endGamePanel
       value: 
       objectReference: {fileID: 1377640652}
-      propertyPath: cardBackButton
-      value: 
-      objectReference: {fileID: 4963611423944183591, guid: a2d051bf988eb6949bafd1552ee032c3, type: 3}
     - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
       propertyPath: cardButtonWithSync
       value: 

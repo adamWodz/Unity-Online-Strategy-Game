@@ -114,16 +114,19 @@ namespace Assets.GameplayControl
             {
                 Debug.Log("AI builds path");
                 BuildPath(path);
+                _GameManager.SetInfoTextServerRpc($"Gracz {Name} wybudował połączenie {path.planetFrom} - {path.planetTo}.");
             }
             else if (missionsToDo.Count > 0)
             {
                 Debug.Log("AI draws cards");
                 DrawCards();
+                _GameManager.SetInfoTextServerRpc($"Gracz {Name} dobrał kartę statku.");
             }
             else
             {
                 Debug.Log("AI draws missions");
                 DrawMissions();
+                _GameManager.SetInfoTextServerRpc($"Gracz {Name} dobrał karty misji.");
             }
 
             _GameManager.EndAiTurn(this);

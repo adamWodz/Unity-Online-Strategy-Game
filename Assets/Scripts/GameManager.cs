@@ -56,6 +56,8 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
         satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
         satelliteCounter.text = "3";
+
+        SetInfoTextServerRpc($"Tura gracza {Server.allPlayersInfo.First(p => p.Position == 0).Name}.");
     }
 
     // Update is called once per frame
@@ -152,7 +154,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
 
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void LastTurnServerRpc()
     {
         LastTurnClientRpc();
@@ -190,6 +192,18 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         ai.BestMove();
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void SetInfoTextServerRpc(string text)
+    {
+        SetInfoTextClientRpc(text);
+    }
+
+    [ClientRpc]
+    void SetInfoTextClientRpc(string text)
+    {
+        GameObject.Find("Canvas").transform.Find("InfoText").GetComponent<TextMeshProUGUI>().text = text;
+    }
+
     public void EndAiTurn(ArtificialPlayer ai)
     {
         StartCoroutine(EndAiTurnCoroutine(ai));
@@ -199,6 +213,17 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     {
         yield return new WaitForSeconds(1);
         Communication.EndAITurn(ai);
+    }
+
+    public void EndTurn()
+    {
+        StartCoroutine(EndTurnCoroutine());
+    }
+
+    IEnumerator EndTurnCoroutine()
+    {
+        yield return new WaitForSeconds(1);
+        Communication.EndTurn();
     }
 
     [ServerRpc(RequireOwnership = false)]

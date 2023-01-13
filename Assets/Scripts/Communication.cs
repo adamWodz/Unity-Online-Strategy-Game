@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -77,8 +78,11 @@ public static class Communication
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
         playerPanel.UpdatePointsAndSpeceshipsNumServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.spaceshipsLeft);
         _GameManager.SetBuildPathDataServerRpc(path.Id, PlayerGameData.Id);
-        EndTurn();
         chosenPath = null;
+
+        _GameManager.SetInfoTextServerRpc($"Gracz {PlayerGameData.Name} wybudował połączenie {path.planetFrom}-{path.planetTo}.");
+
+        _GameManager.EndTurn();
 
         CheckIfNewMissionIsCompleted();
     }
@@ -115,8 +119,11 @@ public static class Communication
 
         Color color = drawCardsPanel.MoveCard(index);
         PlayerGameData.DrawCard(color, DrawCardsPanel.IsCardRandom(index));
+
+        _GameManager.SetInfoTextServerRpc($"Gracz {PlayerGameData.Name} dobrał kartę statku.");
+
         if (PlayerGameData.cardsDrewInTurn == 2)
-            EndTurn();
+            _GameManager.EndTurn();
     }
 
     public static void DrawMissions(List<Mission> missions)
@@ -133,14 +140,16 @@ public static class Communication
         foreach (var mission in missions)
             Debug.Log("missions: " + mission.start + " - " + mission.end);
 
-        EndTurn();
+        _GameManager.SetInfoTextServerRpc($"Gracz {PlayerGameData.Name} dobrał karty misji.");
+
+        _GameManager.EndTurn();
     }
 
     public static void EndTurn()
     {
         PlayerGameData.EndTurn();
         NextTurnActions();
-        Debug.Log("EndTurn");
+        //Debug.Log("EndTurn");
 
         if (PlayerGameData.spaceshipsLeft < Board.minSpaceshipsLeft && !isLastTurn)
         {

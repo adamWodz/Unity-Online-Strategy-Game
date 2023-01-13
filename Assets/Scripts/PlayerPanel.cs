@@ -258,6 +258,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             Communication.StartAiTurn(nextPlayer.Id);
         else
             StartNextPlayerTurnClientRpc(nextPlayer.Id);
+
+        gameManager.SetInfoTextServerRpc($"Tura gracza {nextPlayer.Name}.");
     }
 
     [ClientRpc]
