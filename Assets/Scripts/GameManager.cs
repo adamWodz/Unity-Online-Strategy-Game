@@ -34,6 +34,9 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     GameObject cardGoal;
     GameObject drawCardsButton;
 
+    public List<GameObject> spawnedObjects { get; set; } = new List<GameObject>();
+    public GameObject endGamePanel;
+
     public int playerId = 0;
 
     // Start is called before the first frame update
@@ -72,6 +75,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
         spawnedShip.goalPosition = position;
         spawnedShip.goalRotation = rotation;
+        spawnedObjects.Add(spawnedShipGameObject);
     }
 
     public void SpawnCards(Transform t, int color, string name)
@@ -84,6 +88,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         Transform cardsStack = GameObject.Find(name + "s").GetComponent<Transform>();
         spawnedCard.goalPosition = cardsStack.position;
         spawnedCard.goalRotation = cardsStack.rotation;
+        spawnedObjects.Add(spawnedCardGameObject);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -145,6 +150,21 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         popUp.gameObject.SetActive(true);
     }
 
+
+
+    [ServerRpc]
+    public void LastTurnServerRpc()
+    {
+        LastTurnClientRpc();
+    }
+
+    [ClientRpc]
+    public void LastTurnClientRpc()
+    {
+        Communication.isLastTurn = true;
+        ShowFadingPopUpWindow("Ostatnia tura rozpoczyna się.");
+    }
+
     public void ShowFadingPopUpWindow(string message)
     {
         var popUp = GameObject.Find("Canvas").transform.Find("FadingPopUpPanel");
@@ -184,14 +204,59 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     [ServerRpc(RequireOwnership = false)]
     public void EndGameServerRpc() // wyświetlanie ekranu końcowego
     {
-        EndGameClientRpc();
+        EndGameWithDelayClientRpc();
+
+        foreach (ArtificialPlayer ai in Server.artificialPlayers)
+        {
+            ai.CalculateFinalPoints();
+            SetFinalPointsAndMissionsNumClientRpc(ai.Id, ai.curentPoints, ai.GetMissionIds());
+        }
+        
     }
 
     [ClientRpc]
-    private void EndGameClientRpc()
+    public void SetFinalPointsAndMissionsNumClientRpc(int playerId, int playerPoints, int[] missionIds)
     {
+        var player = Server.allPlayersInfo.Where(p => p.Id == playerId).First();
+        player.Points = playerPoints;
+        player.missions = new List<Mission>();
+        for(int i = 0; i < missionIds.Length; i++)
+        {
+            Mission mission = Server.allMissions.First(m => m.id == missionIds[i]);
+            player.missions.Add(mission);
+        }
+    }
+
+    [ClientRpc]
+    void EndGameWithDelayClientRpc()
+    {
+        ShowFadingPopUpWindow("Koniec gry!");
+
+        PlayerGameData.CalculateFinalPoints();
+        SetFinalPointsAndMissionsNumClientRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.GetMissionIds());
+
+        StartCoroutine(EndGame());
+    }
+
+    IEnumerator EndGame()
+    {
+        yield return new WaitForSeconds(3);
+
         Debug.Log("Quit");
-        Application.Quit();
+
+        DeactivateMap();
+
+        GameObject.Find("Canvas").gameObject.SetActive(false);
+        endGamePanel.SetActive(true);
+    }
+
+    void DeactivateMap()
+    {
+        foreach (GameObject gameObject in spawnedObjects)
+        {
+            if(gameObject != null)
+                gameObject.SetActive(false);
+        }
     }
 
     public void MarkMissionDone(Mission mission)

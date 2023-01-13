@@ -13,6 +13,8 @@ using UnityEngine.UIElements;
 public class StartGameButton : NetworkBehaviour
 {
     public List<MapData> availableMapsData;
+    public List<GameObject> playerTilePrefabs;
+    public List<GameObject> spaceshipPrefabs;
     int allPlayersLimit = 5;
     int startSpaceshipsNumber = 10;
 
@@ -28,6 +30,7 @@ public class StartGameButton : NetworkBehaviour
         SetClientIdClientRpc();
         LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
         int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
+        Debug.Log("maxPlayers" + lobby.maxPlayers);
         int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
         InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
             
@@ -45,10 +48,10 @@ public class StartGameButton : NetworkBehaviour
                 position++;
             }
 
-            SetClientNamesClientRpc();
-
             PlayerGameData.StartTurn();
         }
+        SetClientNamesClientRpc();
+
     }
 
     [ClientRpc]
@@ -77,6 +80,8 @@ public class StartGameButton : NetworkBehaviour
             Id = id,
             IsAI = false,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
+            TilePrefab = playerTilePrefabs[position],
+            SpaceshipPrefab = spaceshipPrefabs[position],
         };
         Server.allPlayersInfo.Add(playerState);
     }
@@ -92,6 +97,8 @@ public class StartGameButton : NetworkBehaviour
             Id = id,
             IsAI = true,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
+            TilePrefab = playerTilePrefabs[position],
+            SpaceshipPrefab = spaceshipPrefabs[position],
         };
         Server.allPlayersInfo.Add(playerState);
         Server.artificialPlayers.Add(new ArtificialPlayer

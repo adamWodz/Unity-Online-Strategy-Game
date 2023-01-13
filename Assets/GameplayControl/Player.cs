@@ -26,7 +26,7 @@ namespace Assets.GameplayControl
         public static int curentPoints { get; set; } = 0;
         public static int spaceshipsLeft { get; set; } = Board.startSpaceshipsNumber;
         public static int satellitesSent { get; set; } = 0;
-        public static bool isLastTurn = false;
+        public static bool lastTurn = false;
         public static List<Mission> missions = new List<Mission>();
         static List<Mission> completedMissions = new List<Mission>();
         public static Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
@@ -137,6 +137,7 @@ namespace Assets.GameplayControl
                     {
                         completedMissions.Add(mission);
                         newCompletedMissions.Add(mission);
+                        mission.isDone = true;
                     }
             }
 
@@ -207,6 +208,25 @@ namespace Assets.GameplayControl
         {
             Path builtPath = mapData.paths.Where(path => path.Id == pathId).FirstOrDefault();
             builtPath.isBuilt = true;
+        }
+
+        public static void CalculateFinalPoints()
+        {
+            foreach (Mission mission in missions)
+                if (mission.isDone)
+                    curentPoints += mission.points;
+                else
+                    curentPoints -= mission.points;
+        }
+
+        public static int[] GetMissionIds()
+        {
+            int[] ids = new int[missions.Count];
+
+            for (int i = 0; i < missions.Count; i++)
+                ids[i] = missions[i].id;
+
+            return ids;
         }
     }
 }

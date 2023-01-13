@@ -15,3 +15,5 @@ MonoBehaviour:
   start: {fileID: 11400000, guid: ae57841b4b4173d4e8d8ddcb1ec1b167, type: 2}
   end: {fileID: 11400000, guid: a69baaed7e2b5bd4098c16f95dfad41f, type: 2}
   points: 6
+  isDone: 0
+  id: 7

@@ -64,6 +64,10 @@ public class Map : NetworkBehaviour, IDataPersistence
         }
         else
             paths = new();
+
+        Server.allMissions = new List<Mission>();
+        foreach (Mission mission in mapData.missions)
+            Server.allMissions.Add(mission);
         
     }
 
@@ -131,6 +135,9 @@ public class Map : NetworkBehaviour, IDataPersistence
             planetNameText.name = planets[i].name + "Text";
             planetNameText.transform.SetParent(canvasForPlanetsNames.transform);
             //planetNameText.SetActive(false);
+
+            gameManager.spawnedObjects.Add(planet);
+            gameManager.spawnedObjects.Add(planetNameText);
         }
 
         // Tworzenie ?cie?ek
@@ -200,6 +207,8 @@ public class Map : NetworkBehaviour, IDataPersistence
                 pom.GetComponent<NetworkObject>().Spawn(true);
             }
         }
+
+        gameManager.spawnedObjects.Add(pathGameObject);
     }
 
     [ClientRpc]
