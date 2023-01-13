@@ -8203,6 +8203,9 @@ PrefabInstance:
       propertyPath: endGamePanel
       value: 
       objectReference: {fileID: 1377640652}
+      propertyPath: cardBackButton
+      value: 
+      objectReference: {fileID: 4963611423944183591, guid: a2d051bf988eb6949bafd1552ee032c3, type: 3}
     - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
       propertyPath: cardButtonWithSync
       value: 
