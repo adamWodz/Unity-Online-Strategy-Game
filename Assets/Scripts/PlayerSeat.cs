@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
+using Unity.Netcode;
 
 public class PlayerSeat : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class PlayerSeat : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Nickname.text = "";
         AI = false;
         lobby = GetComponent<LobbyAndRelay>();
     }
@@ -48,6 +50,12 @@ public class PlayerSeat : MonoBehaviour
         {
             AI = !AI;
             AIPlayer.gameObject.SetActive(AI);
+            joinedBackground.gameObject.SetActive(AI);
+
+            var list = GameObject.Find("PlayerList").GetComponent<PlayerList>();
+            //list.RefreshAIPlayers();
+            list.RefreshList();
+            
             Debug.Log($"[PlayerSeat.SwitchMode] AI:{AI}");
         }
         else Debug.Log($"[PlayerSeat.SwitchMode] Cannot edit playerType");
