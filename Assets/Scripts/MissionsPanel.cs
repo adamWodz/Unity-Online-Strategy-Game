@@ -82,6 +82,9 @@ public class MissionsPanel : Panel
     */
     private void DrawMissions()
     {
+        if(!Communication.TryStartDrawingMission())
+            return;
+        
         if (missionsToChoose.Count < 3)
         {
             gameManager.SetPopUpWindow("Jest za ma�o kart misji, aby mo�na by�o dobra� nowe!");

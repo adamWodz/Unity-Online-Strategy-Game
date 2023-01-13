@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json.Serialization;
+﻿using Codice.Client.BaseCommands;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +41,7 @@ namespace Assets.GameplayControl
             { Color.special, 1 },
         };
         public static bool isNowPlaying { set; get; }
+        public static bool isDrawingMission = false;
         public static int cardsDrewInTurn = 0;
 
         public static List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
@@ -47,33 +50,39 @@ namespace Assets.GameplayControl
         {
             if (!isNowPlaying)
             {
-                errorMessage = "Brak obecnie ruchu";
-                Debug.Log("Brak obecnie ruchu");
+                errorMessage = "Brak obecnie ruchu.";
+                Debug.Log("Brak obecnie ruchu.");
+                return false;
+            }
+            if (isDrawingMission)
+            {
+                errorMessage = "Nie możesz teraz wybudować połączenia.";
+                Debug.Log(errorMessage);
                 return false;
             }
             if (cardsDrewInTurn > 0)
             {
-                errorMessage = "W tym ruchu juz dobrano kartę";
-                Debug.Log("W tym ruchu juz dobrano kartę");
+                errorMessage = "W tym ruchu juz dobrano kartę.";
+                Debug.Log("W tym ruchu juz dobrano kartę.");
                 return false;
             }
             if (path.isBuilt)
             {
-                errorMessage = "Połączenie jest juz wybudowane";
-                Debug.Log("Połączenie jest juz wybudowane");
+                errorMessage = "Połączenie jest juz wybudowane.";
+                Debug.Log("Połączenie jest juz wybudowane.");
                 return false;
             }
             if (path.length > spaceshipsLeft)
             {
-                errorMessage = "Za mało ruchów";
-                Debug.Log("Za mało statków");
+                errorMessage = "Za mało statków.";
+                Debug.Log("Za mało statków.");
                 return false;
             }
             if (numOfCardsInColor[path.color] < path.length
                 && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length)
             {
-                errorMessage = "Za mało kart w odpowiednim kolorze";
-                Debug.Log("Za mało kart w odpowiednim kolorze");
+                errorMessage = "Za mało kart w odpowiednim kolorze.";
+                Debug.Log("Za mało kart w odpowiednim kolorze.");
                 return false;
             }
 
@@ -177,6 +186,19 @@ namespace Assets.GameplayControl
             DrawCard(secondCardColor, true);
         }
 
+        public static bool CanDrawCard(out string errorMessage)
+        {
+            if(isDrawingMission)
+            {
+                errorMessage = "Nie możesz dobrać karty gdy wybierasz misje.";
+                Debug.Log(errorMessage);
+                return false;
+            }
+
+            errorMessage = "No error";
+            return true;
+        }
+
         public static void DrawCard(Color cardColor, bool randomDraw)
         {
             numOfCardsInColor[cardColor]++;
@@ -185,6 +207,25 @@ namespace Assets.GameplayControl
                 cardsDrewInTurn++;
             Debug.Log(cardColor + ", " + numOfCardsInColor[cardColor]);
             //Debug.Log("special cards num: " + numOfCardsInColor[Color.special]);
+        }
+
+        public static bool CanDrawMission(out string errorMessage)
+        {
+            if (!isNowPlaying)
+            {
+                errorMessage = "Brak obecnie ruchu.";
+                Debug.Log("Brak obecnie ruchu.");
+                return false;
+            }
+            if (cardsDrewInTurn > 0)
+            {
+                errorMessage = "W tym ruchu juz dobrano kartę.";
+                Debug.Log("W tym ruchu juz dobrano kartę.");
+                return false;
+            }
+
+            errorMessage = "No error";
+            return true;
         }
 
         public static void DrawMissions(List<Mission> _missions)

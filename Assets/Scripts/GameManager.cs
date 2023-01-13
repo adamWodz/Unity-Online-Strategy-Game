@@ -57,7 +57,14 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
         satelliteCounter.text = "3";
 
-        SetInfoTextServerRpc($"Tura gracza {Server.allPlayersInfo.First(p => p.Position == 0).Name}.");
+        SetInfoTextServerRpc($"Tura {Server.allPlayersInfo.First(p => p.Position == 0).Name}.");
+    }
+
+    [ClientRpc]
+    void ShowStartMessageClientRpc()
+    {
+        if(Server.allPlayersInfo.First(p => p.Position == 0).Id == PlayerGameData.Id)
+            ShowFadingPopUpWindow("Twój ruch.");
     }
 
     // Update is called once per frame

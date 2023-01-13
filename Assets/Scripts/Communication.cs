@@ -80,7 +80,7 @@ public static class Communication
         _GameManager.SetBuildPathDataServerRpc(path.Id, PlayerGameData.Id);
         chosenPath = null;
 
-        _GameManager.SetInfoTextServerRpc($"Gracz {PlayerGameData.Name} wybudował połączenie {path.planetFrom}-{path.planetTo}.");
+        _GameManager.SetInfoTextServerRpc($"{PlayerGameData.Name} wybudował(a) połączenie {path.planetFrom}-{path.planetTo}.");
 
         _GameManager.EndTurn();
 
@@ -116,14 +116,36 @@ public static class Communication
             _GameManager.SetPopUpWindow("Nie możesz dobrać tej karty!");
             return;
         }
+        string errorMessage;
+        if (!PlayerGameData.CanDrawCard(out errorMessage))
+        {
+            _GameManager.SetPopUpWindow(errorMessage);
+            return;
+        }
 
         Color color = drawCardsPanel.MoveCard(index);
         PlayerGameData.DrawCard(color, DrawCardsPanel.IsCardRandom(index));
 
-        _GameManager.SetInfoTextServerRpc($"Gracz {PlayerGameData.Name} dobrał kartę statku.");
+        _GameManager.SetInfoTextServerRpc($"{PlayerGameData.Name} dobrał(a) kartę statku.");
 
         if (PlayerGameData.cardsDrewInTurn == 2)
             _GameManager.EndTurn();
+    }
+
+    public static bool TryStartDrawingMission()
+    {
+        string errorMessage;
+        
+        if(!PlayerGameData.CanDrawMission(out errorMessage))
+        {
+            _GameManager.SetPopUpWindow(errorMessage);
+            return false;
+        }
+        else
+        {
+            PlayerGameData.isDrawingMission = true;
+            return true;
+        }
     }
 
     public static void DrawMissions(List<Mission> missions)
@@ -135,12 +157,13 @@ public static class Communication
         }
 
         PlayerGameData.DrawMissions(missions);
+        PlayerGameData.isDrawingMission = false;
 
         Debug.Log("DrawMissions");
         foreach (var mission in missions)
             Debug.Log("missions: " + mission.start + " - " + mission.end);
 
-        _GameManager.SetInfoTextServerRpc($"Gracz {PlayerGameData.Name} dobrał karty misji.");
+        _GameManager.SetInfoTextServerRpc($"{PlayerGameData.Name} dobrał(a) karty misji.");
 
         _GameManager.EndTurn();
     }
@@ -200,7 +223,7 @@ public static class Communication
             }
             else
             {
-                _GameManager.ShowFadingPopUpWindow("Początek twojej tury");
+                _GameManager.ShowFadingPopUpWindow("Początek Twojej tury.");
                 PlayerGameData.StartTurn();
             }
         }
