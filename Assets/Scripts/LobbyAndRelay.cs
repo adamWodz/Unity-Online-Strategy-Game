@@ -132,7 +132,7 @@ public class LobbyAndRelay : MonoBehaviour
 
             string relaycode = await CreateRelay(maxPlayers);
             Debug.Log($"[CreatePrivateLobby] 1/3 Created Relay with {maxPlayers} connections");
-
+            string username = Assets.GameplayControl.PlayerGameData.Name;
             Lobby lobby = await LobbyService.Instance.CreateLobbyAsync("mojeLobby", maxPlayers,
                 new CreateLobbyOptions
                 {
@@ -140,6 +140,14 @@ public class LobbyAndRelay : MonoBehaviour
                     Data = new Dictionary<string, DataObject> { 
                         {"RelayCode", new DataObject(DataObject.VisibilityOptions.Member,relaycode)},
                         {"IndexesAI", new DataObject(DataObject.VisibilityOptions.Member,AISeats)}
+                    },
+                    // ustawienie nazwy hosta
+                    Player = new Player
+                    {
+                        Data = new Dictionary<string, PlayerDataObject>
+                        {
+                            {"UserName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member,username)}
+                        }
                     }
                 }
             );
@@ -155,7 +163,7 @@ public class LobbyAndRelay : MonoBehaviour
             PrintLobbyInfo(lobby);
             if (code.text != null) GUIUtility.systemCopyBuffer = code.text;
 
-            Debug.Log($"[CreatePrivateLobby] 3/3 Firstly saved seats");
+            Debug.Log($"[CreatePrivateLobby] 3/3 PLAYER = {joinedLobby.Players[0].Data["UserName"].Value}");
 
             //QueryResponse lobbies = await Lobbies.Instance.QueryLobbiesAsync();
             //Debug.Log(lobbies.Results.Count);
@@ -189,6 +197,19 @@ public class LobbyAndRelay : MonoBehaviour
             //3. quickjoin +//
             //Lobby lobby = await Lobbies.Instance.QuickJoinLobbyAsync();
             //onjoin.text = $"Joined with quickjoin";
+
+            var playerId = AuthenticationService.Instance.PlayerId;
+            string username = Assets.GameplayControl.PlayerGameData.Name;
+            var lobby2 = await LobbyService.Instance.UpdatePlayerAsync(lobby.Id, playerId, new UpdatePlayerOptions
+            {
+                Data = new Dictionary<string, PlayerDataObject>
+                {
+                    {"UserName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member,username)}
+                }
+            });
+
+            Debug.Log($"[JoinByCode] 1.2/4 UpdatePlayer {lobby.Id} {lobby2.Id}");
+            lobby = lobby2;
 
             joinedLobby = lobby;
 
@@ -226,16 +247,20 @@ public class LobbyAndRelay : MonoBehaviour
     [ClientRpc]
     public void RpcRefreshPlayerList()
     {
-        var playerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
-
-        Debug.Log($"[RpcRefreshPlayerList] 1/2 HOST:{ImLobbyHost()}");
-        if (playerList != null)
+        var found = GameObject.Find("PlayerList");
+        if (found != null)
         {
-            Debug.Log($"[RpcRefreshPlayerList] 2/2 {playerList.seats.Count} seats where {AISeats} are AI");
+            var playerList = found.GetComponent<PlayerList>();
+
+            Debug.Log($"[RpcRefreshPlayerList] 1/2 HOST:{ImLobbyHost()}");
+            if (playerList != null)
+            {
+                Debug.Log($"[RpcRefreshPlayerList] 2/2 {playerList.seats.Count} seats where {AISeats} are AI");
+            }
+            else Debug.Log($"[RpcRefreshPlayerList] 2/2 PlayerList gameObject is null");
+
+            playerList.RefreshList();
         }
-        else Debug.Log($"[RpcRefreshPlayerList] 2/2 PlayerList gameObject is null");
-        
-        playerList.RefreshList();
     }
 
     public void RefreshPlayerList()
@@ -248,10 +273,15 @@ public class LobbyAndRelay : MonoBehaviour
         code.text = lobby.LobbyCode;
         onjoin.text = lobby.Name + " " + lobby.Id.Substring(0, 5);
     }
-    public void PrintPlayers(Lobby lobby)
+    public void PrintPlayers(Lobby chosen)
     {
-        Debug.Log($"[PrintPlayers] In lobby {lobby.Id}");
-        foreach (var p in lobby.Players) Debug.Log("[PrintPlayers] Player " + p.Id);
+        int j = 0, n = chosen.Players.Count;
+        Debug.Log($"[PrintPlayers] In lobby {chosen.Id}");
+        foreach (var p in chosen.Players)
+        {
+            if (p.Data != null) Debug.Log($"[PrintPlayers] Player {j++}/{n} {p.Data != null} {p.Data["UserName"].Value}");
+            else Debug.Log($"[PrintPlayers] Player {j++}/{n} {p.Id}");
+        }
     }
 
     private float updateTimer;
