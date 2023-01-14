@@ -273,10 +273,15 @@ public class LobbyAndRelay : MonoBehaviour
         code.text = lobby.LobbyCode;
         onjoin.text = lobby.Name + " " + lobby.Id.Substring(0, 5);
     }
-    public void PrintPlayers(Lobby lobby)
+    public void PrintPlayers(Lobby chosen)
     {
-        Debug.Log($"[PrintPlayers] In lobby {lobby.Id}");
-        foreach (var p in lobby.Players) Debug.Log("[PrintPlayers] Player " + p.Id);
+        int j = 0, n = chosen.Players.Count;
+        Debug.Log($"[PrintPlayers] In lobby {chosen.Id}");
+        foreach (var p in chosen.Players)
+        {
+            if (p.Data != null) Debug.Log($"[PrintPlayers] Player {j++}/{n} {p.Data != null} {p.Data["UserName"].Value}");
+            else Debug.Log($"[PrintPlayers] Player {j++}/{n} {p.Id}");
+        }
     }
 
     private float updateTimer;

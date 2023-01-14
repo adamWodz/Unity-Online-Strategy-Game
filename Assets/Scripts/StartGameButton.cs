@@ -32,7 +32,6 @@ public class StartGameButton : NetworkBehaviour
 
         SetClientIdClientRpc();
         LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
-
         PlayerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
         seats = PlayerList.seats;
         IndexesAI = PlayerList.IndexesAI;
@@ -48,12 +47,55 @@ public class StartGameButton : NetworkBehaviour
 
         Debug.Log($"[StarGame] AI:{aiPlayersNum} Reg:{nonAiPlayersNum}");
         InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
-            
+
+        Debug.Log("[StartGame] Print players from host");
+        lobby.PrintPlayers(lobby.joinedLobby);
+        var lobbyplayers = lobby.joinedLobby.Players;
+
         if (!Communication.loadOnStart)
         {
             var clients = NetworkManager.Singleton.ConnectedClientsList;
+            /**
             var seats = PlayerList.seats;
-            int i = 1, clientID, position;
+            int pos = 0, AInum=1, RealNum=0;
+            for(int c = 0; c < seats.Count; c++)
+            {
+                bool AI = PlayerList.IndexesAI.Contains(c.ToString());
+                bool Real = PlayerList.IndexesReg.Contains(c.ToString());
+
+                if (AI) AddAiPlayerClientRpc(pos, AInum++);
+                else if (Real)
+                {
+                    string nick = "Gracz";
+                    if (lobbyplayers[RealNum].Data != null) nick = lobbyplayers[RealNum].Data["UserName"].Value;
+
+                    AddRealPlayerClientRpc(nick, pos, RealNum++);
+                }
+                pos++;
+            }
+            */
+            int clientID, position;
+            int iAI = 1, iRe = 0;
+            int n = IndexesReg.Length + IndexesAI.Length;
+            for (int pos = 0; pos<n; pos++)
+            {
+                position = int.Parse(pos.ToString());
+                if (IndexesAI.Contains(pos.ToString())) AddAiPlayerClientRpc(position, iAI++);
+                else if (IndexesReg.Contains(pos.ToString()))
+                {
+                    if (iRe == clients.Count)
+                    {
+                        Debug.Log($"[StartGame] {pos}th PlayerSeat ({iRe}/{nonAiPlayersNum} Regular), there's {clients.Count} clients. ");
+                        break;
+                    }
+                    position = int.Parse(pos.ToString());
+                    clientID = (int)clients[iRe].ClientId;
+                    string nick = "Gracz";
+                    if (lobbyplayers[iRe].Data != null) nick = lobbyplayers[iRe++].Data["UserName"].Value;
+                    AddRealPlayerClientRpc(nick, position, clientID);
+                }
+            }
+            /**
             foreach (var pos in IndexesAI)
             {
                 position = int.Parse(pos.ToString());
@@ -68,12 +110,17 @@ public class StartGameButton : NetworkBehaviour
                 }
                 position = int.Parse(pos.ToString());
                 clientID = (int)clients[i].ClientId;
-                AddRealPlayerClientRpc(i++, position, clientID);
+                string nick = "Gracz";
+                if (lobbyplayers[i].Data!=null) nick = lobbyplayers[i++].Data["UserName"].Value;
+                AddRealPlayerClientRpc(nick, position, clientID);
             }
+            */
             SetClientNamesClientRpc();
             PlayerGameData.StartTurn();
         }
+        
     }
+    
 
     public string GetPlayeListNick(int charOldIndex, string indexes)
     {
@@ -168,18 +215,14 @@ public class StartGameButton : NetworkBehaviour
 
 
     [ClientRpc]
-    public void AddRealPlayerClientRpc(int menupos, int position, int id)
+    public void AddRealPlayerClientRpc(string name, int position, int id)
     {
-        string nick = "player" + position.ToString(), found="Gracz";
-        if (PlayerList!=null && PlayerList.IndexesReg.Length>0) found = GetPlayeListNick(menupos, PlayerList.IndexesReg);
-        if (found != "Gracz") nick = found;
-
         PlayerInfo playerState = new PlayerInfo
         {
             Position = position,
             Points = 0,
-            Name = nick,
-            Id = id,
+            Name = name,
+            Id = position,
             IsAI = false,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
             TilePrefab = playerTilePrefabs[position],
@@ -195,8 +238,8 @@ public class StartGameButton : NetworkBehaviour
         {
             Position = position,
             Points = 0,
-            Name = "AIplayer" + position.ToString(),
-            Id = id,
+            Name = "AIplayer" + id.ToString(),
+            Id = position,
             IsAI = true,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
             TilePrefab = playerTilePrefabs[position],
@@ -238,7 +281,10 @@ public class StartGameButton : NetworkBehaviour
     [ClientRpc]
     public void SetMapDataClientRpc(int mapNumber,bool loadOnStart)
     {
-        Debug.Log("SetMapDataClientRpc");
+        LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
+        Debug.Log("[SetMapDataClientRpc] Print players from host");
+        lobby.PrintPlayers(lobby.joinedLobby);
+
         Map.mapData = availableMapsData[mapNumber];
         Debug.Log(Map.mapData);
         Communication.availableMapsData = new();
