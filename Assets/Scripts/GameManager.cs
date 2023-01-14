@@ -13,6 +13,7 @@ using UnityEditor;
 
 using UnityEngine;
 using UnityEngine.Networking.Types;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour//, IDataPersistence
@@ -59,10 +60,15 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         SetInfoTextServerRpc($"Tura gracza {Server.allPlayersInfo.First(p => p.Position == 0).Name}.");
         ShowStartMessageClientRpc();
 
-        if(NetworkManager.IsClient)
+        if(!NetworkManager.IsHost)
         {
-            // to do
-            //NetworkManager.Singleton.OnStopHost += NetworkManager.Singleton.Shutdown();
+            NetworkManager.Singleton.OnClientDisconnectCallback +=
+                (i) =>
+                {
+                    NetworkManager.Singleton.Shutdown();
+                    SceneManager.LoadScene("Scenes/Menu");
+                };
+            
         }
     }
 
