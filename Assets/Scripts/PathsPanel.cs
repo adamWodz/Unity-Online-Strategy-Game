@@ -37,7 +37,7 @@ public class PathsPanel : Panel
     }
 
     private bool firstClick;
-    private List<MissionData>[] receivedMissions;
+    public List<MissionData>[] receivedMissions;
     private Map map;
 
     // Start is called before the first frame update
@@ -259,7 +259,7 @@ public class PathsPanel : Panel
                 artificialPlayer.missions = missions.ToList();
                 foreach(var mission in missions)
                 {
-                    if (mission.IsCompletedByPlayer())
+                    if (mission.IsCompletedByClientPlayer())
                         artificialPlayer.missionsDone.Add(mission);
                     else
                         artificialPlayer.missionsToDo = missions.ToList();

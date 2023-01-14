@@ -132,7 +132,7 @@ namespace Assets.GameplayControl
         {
             Debug.Log("Missions:");
             foreach (var mission in missions)
-                Debug.Log(mission + "; " + mission.IsCompletedByPlayer());
+                Debug.Log(mission + "; " + mission.IsCompletedByClientPlayer());
         }
 
         public static List<Mission> GetNewCompletedMissions()
@@ -141,7 +141,7 @@ namespace Assets.GameplayControl
 
             foreach(var mission in missions)
             {
-                if(mission.IsCompletedByPlayer())
+                if(mission.IsCompletedByClientPlayer())
                     if(!completedMissions.Contains(mission))
                     {
                         completedMissions.Add(mission);

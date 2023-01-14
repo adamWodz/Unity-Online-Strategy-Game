@@ -17,7 +17,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     private GameManager gameManager;
 
     //private int[][] cardsQuantityPerPlayerPerColor;
-    private Dictionary<int, int[]> cardsQuantityPerPlayerPerColor = new();
+    public Dictionary<int, int[]> cardsQuantityPerPlayerPerColor = new();
 
     void Start()
     {

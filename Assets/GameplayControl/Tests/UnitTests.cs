@@ -135,7 +135,7 @@ namespace UnitTests
             PlayerGameData.BuildPath(path12);
             PlayerGameData.BuildPath(path23);
 
-            Assert.IsTrue(mission.IsCompletedByPlayer());
+            Assert.IsTrue(mission.IsCompletedByClientPlayer());
         }
     }
 }

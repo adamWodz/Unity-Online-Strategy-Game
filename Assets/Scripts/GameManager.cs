@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Security;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
@@ -55,14 +56,21 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
         satelliteCounter.text = "3";
 
-        SetInfoTextServerRpc($"Tura {Server.allPlayersInfo.First(p => p.Position == 0).Name}.");
+        SetInfoTextServerRpc($"Tura gracza {Server.allPlayersInfo.First(p => p.Position == 0).Name}.");
+        ShowStartMessageClientRpc();
+
+        if(NetworkManager.IsClient)
+        {
+            // to do
+            //NetworkManager.Singleton.OnStopHost += NetworkManager.Singleton.Shutdown();
+        }
     }
 
     [ClientRpc]
     void ShowStartMessageClientRpc()
     {
         if(Server.allPlayersInfo.First(p => p.Position == 0).Id == PlayerGameData.Id)
-            ShowFadingPopUpWindow("Twój ruch.");
+            ShowFadingPopUpWindow("Początek gry - Twój ruch.");
     }
 
     List<int> connectedClientIds;
@@ -100,32 +108,52 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         {
             if(!connectedClientIds.Contains(player.Id))
             {
-                AddAiWhenClientDisconnected(player.Id);
+                var newAI = AddAiWhenClientDisconnected(player.Id);
+                if (player.Position == 0)
+                    newAI.StartAiTurn();
             }
         }
     }
 
-    void AddAiWhenClientDisconnected(int id)
+    ArtificialPlayer AddAiWhenClientDisconnected(int id)
     {
         var playerInfo = Server.allPlayersInfo.First(p => p.Id == id);
+        var a = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>();
+        Debug.Log(a);
+        var playersCards = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>().cardsQuantityPerPlayerPerColor[playerInfo.Id];
+        int playerIndInAllPlayers = -1;
+        for (int i = 0; i < Server.allPlayersInfo.Count; i++)
+            if (Server.allPlayersInfo[i].Id == playerInfo.Id)
+                playerIndInAllPlayers = i;
+        var playerMissionData = GameObject.Find("Canvas").transform.Find("MissionsScroll").transform.Find("PathsPanel").GetComponent<PathsPanel>().receivedMissions[playerIndInAllPlayers];
+        List<Mission> playerMissions = new List<Mission>();
+        foreach(var missionData in playerMissionData)
+            foreach(var mission in Server.allMissions)
+            {
+                if (mission.start.name == missionData.startPlanetName && mission.end.name == missionData.endPlanetName)
+                    playerMissions.Add(mission);
+            }
+
+        Dictionary<Color, int> playerNumOfCardsInColor = new Dictionary<Color, int>();
+        for(int i = 0; i < playersCards.Length; i++)
+        {
+            playerNumOfCardsInColor.Add((Color)i, playersCards[i]);
+        }
         playerInfo.IsAI = true;
 
-        Server.artificialPlayers.Add(new ArtificialPlayer
+        var newAI = new ArtificialPlayer
         {
             Id = playerInfo.Id,
             Name = playerInfo.Name,
             curentPoints = playerInfo.Points,
             spaceshipsLeft = playerInfo.SpaceshipsLeft,
             startedLastTurn = playerInfo.SpaceshipsLeft < Board.minSpaceshipsLeft,
-
-            // to do
-            /*
-            missionsToDo
-            missionsDone
-            numOfCardsInColor
-             * 
-            */
-        });
+            numOfCardsInColor = playerNumOfCardsInColor,
+            missions = playerMissions,
+            missionsToDo = playerMissions
+        };
+        Server.artificialPlayers.Add(newAI);
+        return newAI;
     }
 
     [ServerRpc(RequireOwnership = false)]
