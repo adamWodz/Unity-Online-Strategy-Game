@@ -247,16 +247,20 @@ public class LobbyAndRelay : MonoBehaviour
     [ClientRpc]
     public void RpcRefreshPlayerList()
     {
-        var playerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
-
-        Debug.Log($"[RpcRefreshPlayerList] 1/2 HOST:{ImLobbyHost()}");
-        if (playerList != null)
+        var found = GameObject.Find("PlayerList");
+        if (found != null)
         {
-            Debug.Log($"[RpcRefreshPlayerList] 2/2 {playerList.seats.Count} seats where {AISeats} are AI");
+            var playerList = found.GetComponent<PlayerList>();
+
+            Debug.Log($"[RpcRefreshPlayerList] 1/2 HOST:{ImLobbyHost()}");
+            if (playerList != null)
+            {
+                Debug.Log($"[RpcRefreshPlayerList] 2/2 {playerList.seats.Count} seats where {AISeats} are AI");
+            }
+            else Debug.Log($"[RpcRefreshPlayerList] 2/2 PlayerList gameObject is null");
+
+            playerList.RefreshList();
         }
-        else Debug.Log($"[RpcRefreshPlayerList] 2/2 PlayerList gameObject is null");
-        
-        playerList.RefreshList();
     }
 
     public void RefreshPlayerList()

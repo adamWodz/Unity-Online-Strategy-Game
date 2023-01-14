@@ -17,8 +17,8 @@ public class StartGameButton : NetworkBehaviour
     public List<GameObject> spaceshipPrefabs;
     int allPlayersLimit = 5;
     int startSpaceshipsNumber = 10;
-
-
+    string IndexesAI, IndexesReg;
+    public PlayerList PlayerList;
     public List<PlayerSeat> seats;
 
     public void StartGame()
@@ -33,40 +33,95 @@ public class StartGameButton : NetworkBehaviour
         SetClientIdClientRpc();
         LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
 
-        PlayerList playerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
-        //int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
-        int aiPlayersNum = playerList.IndexesAI.Length;
-        //int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
-        int nonAiPlayersNum = playerList.IndexesReg.Length;
+        PlayerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
+        seats = PlayerList.seats;
+        IndexesAI = PlayerList.IndexesAI;
+        IndexesReg = PlayerList.IndexesReg;
+        AdjustPositions();
 
-        seats = playerList.seats;
+        //int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
+        int aiPlayersNum = IndexesAI.Length;
+        //int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
+        int nonAiPlayersNum = IndexesReg.Length;
+
+        seats = PlayerList.seats;
 
         Debug.Log($"[StarGame] AI:{aiPlayersNum} Reg:{nonAiPlayersNum}");
         InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
             
         if (!Communication.loadOnStart)
         {
-            //int i = 0; 
-            int position = 0;
-            //foreach (var s in seats)
-            //{
-            //    if (s.AI || (s.playerId!=null && s.playerId!="")) AddPlayerClientRpc(i,position++);
-            //    i++;
-            //}
-            foreach (var player in NetworkManager.Singleton.ConnectedClientsList)
+            var clients = NetworkManager.Singleton.ConnectedClientsList;
+            var seats = PlayerList.seats;
+            int i = 1, clientID, position;
+            foreach (var pos in IndexesAI)
             {
-                AddRealPlayerClientRpc(position, (int)player.ClientId);
-                position++;
+                position = int.Parse(pos.ToString());
+                AddAiPlayerClientRpc(position, i++);
             }
-            for (int i = 0; i < aiPlayersNum; i++)
+            i = 0;
+            foreach (var pos in IndexesReg)
             {
-                AddAiPlayerClientRpc(position, nonAiPlayersNum + i);
-                position++;
+                if (i == clients.Count) {
+                    Debug.Log($"[StartGame] {pos}th PlayerSeat ({i}/{nonAiPlayersNum} Regular), there's {clients.Count} clients. ");
+                    break;
+                }
+                position = int.Parse(pos.ToString());
+                clientID = (int)clients[i].ClientId;
+                AddRealPlayerClientRpc(i++, position, clientID);
             }
-
             SetClientNamesClientRpc();
-
             PlayerGameData.StartTurn();
+        }
+    }
+
+    public string GetPlayeListNick(int charOldIndex, string indexes)
+    {
+        string result = "Gracz";
+        int seatIndex = -1;
+        PlayerSeat player;
+
+        if (charOldIndex<indexes.Length) seatIndex = int.Parse(indexes[charOldIndex].ToString());
+        if (seatIndex != -1 && seatIndex < seats.Count)
+        {
+            player = seats[seatIndex];
+            if (player.Nickname != null) result = player.Nickname.text;
+        }
+        return result;
+    }
+
+    public void AdjustPositions()
+    {
+        string spaces = new string(' ', 5);
+        char[] types = spaces.ToCharArray();
+        foreach (var a in IndexesAI)
+        {
+            int i = int.Parse(a.ToString());
+            types[i] = 'a';
+        }
+        foreach (var r in IndexesReg)
+        {
+            int i = int.Parse(r.ToString());
+            types[i] = 'r';
+        }
+        IndexesAI = "";
+        IndexesReg = "";
+        for (int i=0; i<types.Length; i++)
+        {
+            if (i+1<types.Length && types[i]==' ')
+            {
+                types[i] = types[i + 1];
+                types[i + 1] = ' ';
+            }
+            switch (types[i])
+            {
+                case 'a':
+                    IndexesAI += i.ToString();
+                    break;
+                case 'r':
+                    IndexesReg += i.ToString();
+                    break;
+            }
         }
     }
 
@@ -113,13 +168,17 @@ public class StartGameButton : NetworkBehaviour
 
 
     [ClientRpc]
-    public void AddRealPlayerClientRpc(int position, int id)
+    public void AddRealPlayerClientRpc(int menupos, int position, int id)
     {
+        string nick = "player" + position.ToString(), found="Gracz";
+        if (PlayerList!=null && PlayerList.IndexesReg.Length>0) found = GetPlayeListNick(menupos, PlayerList.IndexesReg);
+        if (found != "Gracz") nick = found;
+
         PlayerInfo playerState = new PlayerInfo
         {
             Position = position,
             Points = 0,
-            Name = "player" + position.ToString(),
+            Name = nick,
             Id = id,
             IsAI = false,
             SpaceshipsLeft = Board.startSpaceshipsNumber,

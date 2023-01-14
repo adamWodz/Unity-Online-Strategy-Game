@@ -223,7 +223,16 @@ public class PlayerList : MonoBehaviour
                 if (playersLeft && j <= '4' && j >= '0')
                 {
                     //string pref = players.Count==1? "host" : "spaceman";
-                    var username = players[r].Data["UserName"].Value;
+                    var userData = players[r].Data;
+                    string username = "Gracz";
+                    if (userData != null) {
+                        username = userData["UserName"].Value;
+                    }
+                    else {
+                        Debug.Log($"[RefreshRegPlayers] {r}th LobbyMember name not saved");
+                        if (!lobbyData.ImLobbyHost()) username = Assets.GameplayControl.PlayerGameData.Name;
+                    }
+
                     var playerId = players[r++].Id;
 
                     var jj = int.Parse(j.ToString());
