@@ -187,33 +187,6 @@ public class StartGameButton : NetworkBehaviour
         }
     }
 
-    
-    [ClientRpc]
-    public void AddPlayerClientRpc(int i, int pos)
-    {
-        PlayerSeat seat = seats[i];
-        PlayerInfo playerState = new PlayerInfo
-        {
-            Position = pos,
-            Points = 0,
-            Name = seat.Nickname.text,
-            Id = pos,
-            IsAI = seat.AI,
-            SpaceshipsLeft = Board.startSpaceshipsNumber,
-        };
-
-        Server.allPlayersInfo.Add(playerState);
-        if (seat.AI)
-        {
-            Server.artificialPlayers.Add(new ArtificialPlayer
-            {
-                Name = seat.Nickname.text,
-                Id = pos,
-            });
-        }
-    }
-
-
     [ClientRpc]
     public void AddRealPlayerClientRpc(string name, int position, int id)
     {
@@ -222,7 +195,7 @@ public class StartGameButton : NetworkBehaviour
             Position = position,
             Points = 0,
             Name = name,
-            Id = position,
+            Id = id,
             IsAI = false,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
             TilePrefab = playerTilePrefabs[position],
@@ -239,7 +212,7 @@ public class StartGameButton : NetworkBehaviour
             Position = position,
             Points = 0,
             Name = "AIplayer" + id.ToString(),
-            Id = position,
+            Id = id,
             IsAI = true,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
             TilePrefab = playerTilePrefabs[position],
