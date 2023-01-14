@@ -68,11 +68,12 @@ namespace Assets.GameplayControl
             { Color.special, 1 },
         };
         public List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
-        public int[,] dist = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
-        public int[,] nextPlanet = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         public Dictionary<Planet, int> planetIds = new Dictionary<Planet, int>();
         public bool startedLastTurn = false;
 
+        // reserowane co turę
+        public int[,] dist = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
+        public int[,] nextPlanet = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         List<Path> pathsToBuild = new List<Path>();
 
         public ArtificialPlayer()
@@ -82,6 +83,17 @@ namespace Assets.GameplayControl
             {
                 planetIds.Add(planet, ii);
                 ii++;
+            }
+
+            LoadConnectedPlanets();
+        }
+
+        void LoadConnectedPlanets()
+        {
+            foreach(Path path in Map.mapData.paths)
+            {
+                if (path.isBuilt && path.builtById == Id)
+                    ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, groupsOfConnectedPlanets);
             }
         }
 
@@ -124,9 +136,28 @@ namespace Assets.GameplayControl
             }
             else
             {
-                Debug.Log("AI draws missions");
-                DrawMissions();
-                _GameManager.SetInfoTextServerRpc($"Gracz {Name} dobrał karty misji.");
+                if (GameObject.Find("MissionsPanel").GetComponent<MissionsPanel>().GetRandomMissions().Count > 0)
+                {
+                    Debug.Log("AI draws missions");
+                    DrawMissions();
+                    _GameManager.SetInfoTextServerRpc($"{Name} dobrał(a) karty misji.");
+                }
+                else // brak już misji od dobrania
+                {
+                    path = GetLongestPath();
+                    if (path != null)
+                    {
+                        Debug.Log("AI builds path");
+                        BuildPath(path);
+                        _GameManager.SetInfoTextServerRpc($"{Name} wybudował(a) połączenie {path.planetFrom} - {path.planetTo}.");
+                    }
+                    else
+                    {
+                        Debug.Log("AI draws cards");
+                        DrawCards();
+                        _GameManager.SetInfoTextServerRpc($"{Name} dobrał(a) kartę statku.");
+                    }
+                }
             }
 
             _GameManager.EndAiTurn(this);
@@ -143,6 +174,13 @@ namespace Assets.GameplayControl
                     return path;
 
             return null;
+        }
+
+        Path GetLongestPath()
+        {
+            List<Path> pathsNotBuilt = Map.mapData.paths.Where(p => !p.isBuilt).OrderBy(p => p.length - numOfCardsInColor[p.color]).ToList();
+            pathsToBuild = pathsNotBuilt;
+            return pathsNotBuilt.FirstOrDefault();
         }
 
         bool CanBeBuild(Path path)
@@ -342,7 +380,7 @@ namespace Assets.GameplayControl
             }
             spaceshipsLeft -= path.length;
 
-            ConnectedPlanets.AddPlanetsFromPathToPlanetsGrups(path, groupsOfConnectedPlanets);
+            ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, groupsOfConnectedPlanets);
 
             BuildPath buildPath = Server.buildPaths.Where(b => b.path == path).First();
             buildPath.StartCoroutine(buildPath.BuildPathAnimation(Id));
@@ -369,6 +407,7 @@ namespace Assets.GameplayControl
         // wybieranie najlepszych misji
         List<Mission> PickBestMissions(List<Mission> missionsToDraw)
         {
+            
             List<Mission> pickedMissions = new List<Mission>();
             List<Mission> missionsPool = missionsToDraw;
             missionsPool.AddRange(missions);

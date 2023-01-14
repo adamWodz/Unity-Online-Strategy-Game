@@ -48,10 +48,11 @@ public class StartGameButton : NetworkBehaviour
         Debug.Log($"[StarGame] AI:{aiPlayersNum} Reg:{nonAiPlayersNum}");
         InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
 
+        Server.connectedPlayersCount = nonAiPlayersNum;
+            
         Debug.Log("[StartGame] Print players from host");
         lobby.PrintPlayers(lobby.joinedLobby);
         var lobbyplayers = lobby.joinedLobby.Players;
-
         if (!Communication.loadOnStart)
         {
             var clients = NetworkManager.Singleton.ConnectedClientsList;

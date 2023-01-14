@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Security;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
@@ -12,6 +13,7 @@ using UnityEditor;
 
 using UnityEngine;
 using UnityEngine.Networking.Types;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour//, IDataPersistence
@@ -37,8 +39,6 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     public List<GameObject> spawnedObjects { get; set; } = new List<GameObject>();
     public GameObject endGamePanel;
 
-    public int playerId = 0;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -57,19 +57,109 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
         satelliteCounter.text = "3";
 
-        SetInfoTextServerRpc($"Tura {Server.allPlayersInfo.First(p => p.Position == 0).Name}.");
+        SetInfoTextServerRpc($"Tura gracza {Server.allPlayersInfo.First(p => p.Position == 0).Name}.");
+        ShowStartMessageClientRpc();
+
+        if(!NetworkManager.IsHost)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback +=
+                (i) =>
+                {
+                    NetworkManager.Singleton.Shutdown();
+                    SceneManager.LoadScene("Scenes/Menu");
+                };
+            
+        }
     }
 
     [ClientRpc]
     void ShowStartMessageClientRpc()
     {
         if(Server.allPlayersInfo.First(p => p.Position == 0).Id == PlayerGameData.Id)
-            ShowFadingPopUpWindow("Twój ruch.");
+            ShowFadingPopUpWindow("Początek gry - Twój ruch.");
     }
+
+    List<int> connectedClientIds;
 
     // Update is called once per frame
     void Update()
-    { 
+    {
+        if(NetworkManager.IsServer)
+            if(Server.connectedPlayersCount != NetworkManager.Singleton.ConnectedClients.Count)
+            {
+                connectedClientIds = new List<int>();
+                List<PlayerInfo> allClients = Server.allPlayersInfo.Where(p => p.IsAI == false).ToList();
+                PingClientRpc();
+                StartCoroutine(VerifyClientIds(allClients));
+            }
+    }
+
+    [ClientRpc]
+    void PingClientRpc()
+    {
+        PingServerRpc();
+    }
+
+    [ServerRpc]
+    void PingServerRpc()
+    {
+        connectedClientIds.Add(PlayerGameData.Id);
+    }
+
+    IEnumerator VerifyClientIds(List<PlayerInfo> allClients)
+    {
+        yield return new WaitForSeconds(1);
+
+        foreach(var player in allClients)
+        {
+            if(!connectedClientIds.Contains(player.Id))
+            {
+                var newAI = AddAiWhenClientDisconnected(player.Id);
+                if (player.Position == 0)
+                    newAI.StartAiTurn();
+            }
+        }
+    }
+
+    ArtificialPlayer AddAiWhenClientDisconnected(int id)
+    {
+        var playerInfo = Server.allPlayersInfo.First(p => p.Id == id);
+        var a = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>();
+        Debug.Log(a);
+        var playersCards = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>().cardsQuantityPerPlayerPerColor[playerInfo.Id];
+        int playerIndInAllPlayers = -1;
+        for (int i = 0; i < Server.allPlayersInfo.Count; i++)
+            if (Server.allPlayersInfo[i].Id == playerInfo.Id)
+                playerIndInAllPlayers = i;
+        var playerMissionData = GameObject.Find("Canvas").transform.Find("MissionsScroll").transform.Find("PathsPanel").GetComponent<PathsPanel>().receivedMissions[playerIndInAllPlayers];
+        List<Mission> playerMissions = new List<Mission>();
+        foreach(var missionData in playerMissionData)
+            foreach(var mission in Server.allMissions)
+            {
+                if (mission.start.name == missionData.startPlanetName && mission.end.name == missionData.endPlanetName)
+                    playerMissions.Add(mission);
+            }
+
+        Dictionary<Color, int> playerNumOfCardsInColor = new Dictionary<Color, int>();
+        for(int i = 0; i < playersCards.Length; i++)
+        {
+            playerNumOfCardsInColor.Add((Color)i, playersCards[i]);
+        }
+        playerInfo.IsAI = true;
+
+        var newAI = new ArtificialPlayer
+        {
+            Id = playerInfo.Id,
+            Name = playerInfo.Name,
+            curentPoints = playerInfo.Points,
+            spaceshipsLeft = playerInfo.SpaceshipsLeft,
+            startedLastTurn = playerInfo.SpaceshipsLeft < Board.minSpaceshipsLeft,
+            numOfCardsInColor = playerNumOfCardsInColor,
+            missions = playerMissions,
+            missionsToDo = playerMissions
+        };
+        Server.artificialPlayers.Add(newAI);
+        return newAI;
     }
 
     [ServerRpc(RequireOwnership = false)]

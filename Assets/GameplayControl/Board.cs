@@ -74,7 +74,7 @@ namespace Assets.GameplayControl
             return GroupContainingPlanet(groups, planet1) == GroupContainingPlanet(groups, planet2);
         }
 
-        public static void AddPlanetsFromPathToPlanetsGrups(Path path, List<ConnectedPlanets> connectedPlanets)
+        public static void AddPlanetsFromPathToPlanetsGroups(Path path, List<ConnectedPlanets> connectedPlanets)
         {
             // najpierw sprawdzamy czy planety są już w jakichs grupach
             ConnectedPlanets groupPlanetFrom = ConnectedPlanets.GroupContainingPlanet(connectedPlanets, path.planetFrom);
