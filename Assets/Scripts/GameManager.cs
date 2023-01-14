@@ -37,8 +37,6 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     public List<GameObject> spawnedObjects { get; set; } = new List<GameObject>();
     public GameObject endGamePanel;
 
-    public int playerId = 0;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -67,9 +65,67 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
             ShowFadingPopUpWindow("Twój ruch.");
     }
 
+    List<int> connectedClientIds;
+
     // Update is called once per frame
     void Update()
-    { 
+    {
+        if(NetworkManager.IsServer)
+            if(Server.connectedPlayersCount != NetworkManager.Singleton.ConnectedClients.Count)
+            {
+                connectedClientIds = new List<int>();
+                List<PlayerInfo> allClients = Server.allPlayersInfo.Where(p => p.IsAI == false).ToList();
+                PingClientRpc();
+                StartCoroutine(VerifyClientIds(allClients));
+            }
+    }
+
+    [ClientRpc]
+    void PingClientRpc()
+    {
+        PingServerRpc();
+    }
+
+    [ServerRpc]
+    void PingServerRpc()
+    {
+        connectedClientIds.Add(PlayerGameData.Id);
+    }
+
+    IEnumerator VerifyClientIds(List<PlayerInfo> allClients)
+    {
+        yield return new WaitForSeconds(1);
+
+        foreach(var player in allClients)
+        {
+            if(!connectedClientIds.Contains(player.Id))
+            {
+                AddAiWhenClientDisconnected(player.Id);
+            }
+        }
+    }
+
+    void AddAiWhenClientDisconnected(int id)
+    {
+        var playerInfo = Server.allPlayersInfo.First(p => p.Id == id);
+        playerInfo.IsAI = true;
+
+        Server.artificialPlayers.Add(new ArtificialPlayer
+        {
+            Id = playerInfo.Id,
+            Name = playerInfo.Name,
+            curentPoints = playerInfo.Points,
+            spaceshipsLeft = playerInfo.SpaceshipsLeft,
+            startedLastTurn = playerInfo.SpaceshipsLeft < Board.minSpaceshipsLeft,
+
+            // to do
+            /*
+            missionsToDo
+            missionsDone
+            numOfCardsInColor
+             * 
+            */
+        });
     }
 
     [ServerRpc(RequireOwnership = false)]

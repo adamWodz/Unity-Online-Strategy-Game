@@ -109,7 +109,7 @@ namespace Assets.GameplayControl
             path.isBuilt = true;
 
             // dodanie planet do grup połączonych planet
-            ConnectedPlanets.AddPlanetsFromPathToPlanetsGrups(path, groupsOfConnectedPlanets);
+            ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, groupsOfConnectedPlanets);
 
             PrintConnectedPlanets();
             //PrintMissions();

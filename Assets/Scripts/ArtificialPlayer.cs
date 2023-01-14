@@ -68,11 +68,12 @@ namespace Assets.GameplayControl
             { Color.special, 1 },
         };
         public List<ConnectedPlanets> groupsOfConnectedPlanets = new List<ConnectedPlanets>();
-        public int[,] dist = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
-        public int[,] nextPlanet = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         public Dictionary<Planet, int> planetIds = new Dictionary<Planet, int>();
         public bool startedLastTurn = false;
 
+        // reserowane co turę
+        public int[,] dist = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
+        public int[,] nextPlanet = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         List<Path> pathsToBuild = new List<Path>();
 
         public ArtificialPlayer()
@@ -82,6 +83,17 @@ namespace Assets.GameplayControl
             {
                 planetIds.Add(planet, ii);
                 ii++;
+            }
+
+            LoadConnectedPlanets();
+        }
+
+        void LoadConnectedPlanets()
+        {
+            foreach(Path path in Map.mapData.paths)
+            {
+                if (path.isBuilt && path.builtById == Id)
+                    ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, groupsOfConnectedPlanets);
             }
         }
 
@@ -342,7 +354,7 @@ namespace Assets.GameplayControl
             }
             spaceshipsLeft -= path.length;
 
-            ConnectedPlanets.AddPlanetsFromPathToPlanetsGrups(path, groupsOfConnectedPlanets);
+            ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, groupsOfConnectedPlanets);
 
             BuildPath buildPath = Server.buildPaths.Where(b => b.path == path).First();
             buildPath.StartCoroutine(buildPath.BuildPathAnimation(Id));

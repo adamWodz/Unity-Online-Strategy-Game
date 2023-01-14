@@ -11,4 +11,5 @@ public static class Server
     public static List<BuildPath> buildPaths = new List<BuildPath>();
     public static int curPlayerId;
     public static List<Mission> allMissions;
+    public static int connectedPlayersCount;
 }

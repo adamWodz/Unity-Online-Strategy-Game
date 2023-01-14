@@ -33,6 +33,8 @@ public class StartGameButton : NetworkBehaviour
         Debug.Log("maxPlayers" + lobby.maxPlayers);
         int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
         InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
+
+        Server.connectedPlayersCount = nonAiPlayersNum;
             
         if (!Communication.loadOnStart)
         {
