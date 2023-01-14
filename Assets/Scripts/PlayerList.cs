@@ -202,36 +202,40 @@ public class PlayerList : MonoBehaviour
         var players = lobby.Players;
         var indexesAI = !host ? lobby.Data["IndexesAI"].Value : IndexesAI;
 
-        int r = 0;
-        bool freeSeat, playersLeft;
-        for (int i = 0; i < seats.Count; i++)
+        if (players == null || players.Count > 0)
         {
-            if (players.Count == IndexesReg.Length) break;
-            freeSeat = !indexesAI.Contains(i.ToString()) && !IndexesReg.Contains(i.ToString());
-            Debug.Log($"[RefreshRegPlayers] Seat{i} is free:{freeSeat} IndReg: {IndexesReg}");
-            if (freeSeat) IndexesReg += i.ToString();
-        }
-
-        Debug.Log($"[RefreshRegPlayers] Players:{players.Count} AI:{indexesAI} Reg:{IndexesReg}");
-        // pokazywanie na scenie (powinno by� przy do��czaniu dowolnego playera)
-        r = 0;
-        foreach (char j in IndexesReg)
-        {
-            playersLeft = r < players.Count;
-            if (playersLeft && j <= '4' && j >= '0') 
+            int r = 0;
+            bool freeSeat, playersLeft;
+            for (int i = 0; i < seats.Count; i++)
             {
-                //string pref = players.Count==1? "host" : "spaceman";
-                string pref = players[r].Data["UserName"].Value;
-                var playerId = players[r++].Id;
+                if (players.Count == IndexesReg.Length) break;
+                freeSeat = !indexesAI.Contains(i.ToString()) && !IndexesReg.Contains(i.ToString());
+                Debug.Log($"[RefreshRegPlayers] Seat{i} is free:{freeSeat} IndReg: {IndexesReg}");
+                if (freeSeat) IndexesReg += i.ToString();
+            }
 
-                var jj = int.Parse(j.ToString());
+            Debug.Log($"[RefreshRegPlayers] Players:{players.Count} AI:{indexesAI} Reg:{IndexesReg}");
+            // pokazywanie na scenie (powinno by� przy do��czaniu dowolnego playera)
+            r = 0;
+            foreach (char j in IndexesReg)
+            {
+                playersLeft = r < players.Count;
+                if (playersLeft && j <= '4' && j >= '0')
+                {
+                    //string pref = players.Count==1? "host" : "spaceman";
+                    var username = players[r].Data["UserName"].Value;
+                    var playerId = players[r++].Id;
 
-                seats[jj].playerId = playerId;
-                seats[jj].DisplayJoined(false);
-                seats[jj].Nickname.text = pref;
-                //SetPlayerNick(jj, pref, playerId);
+                    var jj = int.Parse(j.ToString());
+
+                    seats[jj].playerId = playerId;
+                    seats[jj].DisplayJoined(false);
+                    //SetPlayerNick(jj, pref, playerId);
+                    seats[jj].Nickname.text = username;
+                }
             }
         }
+        else Debug.Log($"[RefreshRegPlayers] No Lobby members to display");
     }
 
     public void ShowCurrentNums()

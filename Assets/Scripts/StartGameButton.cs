@@ -18,6 +18,9 @@ public class StartGameButton : NetworkBehaviour
     int allPlayersLimit = 5;
     int startSpaceshipsNumber = 10;
 
+
+    public List<PlayerSeat> seats;
+
     public void StartGame()
     {
         //Communication.loadOnStart = true;
@@ -29,14 +32,27 @@ public class StartGameButton : NetworkBehaviour
 
         SetClientIdClientRpc();
         LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
-        int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
-        Debug.Log("maxPlayers" + lobby.maxPlayers);
-        int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
+
+        PlayerList playerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
+        //int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
+        int aiPlayersNum = playerList.IndexesAI.Length;
+        //int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
+        int nonAiPlayersNum = playerList.IndexesReg.Length;
+
+        seats = playerList.seats;
+
+        Debug.Log($"[StarGame] AI:{aiPlayersNum} Reg:{nonAiPlayersNum}");
         InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
             
         if (!Communication.loadOnStart)
         {
+            //int i = 0; 
             int position = 0;
+            //foreach (var s in seats)
+            //{
+            //    if (s.AI || (s.playerId!=null && s.playerId!="")) AddPlayerClientRpc(i,position++);
+            //    i++;
+            //}
             foreach (var player in NetworkManager.Singleton.ConnectedClientsList)
             {
                 AddRealPlayerClientRpc(position, (int)player.ClientId);
@@ -48,10 +64,10 @@ public class StartGameButton : NetworkBehaviour
                 position++;
             }
 
+            SetClientNamesClientRpc();
+
             PlayerGameData.StartTurn();
         }
-        SetClientNamesClientRpc();
-
     }
 
     [ClientRpc]
@@ -68,6 +84,33 @@ public class StartGameButton : NetworkBehaviour
             Server.allPlayersInfo = new();
         }
     }
+
+    
+    [ClientRpc]
+    public void AddPlayerClientRpc(int i, int pos)
+    {
+        PlayerSeat seat = seats[i];
+        PlayerInfo playerState = new PlayerInfo
+        {
+            Position = pos,
+            Points = 0,
+            Name = seat.Nickname.text,
+            Id = pos,
+            IsAI = seat.AI,
+            SpaceshipsLeft = Board.startSpaceshipsNumber,
+        };
+
+        Server.allPlayersInfo.Add(playerState);
+        if (seat.AI)
+        {
+            Server.artificialPlayers.Add(new ArtificialPlayer
+            {
+                Name = seat.Nickname.text,
+                Id = pos,
+            });
+        }
+    }
+
 
     [ClientRpc]
     public void AddRealPlayerClientRpc(int position, int id)
