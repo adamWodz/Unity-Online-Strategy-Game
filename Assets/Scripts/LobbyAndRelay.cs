@@ -165,6 +165,9 @@ public class LobbyAndRelay : MonoBehaviour
 
             Debug.Log($"[CreatePrivateLobby] 3/3 PLAYER = {joinedLobby.Players[0].Data["UserName"].Value}");
 
+            Button found = GameObject.Find("StartGameButton").GetComponent<Button>();
+            found.interactable = true;
+
             //QueryResponse lobbies = await Lobbies.Instance.QueryLobbiesAsync();
             //Debug.Log(lobbies.Results.Count);
         }

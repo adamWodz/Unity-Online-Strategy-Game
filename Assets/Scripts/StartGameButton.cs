@@ -86,10 +86,12 @@ public class StartGameButton : NetworkBehaviour
             }
 
             Debug.Log("PlayerIDs");
-            foreach (var player in Server.allPlayersInfo)
-                Debug.Log(player.Id);
-            Debug.Log("end PlayerIDs");
-
+            if (Server.allPlayersInfo != null)
+            {
+                foreach (var player in Server.allPlayersInfo)
+                    Debug.Log(player.Id);
+                Debug.Log("end PlayerIDs");
+            }
             SetClientNamesClientRpc();
 
             FirstTurn();
@@ -249,11 +251,14 @@ public class StartGameButton : NetworkBehaviour
 
     void FirstTurn()
     {
-        PlayerInfo nextPlayer = Server.allPlayersInfo.Where(p => p.Position == 0).First();
-        if (nextPlayer.IsAI)
-        { } // gameManager zaczyna turê gracza AI
-        else
-            FirstTurnClientRpc(nextPlayer.Id);
+        if (Server.allPlayersInfo != null)
+        {
+            PlayerInfo nextPlayer = Server.allPlayersInfo.Where(p => p.Position == 0).First();
+            if (nextPlayer.IsAI)
+            { } // gameManager zaczyna turê gracza AI
+            else
+                FirstTurnClientRpc(nextPlayer.Id);
+        }
     }
 
     [ClientRpc]
