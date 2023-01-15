@@ -287,7 +287,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     IEnumerator ShowFadingPopUpWindowCoroutine(FadePanel fade)
     {
         fade.ShowUp();
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1.5f);
         fade.FadeOut();
     }
 
@@ -416,5 +416,10 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         GameObject missionButton = GameObject.Find(mission.start.name + "-" + mission.end.name);
         missionButton.transform.GetChild(3).gameObject.SetActive(true);
     }
-
+    
+    public void ExitGame()
+    {
+        NetworkManager.Singleton.Shutdown();
+        Application.Quit();
+    }
 }

@@ -188,6 +188,7 @@ namespace Assets.GameplayControl
             if (path.length > spaceshipsLeft) return false;
             if (numOfCardsInColor[path.color] < path.length
                 && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length) return false;
+            if(path.isBuilt) return false;
 
             return true;
         }
@@ -259,9 +260,11 @@ namespace Assets.GameplayControl
                 List<Path> quickestPath = GetQuickestPathForMission(mission);
 
                 foreach (Path path in quickestPath)
+                {
                     Debug.Log(path + " " + path.color);
-
-                pathsToBuild.AddRange(quickestPath.Where(p => p.isBuilt == false));
+                    if (!path.isBuilt)
+                        pathsToBuild.Add(path);
+                }
             }
         }
 
