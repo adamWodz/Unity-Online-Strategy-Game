@@ -114,7 +114,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         PingServerRpc();
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     void PingServerRpc()
     {
         connectedClientIds.Add(PlayerGameData.Id);

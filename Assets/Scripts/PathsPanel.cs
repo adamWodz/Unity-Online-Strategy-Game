@@ -346,9 +346,10 @@ public class PathsPanel : Panel
         //Debug.Log("Server Rpc received missions: "+ receivedMissions[id].Count);
         //
 
-        Debug.Log($"receivedMissions {receivedMissions.Length}");
-        for(int i = 0; i < Server.allPlayersInfo.Count; i++)
-            Debug.Log($"data: {i} {receivedMissions[i].Count}");
+
+        //Debug.Log($"receivedMissions {receivedMissions.Length}");
+        //for(int i = 0; i < Server.allPlayersInfo.Count; i++)
+        //    Debug.Log($"data: {i} {receivedMissions[i].Count}");
     }
 
     [ClientRpc]
