@@ -172,7 +172,9 @@ public class PlayerList : MonoBehaviour
             var jj = int.Parse(j.ToString());
 
             if (!seats[jj].AI) seats[jj].ChangePlayerType();
-            seats[jj].Nickname.text = $"AIplayer{a++}";
+            //seats[jj].Nickname.text = $"AIplayer{a++}";
+            seats[jj].Nickname.text = $"{Assets.GameplayControl.PlayerGameData.AINames[a-1]}";
+            a++;
         }
     }
 
