@@ -70,7 +70,7 @@ public class StartGameButton : NetworkBehaviour
                 if (IndexesAI.Contains(pos.ToString()))
                 {
                     nick = "AIPlayer" + iAI.ToString();
-                    if (iAI < PlayerGameData.AINames.Count) nick = PlayerGameData.AINames[iAI - 5];
+                    if (iAI - 5 < PlayerGameData.AINames.Count) nick = PlayerGameData.AINames[iAI - 5];
                     AddAiPlayerClientRpc(nick, position, iAI++);
                 }
                 else if (IndexesReg.Contains(pos.ToString()))
