@@ -46,9 +46,6 @@ public class StartGameButton : NetworkBehaviour
         //int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
         int nonAiPlayersNum = IndexesReg.Length;
 
-        if (aiPlayersNum + nonAiPlayersNum > 3)
-            Board.startSpaceshipsNumber = 20;
-
         seats = PlayerList.seats;
 
         Debug.Log($"[StarGame] AI:{aiPlayersNum} Reg:{nonAiPlayersNum}");
@@ -64,7 +61,7 @@ public class StartGameButton : NetworkBehaviour
             var clients = NetworkManager.Singleton.ConnectedClientsList;
 
             int clientID;
-            int iAI = 0, iRe = 0;
+            int iAI = 5, iRe = 0;
             int n = IndexesReg.Length + IndexesAI.Length;
             string nick = "";
             for (int pos = 0; pos<n; pos++)
@@ -73,7 +70,7 @@ public class StartGameButton : NetworkBehaviour
                 if (IndexesAI.Contains(pos.ToString()))
                 {
                     nick = "AIPlayer" + iAI.ToString();
-                    if (iAI < PlayerGameData.AINames.Count) nick = PlayerGameData.AINames[iAI];
+                    if (iAI < PlayerGameData.AINames.Count) nick = PlayerGameData.AINames[iAI - 5];
                     AddAiPlayerClientRpc(nick, position, iAI++);
                 }
                 else if (IndexesReg.Contains(pos.ToString()))
