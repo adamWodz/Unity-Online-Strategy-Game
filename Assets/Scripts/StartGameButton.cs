@@ -33,7 +33,9 @@ public class StartGameButton : NetworkBehaviour
         Debug.Log($"[ChooseMapMenu.StartGame] {NetworkManager != null} {NetworkManager.SceneManager != null}");
         var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
 
-        SetClientIdClientRpc();
+        if(!Communication.loadOnStart)
+            SetClientIdClientRpc();
+
         LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
         PlayerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
         seats = PlayerList.seats;

@@ -76,6 +76,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
                 if (!Server.allPlayersInfo[i].IsAI)
                 {
                     // ustawiam rpc na wysyłanie do konkretnego gracza (kazdy gracz musi otrzymac inne dane)
+                    /*
                     ClientRpcParams clientRpcParams = new()
                     {
                         Send = new ClientRpcSendParams
@@ -83,8 +84,8 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
                             TargetClientIds = new ulong[] { (ulong)Server.allPlayersInfo[i].Id }
                         }
                     };
-
-                    LoadCardsStacksClientRpc(data.cardsForEachPalyer[Server.allPlayersInfo[i].Id], clientRpcParams);
+                    */
+                    LoadCardsStacksClientRpc(data.cardsForEachPalyer[Server.allPlayersInfo[i].Id], Server.allPlayersInfo[i].Name, Server.allPlayersInfo[i].Id);//, clientRpcParams);
                 }
             }
         }
@@ -132,15 +133,19 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     }
 
     [ClientRpc]
-    void LoadCardsStacksClientRpc(int[] cardStack ,ClientRpcParams clientRpcParams = default)
+    void LoadCardsStacksClientRpc(int[] cardStack,string name,int id ,ClientRpcParams clientRpcParams = default)
     {
-        for(int i = 0; i < cardStack.Length; i++)
+        if (PlayerGameData.Name == name)
         {
-            Debug.Log($"Color: {(Color)i}");
-            gameManager.cardStackCounterList[i].text = cardStack[i].ToString();
-            PlayerGameData.numOfCardsInColor[(Color)i] = cardStack[i];
-            Debug.Log($"Cards in this color: {PlayerGameData.numOfCardsInColor[(Color)i]}");
-            
+            PlayerGameData.Id = id;
+            for (int i = 0; i < cardStack.Length; i++)
+            {
+                Debug.Log($"Color: {(Color)i}");
+                gameManager.cardStackCounterList[i].text = cardStack[i].ToString();
+                PlayerGameData.numOfCardsInColor[(Color)i] = cardStack[i];
+                Debug.Log($"Cards in this color: {PlayerGameData.numOfCardsInColor[(Color)i]}");
+
+            }
         }
     }
 }
