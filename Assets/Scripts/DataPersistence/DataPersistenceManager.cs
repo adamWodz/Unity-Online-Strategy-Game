@@ -8,6 +8,7 @@ public class DataPersistenceManager : NetworkBehaviour
 {
     [Header("File Storage Config")]
     [SerializeField] private string fileName;
+    [SerializeField] private bool useEncryption;
 
     private GameData gameData;
 
@@ -28,7 +29,7 @@ public class DataPersistenceManager : NetworkBehaviour
 
     private void Start()
     {
-        dataHandler = new(Application.persistentDataPath, fileName);
+        dataHandler = new(Application.persistentDataPath, fileName, useEncryption);
         
         // znajdujemy listê skryptów, które posiadaj¹ dane do zapisu/wczytania
         dataPersistenceObjects = FindAllDataPersistenceObjects();

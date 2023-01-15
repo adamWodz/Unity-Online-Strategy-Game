@@ -24,6 +24,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
     private GameObject spawnedCardGameObject;
     public List<GameObject> shipGameObjectList = new();
+    public List<GameObject> playerTileObjectList = new();
     public List<TMP_Text> cardStackCounterList { set; get; } = new();
     private Vector3 spaceshipsBase = new(-8, -4, -1);
     public TMP_Text spaceshipCounter;
@@ -49,18 +50,14 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
         spaceshipCounter = GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>();
         //spaceshipCounter.text = Server.allPlayersInfo.Single(p => p.Id == PlayerGameData.Id).SpaceshipsLeft.ToString();
-
+        
+       
         int index = Server.allPlayersInfo.FindIndex(p => p.Id == PlayerGameData.Id);
         if(index != -1)
             spaceshipCounter.text = Server.allPlayersInfo[index].SpaceshipsLeft.ToString();
-
+       
         satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
         satelliteCounter.text = "3";
-    }
-
-    // Update is called once per frame
-    void Update()
-    { 
     }
 
     [ServerRpc(RequireOwnership = false)]

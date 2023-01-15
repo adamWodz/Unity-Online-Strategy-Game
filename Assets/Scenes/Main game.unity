@@ -3619,6 +3619,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: data.game
+  useEncryption: 0
 --- !u!4 &1168549220
 Transform:
   m_ObjectHideFlags: 0
@@ -8203,6 +8204,7 @@ PrefabInstance:
       propertyPath: endGamePanel
       value: 
       objectReference: {fileID: 1377640652}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
       propertyPath: cardBackButton
       value: 
       objectReference: {fileID: 4963611423944183591, guid: a2d051bf988eb6949bafd1552ee032c3, type: 3}
@@ -8263,6 +8265,10 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: playerTileObjectList.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
       propertyPath: shipGameObjectList.Array.data[0]
       value: 
       objectReference: {fileID: 3441242531852383513, guid: 5c21c7b54c6592247af93fb66d903631, type: 3}
@@ -8286,6 +8292,26 @@ PrefabInstance:
       propertyPath: shipGameObjectList.Array.data[5]
       value: 
       objectReference: {fileID: 1072247400550304756, guid: 27a4056407d0349d690c709e653ddcbd, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: playerTileObjectList.Array.data[0]
+      value: 
+      objectReference: {fileID: 4309489565412034509, guid: c428d38e5a50ef54ebea0be747381e33, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: playerTileObjectList.Array.data[1]
+      value: 
+      objectReference: {fileID: 4309489565412034509, guid: 179342bf4f142d34fb0278b20765017a, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: playerTileObjectList.Array.data[2]
+      value: 
+      objectReference: {fileID: 4309489565412034509, guid: c39c7e2153448a84082966cf1d46d769, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: playerTileObjectList.Array.data[3]
+      value: 
+      objectReference: {fileID: 4309489565412034509, guid: e56859b0537065148aab37104daba743, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: playerTileObjectList.Array.data[4]
+      value: 
+      objectReference: {fileID: 4309489565412034509, guid: a0418d0b9af24fa49b71053e4866dffa, type: 3}
     - target: {fileID: 2329796705188009015, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
       propertyPath: m_Name
       value: GameManager

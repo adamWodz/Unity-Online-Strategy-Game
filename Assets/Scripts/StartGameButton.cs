@@ -49,9 +49,8 @@ public class StartGameButton : NetworkBehaviour
             }
 
             PlayerGameData.StartTurn();
+            SetClientNamesClientRpc();
         }
-        SetClientNamesClientRpc();
-
     }
 
     [ClientRpc]

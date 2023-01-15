@@ -7,20 +7,16 @@ using UnityEngine;
 public class GameData
 {
     public int mapNumber;
-    public int curPlayerId;
-    public List<PlayerInfo> players;
+    public List<PlayerInfoData> players;
     public List<PathData> paths;
-    //public List<Mission> missionsToChoose;
     public Dictionary<int, int[]> cardsForEachPalyer;
     public Dictionary<int, List<MissionData>> missionsForEachPalyer;
 
     public GameData()
     {
         mapNumber = 0;
-        curPlayerId = 0;
         players = new();
         paths = new();
-        //missionsToChoose = new();
         cardsForEachPalyer = new();
         missionsForEachPalyer = new();
     }

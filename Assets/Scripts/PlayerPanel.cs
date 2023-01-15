@@ -35,6 +35,18 @@ public class PlayerInfo
     public List<Mission> missions; // uzupe³niana na koniec gry
 }
 
+[Serializable]
+public struct PlayerInfoData
+{
+    public int Position;
+    public int Points;
+    public string Name;
+    public int Id;
+    public bool IsAI;
+    public int SpaceshipsLeft;
+    public int PlayerTileId;
+    public int PlayerColorNumber;
+}
 public class PlayerInfoComparer: IComparer<PlayerInfo>
 {
     public int Compare(PlayerInfo x, PlayerInfo y)
@@ -74,7 +86,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     GameManager gameManager;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         if (Communication.loadOnStart)
@@ -155,22 +167,27 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             SendStartTurnClientRpc(clientRpcParams);
         }
 
-        gameManager.spaceshipCounter.text = Server.allPlayersInfo.Single(p => p.Id == PlayerGameData.Id).SpaceshipsLeft.ToString();
+        //gameManager.spaceshipCounter.text = Server.allPlayersInfo.Single(p => p.Id == PlayerGameData.Id).SpaceshipsLeft.ToString();
     }
 
     [ClientRpc]
     void LoadPlayersListClientRpc(int position,int points,string name,int id,bool isAI, int spaceshipsLeft, int playerTileId)
     {
-        PlayerInfo playerInfo = new()
+        PlayerInfo playerInfo = new PlayerInfo()
         {
             Position = position,
             Points = points,
-            Name= name,
+            Name = name,
             Id = id,
             IsAI = isAI,
             SpaceshipsLeft = spaceshipsLeft,
-            PlayerTileId = playerTileId
+            PlayerTileId = playerTileId,
+            PlayerColorNumber = id,
+            //SpaceshipPrefab = gameManager.shipGameObjectList[id],
+            //TilePrefab = gameManager.playerTileObjectList[id],
+            //missions = new()
         };
+        Debug.Log(playerInfo);
         players ??= new();
         Server.allPlayersInfo ??= new();
         players.Add(playerInfo);
@@ -179,7 +196,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         //Debug.Log($"ServerPlayers: {Server.allPlayersInfo.Count}");
         //GameObject playerTextTemplate = transform.GetChild(0).gameObject;
         playersTiles ??= new();
-        var playerTile = Instantiate(playerTilePrefab, transform);
+        var playerTile = Instantiate(gameManager.playerTileObjectList[id], transform);
         playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (playerInfo.Position + 1).ToString();
         playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = playerInfo.Name;
         playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = playerInfo.SpaceshipsLeft.ToString();
@@ -196,6 +213,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         {
             PlayerGameData.spaceshipsLeft = playerInfo.SpaceshipsLeft;
             PlayerGameData.curentPoints = playerInfo.Points;
+            if(IsHost)
+                gameManager.spaceshipCounter.text = playerInfo.SpaceshipsLeft.ToString();
         }
     }
 
@@ -203,9 +222,28 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     {
         if(IsHost)
         {
+            /*
             data.players = Server.allPlayersInfo;
             data.players.Sort(new PlayerInfoComparer());
-            data.curPlayerId = Server.curPlayerId;
+            */
+            data.players = new();
+            Server.allPlayersInfo.Sort(new PlayerInfoComparer());
+            foreach(var player in Server.allPlayersInfo)
+            {
+                PlayerInfoData playerInfoData = new()
+                {
+                    Position = player.Position,
+                    Points = player.Points,
+                    Id = player.Id,
+                    Name = player.Name,
+                    IsAI = player.IsAI,
+                    SpaceshipsLeft = player.SpaceshipsLeft,
+                    PlayerColorNumber = player.PlayerColorNumber,
+                    PlayerTileId = player.PlayerTileId
+                };
+                data.players.Add(playerInfoData);
+            }
+
         } 
     }
 

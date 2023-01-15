@@ -80,7 +80,8 @@ public class Map : NetworkBehaviour, IDataPersistence
         {
             //paths = data.paths;
             //Communication.mapDataNumber = data.mapNumber;
-            foreach(PathData path in data.paths)
+            Debug.Log("Liczba ścieżek zbudowanych: " + data.paths.Where(a => a.isBuilt).Count());
+            foreach (PathData path in data.paths)
             {
                 SetPathsClientRpc(path.id, path.planetFromName, path.planetToName, path.color, path.length, path.isBuilt, path.builtById,data.mapNumber);
             }
@@ -97,8 +98,18 @@ public class Map : NetworkBehaviour, IDataPersistence
             //Debug.Log("Client?" + IsClient);
             //Debug.Log("Server?" + IsServer);
             //data.paths = paths;
+            Debug.Log("Liczba ścieżek zbudowanych: " + data.paths.Count());
+            Debug.Log("Liczba ścieżek zbudowanych: " + data.paths.Where(a => a.isBuilt).Count());
+            /*
+            foreach(PathData path in data.paths)
+            {
+                if(path.isBuilt)
+
+            }
+            */
             data.paths = new();
             //Debug.Log("Liczba sciezek "+paths.Count);
+            Debug.Log("Liczba ścieżek zbudowanych: " + paths.Where(a => a.isBuilt).Count());
             foreach(Path path in paths)
             {
                 PathData pathData = new()
@@ -135,7 +146,9 @@ public class Map : NetworkBehaviour, IDataPersistence
             planetNameText.name = planets[i].name + "Text";
             planetNameText.transform.SetParent(canvasForPlanetsNames.transform);
             //planetNameText.SetActive(false);
-
+            
+            if(gameManager == null)
+                gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
             gameManager.spawnedObjects.Add(planet);
             gameManager.spawnedObjects.Add(planetNameText);
         }
@@ -234,7 +247,7 @@ public class Map : NetworkBehaviour, IDataPersistence
         Planet planetFrom = mapData.planets.Single(planet => planet.name == planetFromName);
         Planet planetTo = mapData.planets.Single(planet => planet.name == planetToName);
         Path path = Path.CreateInstance(id,planetFrom,planetTo, color,length,isBuilt,builtById);
-        //Debug.Log($"Path {path.planetFrom.name}-{path.planetTo.name} jest zbudowana? {path.isBuilt}");
+        Debug.Log($"Path {path.planetFrom.name}-{path.planetTo.name} jest zbudowana? {path.isBuilt}");
         paths.Add(path);
     }
 }

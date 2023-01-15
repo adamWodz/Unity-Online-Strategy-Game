@@ -19,10 +19,10 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     //private int[][] cardsQuantityPerPlayerPerColor;
     private Dictionary<int, int[]> cardsQuantityPerPlayerPerColor = new();
 
-    void Start()
+    void Awake()
     {
         cardsQuantityPerPlayerPerColor = new();//new int[Server.allPlayersInfo.Count][];
-
+        SendCardsStacksServerRpc(startHand,PlayerGameData.Id);
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         
         GameObject cardTempalte = transform.GetChild(0).gameObject;
@@ -48,7 +48,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
 
         Destroy(cardTempalte);
         Debug.Log("Ładuję card deck");
-        SendCardsStacksServerRpc(startHand,PlayerGameData.Id);
+        
     }
 
     public void LoadData(GameData data)
@@ -123,7 +123,6 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     [ServerRpc(RequireOwnership = false)]
     public void SendCardsStacksServerRpc(int[] cards,int id) //ServerRpcParams serverRpcParams = default)//int redCards, int greenCards, int blueCards, int yellowCards, int pinkCards, int rainbowCards, ServerRpcParams serverRpcParams = default)
     {
-        Debug.Log("Początkowa ręka");
         //int id = (int)serverRpcParams.Receive.SenderClientId;
         if(!cardsQuantityPerPlayerPerColor.ContainsKey(id))
             cardsQuantityPerPlayerPerColor.Add(id, cards);
@@ -139,8 +138,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
             Debug.Log($"Color: {(Color)i}");
             gameManager.cardStackCounterList[i].text = cardStack[i].ToString();
             PlayerGameData.numOfCardsInColor[(Color)i] = cardStack[i];
-            Debug.Log($"Cards in this color: {PlayerGameData.numOfCardsInColor[(Color)i]}");
-            
+            Debug.Log($"Cards in this color: {PlayerGameData.numOfCardsInColor[(Color)i]}");  
         }
     }
 }
