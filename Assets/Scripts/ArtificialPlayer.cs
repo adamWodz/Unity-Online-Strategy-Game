@@ -385,7 +385,7 @@ namespace Assets.GameplayControl
 
             ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, groupsOfConnectedPlanets);
 
-            BuildPath buildPath = Server.buildPaths.Where(b => b.path == path).First();
+            BuildPath buildPath = Server.buildPaths.Where(b => b.path.Id == path.Id).First();
             //buildPath.StartCoroutine(buildPath.BuildPathAnimation(Id));
             buildPath.DoBuildPathByAI(Server.allPlayersInfo.Where(p => p.Id == Id).First().ColorNum);
 

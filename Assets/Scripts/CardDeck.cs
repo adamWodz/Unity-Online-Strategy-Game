@@ -19,7 +19,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     //private int[][] cardsQuantityPerPlayerPerColor;
     public Dictionary<int, int[]> cardsQuantityPerPlayerPerColor = new();
 
-    void Start()
+    void Awake()
     {
         cardsQuantityPerPlayerPerColor = new();//new int[Server.allPlayersInfo.Count][];
 
@@ -84,7 +84,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
                         }
                     };
 
-                    LoadCardsStacksClientRpc(data.cardsForEachPalyer[i], clientRpcParams);
+                    LoadCardsStacksClientRpc(data.cardsForEachPalyer[Server.allPlayersInfo[i].Id], clientRpcParams);
                 }
             }
         }

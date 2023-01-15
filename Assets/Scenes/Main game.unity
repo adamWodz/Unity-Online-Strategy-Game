@@ -2918,6 +2918,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: data.game
+  useEncryption: 1
 --- !u!4 &1168549220
 Transform:
   m_ObjectHideFlags: 0
@@ -7531,7 +7532,6 @@ MonoBehaviour:
   popUpPanel: {fileID: 1674471843}
   panelState: 1
   pathButtonPrefab: {fileID: 8818678304912476882, guid: 6a81663fec66bf24d9dd7d7588f92478, type: 3}
-  circlePrefab: {fileID: 3751254401362986206, guid: 8f2fcf9fae45ad040b8a3d4c861e4c88, type: 3}
   missionsFromClickedMissionsCards: []
 --- !u!114 &2120158611
 MonoBehaviour:

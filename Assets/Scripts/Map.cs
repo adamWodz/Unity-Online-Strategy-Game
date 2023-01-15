@@ -143,6 +143,8 @@ public class Map : NetworkBehaviour, IDataPersistence
             planetNameText.transform.SetParent(canvasForPlanetsNames.transform);
             //planetNameText.SetActive(false);
 
+            if(gameManager == null)
+                gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
             gameManager.spawnedObjects.Add(planet);
             gameManager.spawnedObjects.Add(planetNameText);
         }

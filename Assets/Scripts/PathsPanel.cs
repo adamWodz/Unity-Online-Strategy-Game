@@ -29,7 +29,7 @@ public class PathsPanel : Panel
             // zapis posiadanych misji przez gracza na bie¿¹co
             foreach(Mission m in value)
             {
-                SendMissionsChosenServerRpc(m.start.name, m.end.name, m.points, PlayerGameData.Id);
+                SendMissionsChosenServerRpc(m.start.name, m.end.name, m.points, PlayerGameData.Id, m.isDone);
             }
             
             SpawnMissionsButtons(value);
@@ -49,10 +49,10 @@ public class PathsPanel : Panel
 
         if (IsHost && !Communication.loadOnStart)
         {
-            receivedMissions = new List<MissionData>[Server.allPlayersInfo.Count];
+            receivedMissions = new List<MissionData>[10];
             for (int i = 0; i < Server.allPlayersInfo.Count; i++)
             {
-                receivedMissions[i] = new();
+                receivedMissions[Server.allPlayersInfo[i].Id] = new();
             }
         }
 
@@ -131,22 +131,18 @@ public class PathsPanel : Panel
         if (firstPlanetColor != highlightColor || secondPlanetColor != highlightColor)
         {
             ChangePlanetColor(highlightColor, firstPlanetName);
-            //GameObject.Find(firstPlanetName).transform.GetChild(0).gameObject.SetActive(true);
             ChangePlanetColor(highlightColor, secondPlanetName);
-            //GameObject.Find(secondPlanetName).transform.GetChild(0).gameObject.SetActive(true);
         }
         else
         {
             if (CheckIfPlanetCanBeExtinguished(firstPlanetName, secondPlanetName))
             {
                 ChangePlanetColor(extinguishColor, firstPlanetName);
-                //GameObject.Find(firstPlanetName).transform.GetChild(0).gameObject.SetActive(false);
             }
 
             if (CheckIfPlanetCanBeExtinguished(secondPlanetName, firstPlanetName))
             {
                 ChangePlanetColor(extinguishColor, secondPlanetName);
-                //GameObject.Find(secondPlanetName).transform.GetChild(0).gameObject.SetActive(false);
             }
         }
 
@@ -223,6 +219,7 @@ public class PathsPanel : Panel
             missionButton.transform.GetChild(0).GetComponent<TMP_Text>().text = newMissions[i].start.name;
             missionButton.transform.GetChild(1).GetComponent<TMP_Text>().text = newMissions[i].end.name;
             missionButton.transform.GetChild(2).GetComponent<TMP_Text>().text = newMissions[i].points.ToString();
+            missionButton.transform.GetChild(3).gameObject.SetActive(newMissions[i].isDone);
             missionButton.GetComponent<Button>().onClick.AddListener(() => HighlightPlanet(newMissions[copy]));
         }
     }
@@ -231,7 +228,7 @@ public class PathsPanel : Panel
     {
         if (IsHost)
         {
-            receivedMissions = new List<MissionData>[Server.allPlayersInfo.Count];
+            receivedMissions = new List<MissionData>[10];
             for (int i = 0; i < Server.allPlayersInfo.Count; i++)
             {
                 receivedMissions[i] = new();
@@ -266,7 +263,7 @@ public class PathsPanel : Panel
                 artificialPlayer.missions = missions.ToList();
                 foreach(var mission in missions)
                 {
-                    if (mission.IsCompletedByClientPlayer())
+                    if (mission.isDone)
                         artificialPlayer.missionsDone.Add(mission);
                     else
                         artificialPlayer.missionsToDo = missions.ToList();
@@ -276,21 +273,21 @@ public class PathsPanel : Panel
             // host wysy³a rpc innym graczom z danymi
             for (int i = 0; i < Server.allPlayersInfo.Count; i++)
             {
-                if (i != PlayerGameData.Id)
+                if (Server.allPlayersInfo[i].Id != PlayerGameData.Id)
                 {
                     // ustawiam rpc na wysy³anie do konkretnego gracza (kazdy gracz musi otrzymac inne dane)
                     ClientRpcParams clientRpcParams = new()
                     {
                         Send = new ClientRpcSendParams
                         {
-                            TargetClientIds = new ulong[] { (ulong)i }
+                            TargetClientIds = new ulong[] { (ulong)Server.allPlayersInfo[i].Id }
                         }
                     };
 
-                    missionsData = data.missionsForEachPalyer[i];
+                    missionsData = data.missionsForEachPalyer[Server.allPlayersInfo[i].Id];
                     foreach(var mD in missionsData)
                     {
-                        LoadMissionsChosenClientRpc(mD.startPlanetName,mD.endPlanetName,mD.points, clientRpcParams);
+                        LoadMissionsChosenClientRpc(mD.startPlanetName,mD.endPlanetName,mD.points, mD.isDone, clientRpcParams);
                     }
                 }
             }
@@ -301,7 +298,6 @@ public class PathsPanel : Panel
     {
         if (IsHost)
         {
-            
             // AI
             foreach (var artificialPlayer in Server.artificialPlayers)
             {
@@ -313,25 +309,29 @@ public class PathsPanel : Panel
                         startPlanetName = mission.start.name,
                         endPlanetName = mission.end.name,
                         points = mission.points,
+                        isDone = mission.isDone,
                     });
                 }
                 receivedMissions[artificialPlayer.Id] = new(pom);
             }
 
 
-            for (int i = 0; i < Server.allPlayersInfo.Count; i++)
+            for (int i = 0; i < 10; i++)
             {
-                //Debug.Log("Received missions:" + receivedMissions[i].Count);
-                if (!data.missionsForEachPalyer.ContainsKey(i))
-                    data.missionsForEachPalyer.Add(i, receivedMissions[i]);
-                else
-                    data.missionsForEachPalyer[i] = receivedMissions[i];
+                if (receivedMissions[i] != null)
+                {
+                    //Debug.Log("Received missions:" + receivedMissions[i].Count);
+                    if (!data.missionsForEachPalyer.ContainsKey(i))
+                        data.missionsForEachPalyer.Add(i, receivedMissions[i]);
+                    else
+                        data.missionsForEachPalyer[i] = receivedMissions[i];
+                }
             }
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void SendMissionsChosenServerRpc(string startPlanetName, string endPlanetName, int points,int id)//ServerRpcParams serverRpcParams = default)
+    void SendMissionsChosenServerRpc(string startPlanetName, string endPlanetName, int points,int id,bool isDone)//ServerRpcParams serverRpcParams = default)
     {
         //int id = (int)serverRpcParams.Receive.SenderClientId;
         receivedMissions[id].Add(new MissionData()
@@ -339,16 +339,18 @@ public class PathsPanel : Panel
             startPlanetName = startPlanetName,
             endPlanetName = endPlanetName,
             points = points,
+            isDone = isDone
         });
         //Debug.Log("Server Rpc received missions: "+ receivedMissions[id].Count);    
     }
 
     [ClientRpc]
-    void LoadMissionsChosenClientRpc(string startPlanetName, string endPlanetName, int points, ClientRpcParams clientRpcParams = default)
+    void LoadMissionsChosenClientRpc(string startPlanetName, string endPlanetName, int points,bool isDone, ClientRpcParams clientRpcParams = default)
     {
         map = GameObject.Find("Space").GetComponent<Map>();
         Debug.Log(map);
         Mission mission = map.Missions.Single(m => m.start.name == startPlanetName && m.end.name == endPlanetName && m.points == points);
+        mission.isDone = isDone;
         Debug.Log(mission);
         List<Mission> missions = new()
         {
