@@ -33,7 +33,7 @@ public class MissionsPanel : Panel
         AssignValues(0, 242.9984f, PanelState.Minimized, false);
 
         //missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions.Except(pathsPanel.MissionsChoosed,new MissionComparer()).ToList());
-        Debug.Log(GameObject.Find("Space").GetComponent<Map>().Missions);
+        //Debug.Log(GameObject.Find("Space").GetComponent<Map>().Missions);
         missionsToChoose = new();
         missionsToChoose.AddRange(Map.mapData.missions);
         /*
@@ -42,8 +42,8 @@ public class MissionsPanel : Panel
             missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions);
         }
         */
-        Debug.Log(missionsToChoose);
-        Debug.Log($"Missions To Choose: {missionsToChoose.Count}");
+        //Debug.Log(missionsToChoose);
+        //Debug.Log($"Missions To Choose: {missionsToChoose.Count}");
         missionButtonsAndConfirmButton = transform.GetComponentsInChildren<Button>();
         
         missionButtonsAndConfirmButton[^1].onClick.AddListener(AddMissions);

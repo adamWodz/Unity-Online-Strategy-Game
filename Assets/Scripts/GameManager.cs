@@ -134,25 +134,41 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         var a = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>();
         Debug.Log(a);
         var playersCards = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>().cardsQuantityPerPlayerPerColor[playerInfo.Id];
+
+        for (int i = 0; i < playersCards.Length; i++)
+            Debug.Log($"{i}, count {playersCards[i]}");
+        
         int playerIndInAllPlayers = -1;
         for (int i = 0; i < Server.allPlayersInfo.Count; i++)
             if (Server.allPlayersInfo[i].Id == playerInfo.Id)
+            {
                 playerIndInAllPlayers = i;
-        var playerMissionData = GameObject.Find("Canvas").transform.Find("MissionsScroll").transform.Find("PathsPanel").GetComponent<PathsPanel>().receivedMissions[playerIndInAllPlayers];
-        List<Mission> playerMissions = new List<Mission>();
-        foreach(var missionData in playerMissionData)
-            foreach(var mission in Server.allMissions)
+                break;
+            }
+
+        var receivedMissions = GameObject.Find("Canvas").transform.Find("MissionsScroll").transform.Find("PathsPanel").GetComponent<PathsPanel>().receivedMissions;
+        var playerMissionData = receivedMissions[playerIndInAllPlayers];
+        List<Mission> playerMissions = new List<Mission>(), playerMissionsToDo = new List<Mission>();
+
+        foreach (var missionData in playerMissionData)
+        {
+            foreach (var mission in Server.allMissions)
             {
                 if (mission.start.name == missionData.startPlanetName && mission.end.name == missionData.endPlanetName)
+                {
                     playerMissions.Add(mission);
+                    playerMissionsToDo.Add(mission);
+                    //Debug.Log($"newAI mission: {mission}");
+                }
             }
+        }
 
         Dictionary<Color, int> playerNumOfCardsInColor = new Dictionary<Color, int>();
         for(int i = 0; i < playersCards.Length; i++)
         {
             playerNumOfCardsInColor.Add((Color)i, playersCards[i]);
         }
-        Debug.Log("GameManager; playerName: " + playerInfo.Name + " isAI " + playerInfo.IsAI);
+        //Debug.Log("GameManager; playerName: " + playerInfo.Name + " isAI " + playerInfo.IsAI);
         playerInfo.IsAI = true;
 
         var newAI = new ArtificialPlayer
@@ -164,7 +180,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
             startedLastTurn = playerInfo.SpaceshipsLeft < Board.minSpaceshipsLeft,
             numOfCardsInColor = playerNumOfCardsInColor,
             missions = playerMissions,
-            missionsToDo = playerMissions
+            missionsToDo = playerMissionsToDo,
         };
         Server.artificialPlayers.Add(newAI);
 

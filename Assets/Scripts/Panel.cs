@@ -49,7 +49,11 @@ public class Panel : NetworkBehaviour, IDataPersistence
     
     protected void AssignValues(float minW, float maxW, PanelState state, bool getParentRectTransform)
     {
-        popUpPanel.transform.GetChild(1).GetComponent<Button>().onClick.AddListener(() => ChangeState());
+        popUpPanel.transform.GetChild(1).GetComponent<Button>().onClick.AddListener(() =>
+            {
+                ChangeState();
+                PlayerGameData.isDrawingMission = true;
+            });
         popUpPanel.transform.GetChild(2).GetComponent<Button>().onClick.AddListener(() => CancelButtonWasClicked());
         
         //ustawiam maksymalna i minimalna dlugosc panelu

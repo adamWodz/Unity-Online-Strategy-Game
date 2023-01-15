@@ -143,7 +143,6 @@ public static class Communication
         }
         else
         {
-            PlayerGameData.isDrawingMission = true;
             return true;
         }
     }

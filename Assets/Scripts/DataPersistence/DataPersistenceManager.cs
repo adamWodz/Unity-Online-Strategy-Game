@@ -9,7 +9,7 @@ public class DataPersistenceManager : NetworkBehaviour
     [Header("File Storage Config")]
     [SerializeField] private string fileName;
 
-    private GameData gameData;
+    public static GameData gameData;
 
     private List<IDataPersistence> dataPersistenceObjects;
 
