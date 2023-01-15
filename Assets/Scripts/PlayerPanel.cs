@@ -145,7 +145,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             
             foreach(var player in data.players) 
             {
-                LoadPlayersListClientRpc(player.Position, player.Points, player.Name, player.Id, player.IsAI, player.SpaceshipsLeft, player.PlayerTileId);
+                LoadPlayersListClientRpc(player.Position, player.Points, player.Name, player.Id, player.IsAI, player.SpaceshipsLeft, player.PlayerTileId,player.ColorNum);
             }
             
             int id = data.players.Single(player => player.Position == 0).Id;
@@ -163,8 +163,13 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     }
 
     [ClientRpc]
-    void LoadPlayersListClientRpc(int position,int points,string name,int id,bool isAI, int spaceshipsLeft, int playerTileId)
+    void LoadPlayersListClientRpc(int position,int points,string name,int id,bool isAI, int spaceshipsLeft, int playerTileId, int colorNum)
     {
+        if(position==0 && isAI)
+        {
+            Communication.StartAiTurn(id);
+        }
+        
         PlayerInfo playerInfo = new()
         {
             Position = position,
@@ -173,7 +178,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             Id = id,
             IsAI = isAI,
             SpaceshipsLeft = spaceshipsLeft,
-            PlayerTileId = playerTileId
+            PlayerTileId = playerTileId,
+            ColorNum = colorNum
         };
         players ??= new();
         Server.allPlayersInfo ??= new();
@@ -183,7 +189,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         //Debug.Log($"ServerPlayers: {Server.allPlayersInfo.Count}");
         //GameObject playerTextTemplate = transform.GetChild(0).gameObject;
         playersTiles ??= new();
-        var playerTile = Instantiate(playerTilePrefab, transform);
+        var playerTile = Instantiate(playerTilesPrefabs[colorNum], transform);
         SetPlayerTileTransform(playerTile, playerInfo);
         playerTile.transform.SetSiblingIndex(playerInfo.Position);
         

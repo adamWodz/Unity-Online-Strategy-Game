@@ -28,5 +28,6 @@ namespace Assets.GameplayControl
         public string startPlanetName;
         public string endPlanetName;
         public int points;
+        public bool isDone;
     }
 }

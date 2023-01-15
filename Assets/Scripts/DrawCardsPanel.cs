@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.TerrainUtils;
@@ -182,10 +183,23 @@ public class DrawCardsPanel : NetworkBehaviour
 
     void ShuffleCards()
     {
+        StartCoroutine(HighlightDrawCardsPanel());
         numberOfRainbowCards = 0;
         for(int i = 0;i < cards.Count; i++)
         {
             ChooseRandomColor(i);
         }
+        
+    }
+
+    IEnumerator HighlightDrawCardsPanel()
+    {
+        gameObject.GetComponent<Image>().color = UnityEngine.Color.yellow;
+        //Debug.Log(GameObject.Find("InfoText").GetComponent<TMP_Text>().text);
+        GameObject.Find("InfoText").GetComponent<TMP_Text>().text = "Przetasowano karty";
+        //Debug.Log(GameObject.Find("InfoText").GetComponent<TMP_Text>().text);
+        yield return new WaitForSeconds(1);
+        GameObject.Find("InfoText").GetComponent<TMP_Text>().text = "Przetasowano karty";
+        gameObject.GetComponent<Image>().color = UnityEngine.Color.white;
     }
 }

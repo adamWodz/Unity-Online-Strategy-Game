@@ -26,7 +26,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
     private GameObject spawnedCardGameObject;
     public List<GameObject> shipGameObjectList = new();
-    public List<TMP_Text> cardStackCounterList { set; get; } = new();
+    public List<TMP_Text> cardStackCounterList = new();
     private Vector3 spaceshipsBase = new(-8, -4, -1);
     public TMP_Text spaceshipCounter;
     private TMP_Text satelliteCounter;
@@ -58,11 +58,17 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
         satelliteCounter.text = "3";
 
-        SetInfoTextServerRpc($"Tura gracza {Server.allPlayersInfo.First(p => p.Position == 0).Name}.");
+        index = Server.allPlayersInfo.FindIndex(p => p.Position == 0);
+        if(index != -1)
+            SetInfoTextServerRpc($"Tura gracza {Server.allPlayersInfo[index].Name}.");
+
         ShowStartMessageClientRpc();
-        PlayerInfo nextPlayer = Server.allPlayersInfo.Where(p => p.Position == 0).First();
-        if (nextPlayer.IsAI)
-            Communication.StartAiTurn(nextPlayer.Id);
+        if (!Communication.loadOnStart)
+        {
+            PlayerInfo nextPlayer = Server.allPlayersInfo.Where(p => p.Position == 0).First();
+            if (nextPlayer.IsAI)
+                Communication.StartAiTurn(nextPlayer.Id);
+        }
 
         if (!NetworkManager.IsHost)
         {
@@ -81,8 +87,9 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     [ClientRpc]
     void ShowStartMessageClientRpc()
     {
-        if(Server.allPlayersInfo.First(p => p.Position == 0).Id == PlayerGameData.Id)
-            ShowFadingPopUpWindow("Początek gry - Twój ruch.");
+        int index = Server.allPlayersInfo.FindIndex(p => p.Position == 0);
+        if(index != -1 && Server.allPlayersInfo[index].Id == PlayerGameData.Id)
+           ShowFadingPopUpWindow("Początek gry - Twój ruch.");
     }
 
     List<int> connectedClientIds;

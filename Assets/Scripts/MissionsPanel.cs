@@ -30,7 +30,7 @@ public class MissionsPanel : Panel
         
         pathsPanel = GameObject.Find("PathsPanel").GetComponent<PathsPanel>();
         
-        AssignValues(0, 242.9984f, PanelState.Minimized, false);
+        AssignValues(0, 370, PanelState.Minimized, false);
 
         //missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions.Except(pathsPanel.MissionsChoosed,new MissionComparer()).ToList());
         Debug.Log(GameObject.Find("Space").GetComponent<Map>().Missions);
@@ -106,7 +106,10 @@ public class MissionsPanel : Panel
             for (int i = 0; i < missionButtonsAndConfirmButton.Length - 1; i++)
             {
                 int copy = i;
-                missionButtonsAndConfirmButton[copy].name = missionButtonsAndConfirmButton[copy].transform.GetChild(0).GetComponent<TMP_Text>().text = randomMissions[copy].start.name + "-" + randomMissions[copy].end.name;
+                missionButtonsAndConfirmButton[copy].name =  randomMissions[copy].start.name + "-" + randomMissions[copy].end.name;
+                missionButtonsAndConfirmButton[copy].transform.GetChild(0).GetComponent<TMP_Text>().text = randomMissions[copy].start.name;
+                missionButtonsAndConfirmButton[copy].transform.GetChild(1).GetComponent<TMP_Text>().text = randomMissions[copy].end.name;
+                missionButtonsAndConfirmButton[copy].transform.GetChild(2).GetComponent<TMP_Text>().text = randomMissions[copy].points.ToString();
                 missionButtonsAndConfirmButton[copy].onClick.AddListener(() => pathsPanel.HighlightPlanet(randomMissions[copy]));
             }
         }
