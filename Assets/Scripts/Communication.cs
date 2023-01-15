@@ -74,7 +74,7 @@ public static class Communication
         Debug.Log("CurrentPoints: " + PlayerGameData.curentPoints);
 
         //buildPath.StartCoroutine(buildPath.BuildPathAnimation(PlayerGameData.Id));
-        buildPath.DoBuildPath(PlayerGameData.Id);
+        buildPath.DoBuildPath(Server.allPlayersInfo.Where(p => p.Id == PlayerGameData.Id).First().ColorNum);
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
         playerPanel.UpdatePointsAndSpeceshipsNumServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.spaceshipsLeft);
         _GameManager.SetBuildPathDataServerRpc(path.Id, PlayerGameData.Id);

@@ -176,12 +176,12 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnShipsServerRpc(int playerId, Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
+    public void SpawnShipsServerRpc(int playerColorNum, Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
     {
         //Debug.Log("playerId: " + playerId);
         
         float angle = CalculateAngle(position,spaceshipsBase);
-        var spawnedShipGameObject = Instantiate(shipGameObjectList[playerId], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
+        var spawnedShipGameObject = Instantiate(shipGameObjectList[playerColorNum], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
         // spawnuje si� dla wszystkich graczy bo network object
         spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
@@ -344,13 +344,13 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         foreach (ArtificialPlayer ai in Server.artificialPlayers)
         {
             ai.CalculateFinalPoints();
-            SetFinalPointsAndMissionsNumClientRpc(ai.Id, ai.curentPoints, ai.GetMissionIds());
+            SetFinalPointsAndMissionsNumClientRpc(ai.Id, ai.curentPoints, ai.GetMissionIds(), ai.AreMissionsDone());
         }
         
     }
 
     [ClientRpc]
-    public void SetFinalPointsAndMissionsNumClientRpc(int playerId, int playerPoints, int[] missionIds)
+    public void SetFinalPointsAndMissionsNumClientRpc(int playerId, int playerPoints, int[] missionIds, bool[] isMissionDoneMissionDone)
     {
         var player = Server.allPlayersInfo.Where(p => p.Id == playerId).First();
         player.Points = playerPoints;
@@ -358,6 +358,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         for(int i = 0; i < missionIds.Length; i++)
         {
             Mission mission = Server.allMissions.First(m => m.id == missionIds[i]);
+            mission.isDone = isMissionDoneMissionDone[i];
             player.missions.Add(mission);
         }
 
@@ -370,15 +371,16 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         ShowFadingPopUpWindow("Koniec gry!");
 
         PlayerGameData.CalculateFinalPoints();
-        PropagateClientEndDataServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.GetMissionIds());
+        PropagateClientEndDataServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, 
+            PlayerGameData.GetMissionIds(), PlayerGameData.AreMissionsDone());
 
         StartCoroutine(EndGame());
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void PropagateClientEndDataServerRpc(int id, int finalPoints, int[] missionIds)
+    void PropagateClientEndDataServerRpc(int id, int finalPoints, int[] missionIds, bool[] areMissionDone)
     {
-        SetFinalPointsAndMissionsNumClientRpc(id, finalPoints, missionIds);
+        SetFinalPointsAndMissionsNumClientRpc(id, finalPoints, missionIds, areMissionDone);
     }
 
     IEnumerator EndGame()

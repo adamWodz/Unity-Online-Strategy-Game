@@ -37,7 +37,7 @@ public class BuildPath : MonoBehaviour
         Communication.ChoosePath(this);
     }
 
-    public void DoBuildPath(int playerId)
+    public void DoBuildPath(int playerColorNum)
     {
         for (int i = 0; i < tilesRenderers.Length; i++)
         {
@@ -65,21 +65,21 @@ public class BuildPath : MonoBehaviour
         Debug.Log(cardsStacks);
         cardDeck.SendCardsStacksServerRpc(cardsStacks,PlayerGameData.Id);
 
-        StartCoroutine(BuildPathAnimation(playerId));
+        StartCoroutine(BuildPathAnimation(playerColorNum));
     }
 
-    public void DoBuildPathByAI(int playerId)
+    public void DoBuildPathByAI(int playerColorNum)
     {
-        StartCoroutine(BuildPathAnimation(playerId));
+        StartCoroutine(BuildPathAnimation(playerColorNum));
     }
 
-    public IEnumerator BuildPathAnimation(int playerId)
+    public IEnumerator BuildPathAnimation(int playerColorNum)
     {
         Debug.Log("Started Coroutine at timestamp : " + Time.time);
         for (int i = 0; i < tilesRenderers.Length; i++)
         {
             // host spawni statki i je przemieszcza 
-            gameManager.SpawnShipsServerRpc(playerId, tilesTransforms[i + 1].position, tilesTransforms[i + 1].rotation);
+            gameManager.SpawnShipsServerRpc(playerColorNum, tilesTransforms[i + 1].position, tilesTransforms[i + 1].rotation);
             
             yield return new WaitForSeconds(0.2f);
         }

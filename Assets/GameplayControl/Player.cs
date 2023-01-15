@@ -268,5 +268,15 @@ namespace Assets.GameplayControl
 
             return ids;
         }
+
+        public static bool[] AreMissionsDone()
+        {
+            bool[] areDone = new bool[missions.Count];
+
+            for (int i = 0; i < missions.Count; i++)
+                areDone[i] = missions[i].isDone;
+
+            return areDone;
+        }
     }
 }

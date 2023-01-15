@@ -26,7 +26,7 @@ namespace Assets.GameplayControl
             {3, 3},
         };
         public static int maxSatellitesSent = 3;
-        public static int startSpaceshipsNumber = 5;
+        public static int startSpaceshipsNumber = 25;
         public static int minSpaceshipsLeft = 3;
     }
 
