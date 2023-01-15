@@ -63,13 +63,18 @@ public class StartGameButton : NetworkBehaviour
             var clients = NetworkManager.Singleton.ConnectedClientsList;
 
             int clientID;
-            int iAI = 5, iRe = 0;
+            int iAI = 0, iRe = 0;
             int n = IndexesReg.Length + IndexesAI.Length;
+            string nick = "";
             for (int pos = 0; pos<n; pos++)
             {
                 int position = int.Parse(pos.ToString());
-                if (IndexesAI.Contains(pos.ToString())) 
-                    AddAiPlayerClientRpc(position, iAI++);
+                if (IndexesAI.Contains(pos.ToString()))
+                {
+                    nick = "AIPlayer" + iAI.ToString();
+                    if (iAI < PlayerGameData.AINames.Count) nick = PlayerGameData.AINames[iAI];
+                    AddAiPlayerClientRpc(nick, position, iAI++);
+                }
                 else if (IndexesReg.Contains(pos.ToString()))
                 {
                     if (iRe == clients.Count)
@@ -79,17 +84,19 @@ public class StartGameButton : NetworkBehaviour
                     }
                     position = int.Parse(pos.ToString());
                     clientID = (int)clients[iRe].ClientId;
-                    string nick = "Gracz";
+                    nick = "Gracz";
                     if (lobbyplayers[iRe].Data != null) nick = lobbyplayers[iRe++].Data["UserName"].Value;
                     AddRealPlayerClientRpc(nick, position, clientID);
                 }
             }
 
             Debug.Log("PlayerIDs");
-            foreach (var player in Server.allPlayersInfo)
-                Debug.Log(player.Id);
-            Debug.Log("end PlayerIDs");
-
+            if (Server.allPlayersInfo != null)
+            {
+                foreach (var player in Server.allPlayersInfo)
+                    Debug.Log(player.Id);
+                Debug.Log("end PlayerIDs");
+            }
             SetClientNamesClientRpc();
 
             FirstTurn();
@@ -180,8 +187,9 @@ public class StartGameButton : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void AddAiPlayerClientRpc(int position, int id)
+    public void AddAiPlayerClientRpc(string nick, int position, int id)
     {
+        /**
         PlayerInfo playerState = new PlayerInfo
         {
             Position = position,
@@ -196,6 +204,24 @@ public class StartGameButton : NetworkBehaviour
         Server.artificialPlayers.Add(new ArtificialPlayer
         {
             Name = "AIplayer" + position.ToString(),
+            Id = id,
+        });
+        */
+
+        PlayerInfo playerState = new PlayerInfo
+        {
+            Position = position,
+            Points = 0,
+            Name = nick,
+            Id = id,
+            IsAI = true,
+            SpaceshipsLeft = Board.startSpaceshipsNumber,
+            ColorNum = position,
+        };
+        Server.allPlayersInfo.Add(playerState);
+        Server.artificialPlayers.Add(new ArtificialPlayer
+        {
+            Name = nick,
             Id = id,
         });
     }
@@ -249,11 +275,14 @@ public class StartGameButton : NetworkBehaviour
 
     void FirstTurn()
     {
-        PlayerInfo nextPlayer = Server.allPlayersInfo.Where(p => p.Position == 0).First();
-        if (nextPlayer.IsAI)
-        { } // gameManager zaczyna turê gracza AI
-        else
-            FirstTurnClientRpc(nextPlayer.Id);
+        if (Server.allPlayersInfo != null)
+        {
+            PlayerInfo nextPlayer = Server.allPlayersInfo.Where(p => p.Position == 0).First();
+            if (nextPlayer.IsAI)
+            { } // gameManager zaczyna turê gracza AI
+            else
+                FirstTurnClientRpc(nextPlayer.Id);
+        }
     }
 
     [ClientRpc]
