@@ -39,6 +39,8 @@ public class PathsPanel : Panel
     private bool firstClick;
     public List<MissionData>[] receivedMissions;
     private Map map;
+    private UnityEngine.Color highlightColor = UnityEngine.Color.green;
+    private UnityEngine.Color extinguishColor = UnityEngine.Color.white;
 
     // Start is called before the first frame update
     void Start()
@@ -66,7 +68,7 @@ public class PathsPanel : Panel
 
         //Debug.Log($"Missions choosed: {missionsChosen.Count}");
 
-        AssignValues(349.4f, 585.4f, PanelState.Maximized, true);
+        AssignValues(234, 585, PanelState.Maximized, true);
 
         //SpawnMissionsButtons(missionsChoosed);
     }
@@ -81,7 +83,7 @@ public class PathsPanel : Panel
     {
         if (firstClick)
         {
-            ChangePlanetsColor(UnityEngine.Color.green);
+            ChangePlanetsColor(highlightColor);
             missionsFromClickedMissionsCards.AddRange(missionsChosen.Except(missionsFromClickedMissionsCards, new MissionComparer()).ToList());
 
             // zmiana koloru przycisków
@@ -92,7 +94,7 @@ public class PathsPanel : Panel
         }
         else
         {
-            ChangePlanetsColor(UnityEngine.Color.white);
+            ChangePlanetsColor(extinguishColor);
             missionsFromClickedMissionsCards = missionsFromClickedMissionsCards.Except(missionsChosen, new MissionComparer()).ToList();
 
             // zmiana koloru przycisków
@@ -114,33 +116,37 @@ public class PathsPanel : Panel
         var pom = GameObject.Find(firstPlanetName + "-" + secondPlanetName).GetComponent<Image>();
         //Debug.Log(pom.name);
 
-        if (pom.color == UnityEngine.Color.white)
+        if (pom.color == extinguishColor)
         {
-            pom.color = UnityEngine.Color.green;
+            pom.color = highlightColor;
         }
         else
         {
-            pom.color = UnityEngine.Color.white;
+            pom.color = extinguishColor;
         }
 
         UnityEngine.Color firstPlanetColor = GetPlanetColor(firstPlanetName);
         UnityEngine.Color secondPlanetColor = GetPlanetColor(secondPlanetName);
 
-        if (firstPlanetColor != UnityEngine.Color.green || secondPlanetColor != UnityEngine.Color.green)
+        if (firstPlanetColor != highlightColor || secondPlanetColor != highlightColor)
         {
-            ChangePlanetColor(UnityEngine.Color.green, firstPlanetName);
-            ChangePlanetColor(UnityEngine.Color.green, secondPlanetName);
+            ChangePlanetColor(highlightColor, firstPlanetName);
+            //GameObject.Find(firstPlanetName).transform.GetChild(0).gameObject.SetActive(true);
+            ChangePlanetColor(highlightColor, secondPlanetName);
+            //GameObject.Find(secondPlanetName).transform.GetChild(0).gameObject.SetActive(true);
         }
         else
         {
             if (CheckIfPlanetCanBeExtinguished(firstPlanetName, secondPlanetName))
             {
-                ChangePlanetColor(UnityEngine.Color.white, firstPlanetName);
+                ChangePlanetColor(extinguishColor, firstPlanetName);
+                //GameObject.Find(firstPlanetName).transform.GetChild(0).gameObject.SetActive(false);
             }
 
             if (CheckIfPlanetCanBeExtinguished(secondPlanetName, firstPlanetName))
             {
-                ChangePlanetColor(UnityEngine.Color.white, secondPlanetName);
+                ChangePlanetColor(extinguishColor, secondPlanetName);
+                //GameObject.Find(secondPlanetName).transform.GetChild(0).gameObject.SetActive(false);
             }
         }
 
@@ -165,6 +171,7 @@ public class PathsPanel : Panel
     void ChangePlanetColor(UnityEngine.Color color, string name)
     {
         GetPlanetRenderer(name).material.color = color;
+        GameObject.Find(name).transform.GetChild(0).gameObject.SetActive(color == highlightColor);
     }
 
     UnityEngine.Color GetPlanetColor(string name)

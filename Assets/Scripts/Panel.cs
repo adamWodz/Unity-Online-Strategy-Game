@@ -93,15 +93,17 @@ public class Panel : NetworkBehaviour, IDataPersistence
         if (panelState == PanelState.Rolling)
         {
             panel.sizeDelta = new Vector2(width, panel.sizeDelta.y);
-            width += speed * Time.deltaTime;
+            width += (int)(speed * Time.deltaTime);
 
             if (width >= maxWidth)
             {
                 panelState = PanelState.Maximized;
+                maxWidth = width;
             }
             if (width <= minWidth)
             {
                 panelState = PanelState.Minimized;
+                minWidth = width;
             }
         }
     }

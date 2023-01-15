@@ -27,6 +27,7 @@ public class Map : NetworkBehaviour, IDataPersistence
     public List<Planet> Planets { get { return planets; } }
     public GameObject[] pathsPrefabs;
     public GameObject planetNameText;
+    public GameObject circlePrefab;
 
     // kolory sciezek
     private UnityEngine.Color[] colors = new UnityEngine.Color[] {
@@ -128,6 +129,12 @@ public class Map : NetworkBehaviour, IDataPersistence
             // spawneine planety
             var planet = Instantiate(planets[i].planetPrefab, new Vector3(planets[i].positionX, planets[i].positionY, mapZparam), planets[i].planetPrefab.transform.rotation);
             planet.name = planets[i].name;
+
+            // spawnienie obwódki planety
+            var higlighten = Instantiate(circlePrefab, planet.transform);
+            higlighten.transform.localScale = new Vector3(7, 7, 1);
+            higlighten.transform.localPosition = new Vector3(0, 0, 0.74f);
+            higlighten.SetActive(false);
 
             // spawnienie tekstu planety, znajdującego się nad nią, który na razie jest nieaktywny
             var planetNameText = Instantiate(this.planetNameText, new Vector3(planets[i].positionX, planets[i].positionY + 0.5f, mapZparam), Quaternion.identity);
