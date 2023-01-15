@@ -13,7 +13,7 @@ public class Planet : ScriptableObject
     public float positionX;
     public float positionY;
     public bool withSatellite { set; get; } = false;
-    public List<Path> adjacentPaths { get; set; }
+    //public List<Path> adjacentPaths { get; set; }
 
     public GameObject planetPrefab;
 }

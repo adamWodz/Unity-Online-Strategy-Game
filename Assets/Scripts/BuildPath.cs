@@ -75,7 +75,7 @@ public class BuildPath : MonoBehaviour
 
     public IEnumerator BuildPathAnimation(int playerColorNum)
     {
-        Debug.Log("Started Coroutine at timestamp : " + Time.time);
+        //Debug.Log("Started Coroutine at timestamp : " + Time.time);
         for (int i = 0; i < tilesRenderers.Length; i++)
         {
             // host spawni statki i je przemieszcza 
@@ -83,6 +83,6 @@ public class BuildPath : MonoBehaviour
             
             yield return new WaitForSeconds(0.2f);
         }
-        Debug.Log("Finished Coroutine at timestamp : " + Time.time);
+        //Debug.Log("Finished Coroutine at timestamp : " + Time.time);
     }
 }
