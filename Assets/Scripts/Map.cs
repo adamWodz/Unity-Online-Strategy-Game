@@ -201,7 +201,7 @@ public class Map : NetworkBehaviour, IDataPersistence
             tilesRenderers[j].material.color = colors[(int)path.color];
             if (path.isBuilt && IsHost)
             {
-                var pom = Instantiate(gameManager.shipGameObjectList[path.builtById], tilesTransforms[j + 1].position, tilesTransforms[j + 1].rotation);
+                var pom = Instantiate(gameManager.shipGameObjectList[Server.allPlayersInfo.Where(p => p.Id == path.builtById).First().ColorNum], tilesTransforms[j + 1].position, tilesTransforms[j + 1].rotation);
                 //Debug.Log(pom);
                 pom.GetComponent<Move>().speed = 0;
                 pom.GetComponent<NetworkObject>().Spawn(true);

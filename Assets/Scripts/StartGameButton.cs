@@ -23,6 +23,11 @@ public class StartGameButton : NetworkBehaviour
 
     public void StartGame()
     {
+        Server.playerTilePrefabs = new List<GameObject>();
+
+        foreach(var prefab in playerTilePrefabs)
+            Server.playerTilePrefabs.Add(prefab);
+        
         //Communication.loadOnStart = true;
         //Debug.Log("StartGame; " + NetworkManager.Singleton.IsServer);
         SetMapDataClientRpc(Communication.mapDataNumber,Communication.loadOnStart);
@@ -56,32 +61,15 @@ public class StartGameButton : NetworkBehaviour
         if (!Communication.loadOnStart)
         {
             var clients = NetworkManager.Singleton.ConnectedClientsList;
-            /**
-            var seats = PlayerList.seats;
-            int pos = 0, AInum=1, RealNum=0;
-            for(int c = 0; c < seats.Count; c++)
-            {
-                bool AI = PlayerList.IndexesAI.Contains(c.ToString());
-                bool Real = PlayerList.IndexesReg.Contains(c.ToString());
 
-                if (AI) AddAiPlayerClientRpc(pos, AInum++);
-                else if (Real)
-                {
-                    string nick = "Gracz";
-                    if (lobbyplayers[RealNum].Data != null) nick = lobbyplayers[RealNum].Data["UserName"].Value;
-
-                    AddRealPlayerClientRpc(nick, pos, RealNum++);
-                }
-                pos++;
-            }
-            */
-            int clientID, position;
-            int iAI = 1, iRe = 0;
+            int clientID;
+            int iAI = 5, iRe = 0;
             int n = IndexesReg.Length + IndexesAI.Length;
             for (int pos = 0; pos<n; pos++)
             {
-                position = int.Parse(pos.ToString());
-                if (IndexesAI.Contains(pos.ToString())) AddAiPlayerClientRpc(position, iAI++);
+                int position = int.Parse(pos.ToString());
+                if (IndexesAI.Contains(pos.ToString())) 
+                    AddAiPlayerClientRpc(position, iAI++);
                 else if (IndexesReg.Contains(pos.ToString()))
                 {
                     if (iRe == clients.Count)
@@ -96,28 +84,15 @@ public class StartGameButton : NetworkBehaviour
                     AddRealPlayerClientRpc(nick, position, clientID);
                 }
             }
-            /**
-            foreach (var pos in IndexesAI)
-            {
-                position = int.Parse(pos.ToString());
-                AddAiPlayerClientRpc(position, i++);
-            }
-            i = 0;
-            foreach (var pos in IndexesReg)
-            {
-                if (i == clients.Count) {
-                    Debug.Log($"[StartGame] {pos}th PlayerSeat ({i}/{nonAiPlayersNum} Regular), there's {clients.Count} clients. ");
-                    break;
-                }
-                position = int.Parse(pos.ToString());
-                clientID = (int)clients[i].ClientId;
-                string nick = "Gracz";
-                if (lobbyplayers[i].Data!=null) nick = lobbyplayers[i++].Data["UserName"].Value;
-                AddRealPlayerClientRpc(nick, position, clientID);
-            }
-            */
+
+            Debug.Log("PlayerIDs");
+            foreach (var player in Server.allPlayersInfo)
+                Debug.Log(player.Id);
+            Debug.Log("end PlayerIDs");
+
             SetClientNamesClientRpc();
-            PlayerGameData.StartTurn();
+
+            FirstTurn();
         }
         
     }
@@ -199,8 +174,7 @@ public class StartGameButton : NetworkBehaviour
             Id = id,
             IsAI = false,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
-            TilePrefab = playerTilePrefabs[position],
-            SpaceshipPrefab = spaceshipPrefabs[position],
+            ColorNum = position,
         };
         Server.allPlayersInfo.Add(playerState);
     }
@@ -216,8 +190,7 @@ public class StartGameButton : NetworkBehaviour
             Id = id,
             IsAI = true,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
-            TilePrefab = playerTilePrefabs[position],
-            SpaceshipPrefab = spaceshipPrefabs[position],
+            ColorNum= position,
         };
         Server.allPlayersInfo.Add(playerState);
         Server.artificialPlayers.Add(new ArtificialPlayer
@@ -272,5 +245,21 @@ public class StartGameButton : NetworkBehaviour
         Debug.Log("SetMapDataServerRpc");
         Map.mapData = availableMapsData[mapNumber];
         Debug.Log(Map.mapData);
+    }
+
+    void FirstTurn()
+    {
+        PlayerInfo nextPlayer = Server.allPlayersInfo.Where(p => p.Position == 0).First();
+        if (nextPlayer.IsAI)
+        { } // gameManager zaczyna turê gracza AI
+        else
+            FirstTurnClientRpc(nextPlayer.Id);
+    }
+
+    [ClientRpc]
+    void FirstTurnClientRpc(int id)
+    {
+        if (PlayerGameData.Id == id)
+            PlayerGameData.StartTurn();
     }
 }

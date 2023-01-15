@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class FinalPlayerResults : MonoBehaviour
 {
     public GameObject missionResultsPanel;
+    public List<GameObject> finalScreenPlayerTilePrefabs;
     
     // Start is called before the first frame update
     void Start()
@@ -24,7 +25,7 @@ public class FinalPlayerResults : MonoBehaviour
         {
             var player = players[i];
 
-            playerTile = Instantiate(player.TilePrefab, transform);
+            playerTile = Instantiate(finalScreenPlayerTilePrefabs[player.ColorNum], transform);
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (i + 1).ToString();
             playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = players[i].Name;
             playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].Points.ToString();

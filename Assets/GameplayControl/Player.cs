@@ -1,5 +1,4 @@
-﻿using Codice.Client.BaseCommands;
-using Newtonsoft.Json.Serialization;
+﻿using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -268,6 +267,16 @@ namespace Assets.GameplayControl
                 ids[i] = missions[i].id;
 
             return ids;
+        }
+
+        public static bool[] AreMissionsDone()
+        {
+            bool[] areDone = new bool[missions.Count];
+
+            for (int i = 0; i < missions.Count; i++)
+                areDone[i] = missions[i].isDone;
+
+            return areDone;
         }
     }
 }

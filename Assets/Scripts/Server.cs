@@ -12,4 +12,6 @@ public static class Server
     public static int curPlayerId;
     public static List<Mission> allMissions;
     public static int connectedPlayersCount;
+
+    public static List<GameObject> playerTilePrefabs;
 }

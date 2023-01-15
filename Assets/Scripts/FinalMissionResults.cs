@@ -24,6 +24,10 @@ public class FinalMissionResults : MonoBehaviour
 
     void RefreshList(List<Mission> missions)
     {
+        Debug.Log("RefreshList");
+        foreach (Mission m in missions)
+            Debug.Log($"{m.start.name} - {m.end.name}");
+        
         foreach(var tile in missionTiles)
         {
             Destroy(tile);

@@ -124,9 +124,9 @@ namespace Assets.GameplayControl
             Path path = BestPathToBuild();
             if (path != null)
             {
-                Debug.Log("AI builds path");
+                Debug.Log($"AI builds path {path.planetFrom.name} - {path.planetTo.name}");
                 BuildPath(path);
-                _GameManager.SetInfoTextServerRpc($"Gracz {Name} wybudował połączenie {path.planetFrom} - {path.planetTo}.");
+                _GameManager.SetInfoTextServerRpc($"Gracz {Name} wybudował połączenie {path.planetFrom.name} - {path.planetTo.name}.");
             }
             else if (missionsToDo.Count > 0)
             {
@@ -149,7 +149,7 @@ namespace Assets.GameplayControl
                     {
                         Debug.Log("AI builds path");
                         BuildPath(path);
-                        _GameManager.SetInfoTextServerRpc($"{Name} wybudował(a) połączenie {path.planetFrom} - {path.planetTo}.");
+                        _GameManager.SetInfoTextServerRpc($"{Name} wybudował(a) połączenie {path.planetFrom.name} - {path.planetTo.name}.");
                     }
                     else
                     {
@@ -188,6 +188,7 @@ namespace Assets.GameplayControl
             if (path.length > spaceshipsLeft) return false;
             if (numOfCardsInColor[path.color] < path.length
                 && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length) return false;
+            if(path.isBuilt) return false;
 
             return true;
         }
@@ -259,9 +260,11 @@ namespace Assets.GameplayControl
                 List<Path> quickestPath = GetQuickestPathForMission(mission);
 
                 foreach (Path path in quickestPath)
-                    Debug.Log(path + " " + path.color);
-
-                pathsToBuild.AddRange(quickestPath.Where(p => p.isBuilt == false));
+                {
+                    Debug.Log(path + " " + path.color + " " + path.isBuilt);
+                    if (!path.isBuilt)
+                        pathsToBuild.Add(path);
+                }
             }
         }
 
@@ -383,8 +386,8 @@ namespace Assets.GameplayControl
             ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, groupsOfConnectedPlanets);
 
             BuildPath buildPath = Server.buildPaths.Where(b => b.path == path).First();
-            buildPath.StartCoroutine(buildPath.BuildPathAnimation(Id));
-            buildPath.DoBuildPathByAI(Id);
+            //buildPath.StartCoroutine(buildPath.BuildPathAnimation(Id));
+            buildPath.DoBuildPathByAI(Server.allPlayersInfo.Where(p => p.Id == Id).First().ColorNum);
 
             _PlayersPanel.UpdatePointsAndSpeceshipsNumServerRpc(Id, curentPoints, spaceshipsLeft);
             _GameManager.SetBuildPathDataServerRpc(path.Id, Id);
@@ -530,6 +533,16 @@ namespace Assets.GameplayControl
                 ids[i] = missions[i].id;
 
             return ids;
+        }
+
+        public bool[] AreMissionsDone()
+        {
+            bool[] areDone = new bool[missions.Count];
+
+            for (int i = 0; i < missions.Count; i++)
+                areDone[i] = missions[i].isDone;
+
+            return areDone;
         }
     }
 }

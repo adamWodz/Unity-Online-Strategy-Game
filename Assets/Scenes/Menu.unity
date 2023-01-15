@@ -7973,16 +7973,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f57bf6f1c4a7b8849bfa3ac3b1c5dab9, type: 2}
   playerTilePrefabs:
   - {fileID: 4309489565412034509, guid: c39c7e2153448a84082966cf1d46d769, type: 3}
-  - {fileID: 4309489565412034509, guid: 179342bf4f142d34fb0278b20765017a, type: 3}
-  - {fileID: 4309489565412034509, guid: e56859b0537065148aab37104daba743, type: 3}
-  - {fileID: 4309489565412034509, guid: c428d38e5a50ef54ebea0be747381e33, type: 3}
-  - {fileID: 4309489565412034509, guid: a0418d0b9af24fa49b71053e4866dffa, type: 3}
+  - {fileID: 4309489565412034509, guid: 398e26b5dde2e654daa7679e4757e962, type: 3}
+  - {fileID: 4309489565412034509, guid: 337bc440f12f00548b212eb23bcc0d8b, type: 3}
+  - {fileID: 4309489565412034509, guid: 49f5a877da2de964b9d410dad8cecc8b, type: 3}
+  - {fileID: 4309489565412034509, guid: 9a3a5fad7251e1b459d2bee40fda37f8, type: 3}
   spaceshipPrefabs:
   - {fileID: 1072247400550304756, guid: 6c5fd9460b804394f902eb824cc2b7d6, type: 3}
   - {fileID: 1072247400550304756, guid: 893d72930218ea84f936a06baa3c214a, type: 3}
   - {fileID: 1072247400550304756, guid: 0cf66055bd5185d46acd93d9588c8f8e, type: 3}
   - {fileID: 1072247400550304756, guid: ff8c9dee62c54c54ca4ece92b1e44381, type: 3}
   - {fileID: 1072247400550304756, guid: b831a4e9bd3f54549a365fbfffbd79b4, type: 3}
+  PlayerList: {fileID: 0}
+  seats: []
 --- !u!1 &904133285
 GameObject:
   m_ObjectHideFlags: 0
@@ -12048,7 +12050,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1343759499}
   m_OnClick:
     m_PersistentCalls:
