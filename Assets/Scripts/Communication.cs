@@ -195,7 +195,7 @@ public static class Communication
 
     static void NextTurnActions()
     {
-        Debug.Log("NextTurn actions");
+        //Debug.Log("NextTurn actions");
         _PlayerPanel.playersOrderChanged = false;
         _PlayerPanel.UpdatePlayersOrderServerRpc();
         _playerPanel.StartNextPlayerTurnServerRpc();

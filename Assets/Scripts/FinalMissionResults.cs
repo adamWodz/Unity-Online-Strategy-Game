@@ -19,7 +19,7 @@ public class FinalMissionResults : MonoBehaviour
     public void UpdatePlayerId(int id)
     {
         missionsPlayerId = id;
-        RefreshList(Server.allPlayersInfo.First(p => p.Id == missionsPlayerId).missions);
+        RefreshList(Server.missionsByPlayerId[missionsPlayerId]);
     }
 
     void RefreshList(List<Mission> missions)

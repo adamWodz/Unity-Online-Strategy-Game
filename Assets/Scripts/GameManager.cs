@@ -354,13 +354,15 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     {
         var player = Server.allPlayersInfo.Where(p => p.Id == playerId).First();
         player.Points = playerPoints;
-        player.missions = new List<Mission>();
+        List<Mission> missions = new List<Mission>();
         for(int i = 0; i < missionIds.Length; i++)
         {
             Mission mission = Server.allMissions.First(m => m.id == missionIds[i]);
             mission.isDone = isMissionDoneMissionDone[i];
-            player.missions.Add(mission);
+            missions.Add(mission);
         }
+
+        Server.missionsByPlayerId.Add(playerId, missions);
 
         Debug.Log($"Set data for {playerId}");
     }

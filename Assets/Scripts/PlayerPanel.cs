@@ -30,9 +30,7 @@ public class PlayerInfo
     public bool IsAI;
     public int SpaceshipsLeft;
     public int PlayerTileId;
-    public int PlayerColorNumber;
     public int ColorNum;
-    public List<Mission> missions { set; get; } // uzupe³niana na koniec gry
 }
 
 public class PlayerInfoComparer: IComparer<PlayerInfo>
@@ -215,7 +213,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     [ServerRpc(RequireOwnership = false)]
     public void UpdatePlayersOrderServerRpc()
     {
-        Debug.Log("UpdatePlayersOrder: "+PlayerGameData.Id);
+        //Debug.Log("UpdatePlayersOrder: "+PlayerGameData.Id);
         UpdatePlayersOrderClientRpc();
     }
 
