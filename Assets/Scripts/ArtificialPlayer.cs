@@ -1,17 +1,7 @@
-﻿using JetBrains.Annotations;
-using Mono.Cecil.Cil;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
 //using UnityEditor.MemoryProfiler;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Assets.GameplayControl
 {
@@ -109,17 +99,14 @@ namespace Assets.GameplayControl
             UpdateMissions();
             SetPathsToBuild();
 
-            //PrintAllQuickestPaths();
-
-            /*
-            //BuildPath(Map.mapData.paths[0]);
-            //BuildPath(Map.mapData.paths[1]);
-
-            List<Color> colors = new List<Color>();
-            colors.Add(Color.red);
-            colors.Add(Color.blue);
-            //DrawCard(colors);
-            */
+            Debug.Log("Groups of connected planets");
+            foreach(var planets in groupsOfConnectedPlanets)
+            {
+                Debug.Log("group");
+                foreach (Planet planet in planets.planets)
+                    Debug.Log(planet.name);
+            }
+            Debug.Log("end: Groups of connected planets");
 
             Path path = BestPathToBuild();
             if (path != null)
@@ -170,7 +157,7 @@ namespace Assets.GameplayControl
             pathsToBuild = pathsToBuild.OrderByDescending(p1 => p1.length).ToList();
 
             foreach (var path in pathsToBuild)
-                if (CanBeBuild(path))
+                if (CanBeBuild(path) && !path.isBuilt)
                     return path;
 
             return null;
@@ -189,6 +176,8 @@ namespace Assets.GameplayControl
             if (numOfCardsInColor[path.color] < path.length
                 && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length) return false;
             if(path.isBuilt) return false;
+            if(ConnectedPlanets.ArePlanetsInOneGroup(groupsOfConnectedPlanets, path.planetFrom, path.planetTo))
+                return false;
 
             return true;
         }
@@ -412,17 +401,18 @@ namespace Assets.GameplayControl
         {
             
             List<Mission> pickedMissions = new List<Mission>();
-            List<Mission> missionsPool = missionsToDraw;
-            missionsPool.AddRange(missions);
+            //List<Mission> missionsPool = missionsToDraw;
+            //missionsPool.AddRange(missions);
 
             // podobieństwo do jednej z misji
             Dictionary<Mission, int> similarity = new Dictionary<Mission, int>();
             foreach(Mission mission in missionsToDraw)
             {
-                similarity.Add(mission, 0);
+                if (!similarity.ContainsKey(mission))
+                    similarity.Add(mission, 0);
             }
 
-            foreach(Mission mission1 in missionsToDraw)
+            /*foreach(Mission mission1 in missionsToDraw)
             {
                 foreach(Mission mission2 in missionsPool)
                 {
@@ -439,7 +429,17 @@ namespace Assets.GameplayControl
                             pickedMissions.Add(mission2);
                     }
                 }
-            }
+            }*/
+
+            int limit = 7;
+
+            foreach (Mission mission in missionsToDraw)
+                if (DistanceBetweenPlanetGroups(mission.start, mission.end) < limit)
+                {
+                    Debug.Log($"dist {mission.start} - {mission.end} {DistanceBetweenPlanetGroups(mission.start, mission.end)}");
+                    if(!pickedMissions.Contains(mission)) 
+                        pickedMissions.Add(mission);
+                }
 
             /*
             var pickedMissionsSimilarity = similarity.OrderByDescending(s => s.Value).ToList();
@@ -459,6 +459,45 @@ namespace Assets.GameplayControl
                 pickedMissions.Add(missionsToDraw.First());
 
             return pickedMissions;
+        }
+
+        int DistanceBetweenPlanetGroups(Planet p1, Planet p2)
+        {
+            if (ConnectedPlanets.ArePlanetsInOneGroup(groupsOfConnectedPlanets, p1, p2))
+                return 0;
+
+            int distance = int.MaxValue;
+
+            List<Planet> group1, group2;
+
+            ConnectedPlanets planets1 = ConnectedPlanets.GroupContainingPlanet(groupsOfConnectedPlanets, p1);
+            if (planets1 != null)
+                group1 = planets1.planets;
+            else
+            {
+                group1 = new List<Planet>();
+                group1.Add(p1);
+            }
+
+            ConnectedPlanets planets2 = ConnectedPlanets.GroupContainingPlanet(groupsOfConnectedPlanets, p2);
+            if (planets2 != null)
+                group2 = planets2.planets;
+            else
+            {
+                group2 = new List<Planet>();
+                group2.Add(p2);
+            }
+
+            foreach (Planet planet1 in group1)
+                foreach (Planet planet2 in group2)
+                {
+                    if (dist[planetIds[planet1], planetIds[planet2]] < distance)
+                    {
+                        distance = dist[planetIds[planet1], planetIds[planet2]];
+                    }
+                }
+
+            return distance;
         }
 
         private void DrawCards()

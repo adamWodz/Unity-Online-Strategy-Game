@@ -15,8 +15,6 @@ public class StartGameButton : NetworkBehaviour
     public List<MapData> availableMapsData;
     public List<GameObject> playerTilePrefabs;
     public List<GameObject> spaceshipPrefabs;
-    int allPlayersLimit = 5;
-    int startSpaceshipsNumber = 10;
     string IndexesAI, IndexesReg;
     public PlayerList PlayerList;
     public List<PlayerSeat> seats;
@@ -47,6 +45,9 @@ public class StartGameButton : NetworkBehaviour
         int aiPlayersNum = IndexesAI.Length;
         //int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
         int nonAiPlayersNum = IndexesReg.Length;
+
+        if (aiPlayersNum + nonAiPlayersNum > 3)
+            Board.startSpaceshipsNumber = 20;
 
         seats = PlayerList.seats;
 

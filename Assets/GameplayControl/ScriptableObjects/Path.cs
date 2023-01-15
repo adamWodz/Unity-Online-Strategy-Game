@@ -13,7 +13,7 @@ public class Path : ScriptableObject
     public Planet planetTo;
     public Color color;
     public int length;
-    public bool isBuilt { get; set; } = false;
+    public bool isBuilt = false;
     public int builtById;
     //public bool withSatellie { get; set; } = false;
     //public PlayerState playerOfSatellite;

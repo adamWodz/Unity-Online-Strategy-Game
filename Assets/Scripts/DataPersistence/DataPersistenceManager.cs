@@ -10,7 +10,7 @@ public class DataPersistenceManager : NetworkBehaviour
     [SerializeField] private string fileName;
     [SerializeField] private bool useEncryption;
 
-    private GameData gameData;
+    public static GameData gameData;
 
     private List<IDataPersistence> dataPersistenceObjects;
 

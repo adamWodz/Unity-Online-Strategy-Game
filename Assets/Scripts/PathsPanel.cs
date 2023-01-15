@@ -333,6 +333,8 @@ public class PathsPanel : Panel
     [ServerRpc(RequireOwnership = false)]
     void SendMissionsChosenServerRpc(string startPlanetName, string endPlanetName, int points,int id,bool isDone)//ServerRpcParams serverRpcParams = default)
     {
+        Debug.Log($"gracz {id} dobra³ misjê");
+        
         //int id = (int)serverRpcParams.Receive.SenderClientId;
         receivedMissions[id].Add(new MissionData()
         {
@@ -341,7 +343,12 @@ public class PathsPanel : Panel
             points = points,
             isDone = isDone
         });
-        //Debug.Log("Server Rpc received missions: "+ receivedMissions[id].Count);    
+        //Debug.Log("Server Rpc received missions: "+ receivedMissions[id].Count);
+        //
+
+        Debug.Log($"receivedMissions {receivedMissions.Length}");
+        for(int i = 0; i < Server.allPlayersInfo.Count; i++)
+            Debug.Log($"data: {i} {receivedMissions[i].Count}");
     }
 
     [ClientRpc]

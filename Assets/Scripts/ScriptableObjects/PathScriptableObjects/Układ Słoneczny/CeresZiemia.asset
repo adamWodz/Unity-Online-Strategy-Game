@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
-  m_Name: NibiruWenus
+  m_Name: CeresZiemia
   m_EditorClassIdentifier: 
-  Id: 24
-  planetFrom: {fileID: 11400000, guid: 91dd8921d6beece42a0c61f6b8e2c99e, type: 2}
-  planetTo: {fileID: 11400000, guid: 6d8c31ca984ee544bb85080570b5181c, type: 2}
-  color: 1
-  length: 3
+  Id: 104
+  planetFrom: {fileID: 11400000, guid: a69baaed7e2b5bd4098c16f95dfad41f, type: 2}
+  planetTo: {fileID: 11400000, guid: caf05907f71cd244ea4973478fe4f5a3, type: 2}
+  color: 0
+  length: 5
   builtById: 0
