@@ -80,7 +80,7 @@ public static class Communication
         _GameManager.SetBuildPathDataServerRpc(path.Id, PlayerGameData.Id);
         chosenPath = null;
 
-        _GameManager.SetInfoTextServerRpc($"{PlayerGameData.Name} wybudował(a) połączenie {path.planetFrom}-{path.planetTo}.");
+        _GameManager.SetInfoTextServerRpc($"{PlayerGameData.Name} wybudował(a) połączenie {path.planetFrom.name}-{path.planetTo.name}.");
 
         _GameManager.EndTurn();
 

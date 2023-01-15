@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using Unity.Netcode;
+using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -30,9 +31,8 @@ public class PlayerInfo
     public int SpaceshipsLeft;
     public int PlayerTileId;
     public int PlayerColorNumber;
-    public GameObject TilePrefab;
-    public GameObject SpaceshipPrefab;
-    public List<Mission> missions; // uzupe³niana na koniec gry
+    public int ColorNum;
+    public List<Mission> missions { set; get; } // uzupe³niana na koniec gry
 }
 
 public class PlayerInfoComparer: IComparer<PlayerInfo>
@@ -68,6 +68,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
    
     [SerializeField] public List<PlayerInfo> players;
     [SerializeField] private GameObject playerTilePrefab;
+    public List<GameObject> playerTilesPrefabs;
     Queue<GameObject> playersTiles;
     Dictionary<int, GameObject> playerTilesByIds = new Dictionary<int, GameObject>();
     public bool playersOrderChanged = false;
@@ -98,11 +99,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             {
                 var player = players.Where(p => p.Position == i).First();
 
-                playerTile = Instantiate(player.TilePrefab, transform);
-                playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (players[i].Position + 1).ToString();
-                playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = players[i].Name;
-                playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = players[i].Points.ToString();
-                playerTile.transform.GetChild(3).GetComponent<TMP_Text>().text = players[i].SpaceshipsLeft.ToString();
+                playerTile = Instantiate(playerTilesPrefabs[player.ColorNum], transform);
+                SetPlayerTileTransform(playerTile, players[i]);
                 playersTiles.Enqueue(playerTile);
 
                 player.PlayerTileId = playerTile.GetInstanceID();
@@ -110,6 +108,14 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             }
             //Destroy(playerTextTemplate);
         }
+    }
+
+    void SetPlayerTileTransform(GameObject playerTile, PlayerInfo playerInfo)
+    {
+        playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (playerInfo.Position + 1).ToString();
+        playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = playerInfo.Name;
+        playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = playerInfo.Points.ToString();
+        playerTile.transform.GetChild(3).GetComponent<TMP_Text>().text = playerInfo.SpaceshipsLeft.ToString();
     }
 
     // Update is called once per frame
@@ -180,10 +186,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         //GameObject playerTextTemplate = transform.GetChild(0).gameObject;
         playersTiles ??= new();
         var playerTile = Instantiate(playerTilePrefab, transform);
-        playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = (playerInfo.Position + 1).ToString();
-        playerTile.transform.GetChild(1).GetComponent<TMP_Text>().text = playerInfo.Name;
-        playerTile.transform.GetChild(2).GetComponent<TMP_Text>().text = playerInfo.SpaceshipsLeft.ToString();
-        playerTile.transform.GetChild(3).GetComponent<TMP_Text>().text = playerInfo.Points.ToString();
+        SetPlayerTileTransform(playerTile, playerInfo);
         playerTile.transform.SetSiblingIndex(playerInfo.Position);
         
         var player = players.Where(p => p.Position == playerInfo.Position).First();
@@ -253,7 +256,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         while(!playersOrderChanged) { }
         
         PlayerInfo nextPlayer = players.Where(p => p.Position == 0).First();
-        //Debug.Log("StartNextPlayerTurnServerRpc; playerId: " + nextPlayer.Id);
+        Debug.Log("StartNextPlayerTurnServerRpc; playerName: " + nextPlayer.Name + " isAI " + nextPlayer.IsAI);
         if (nextPlayer.IsAI)
             Communication.StartAiTurn(nextPlayer.Id);
         else
@@ -281,8 +284,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         var player = players.Where(p => p.Id == playerId).First();
         player.Points = playerPoints;
         player.SpaceshipsLeft = spaceshipsLeft;
-        playerTilesByIds[player.PlayerTileId].transform.GetChild(2).GetComponent<TMP_Text>().text = player.SpaceshipsLeft.ToString();
-        playerTilesByIds[player.PlayerTileId].transform.GetChild(3).GetComponent<TMP_Text>().text = player.Points.ToString();
+        playerTilesByIds[player.PlayerTileId].transform.GetChild(2).GetComponent<TMP_Text>().text = player.Points.ToString();
+        playerTilesByIds[player.PlayerTileId].transform.GetChild(3).GetComponent<TMP_Text>().text = player.SpaceshipsLeft.ToString();
     }
 
     [ClientRpc]

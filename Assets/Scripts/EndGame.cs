@@ -49,7 +49,9 @@ public class EndGame : MonoBehaviour
     {
         NetworkManager.Singleton.Shutdown();
         
-        string name = "Scenes/Menu";
-        SceneManager.LoadScene(name, LoadSceneMode.Single);
+        Application.Quit();
+
+        /*string name = "Scenes/Menu";
+        SceneManager.LoadScene(name, LoadSceneMode.Single);*/
     }
 }

@@ -1577,6 +1577,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   missionResultsPanel: {fileID: 1032398448}
+  finalScreenPlayerTilePrefabs:
+  - {fileID: 4309489565412034509, guid: c39c7e2153448a84082966cf1d46d769, type: 3}
+  - {fileID: 4309489565412034509, guid: 398e26b5dde2e654daa7679e4757e962, type: 3}
+  - {fileID: 4309489565412034509, guid: 337bc440f12f00548b212eb23bcc0d8b, type: 3}
+  - {fileID: 4309489565412034509, guid: 49f5a877da2de964b9d410dad8cecc8b, type: 3}
+  - {fileID: 4309489565412034509, guid: 9a3a5fad7251e1b459d2bee40fda37f8, type: 3}
 --- !u!1 &426874996
 GameObject:
   m_ObjectHideFlags: 0
@@ -3255,7 +3261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fb5951f72bd9f44096c1378a5ae37ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  missionTalePrefab: {fileID: 8818678304912476882, guid: 6a81663fec66bf24d9dd7d7588f92478, type: 3}
+  missionTalePrefab: {fileID: 8818678304912476882, guid: 4180a031eeb0f2f498e49f40e96ef908, type: 3}
   missionsPlayerId: 0
 --- !u!1 &1071830720
 GameObject:
@@ -3920,6 +3926,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   players: []
   playerTilePrefab: {fileID: 4309489565412034509, guid: c39c7e2153448a84082966cf1d46d769, type: 3}
+  playerTilesPrefabs:
+  - {fileID: 4309489565412034509, guid: c39c7e2153448a84082966cf1d46d769, type: 3}
+  - {fileID: 4309489565412034509, guid: 398e26b5dde2e654daa7679e4757e962, type: 3}
+  - {fileID: 4309489565412034509, guid: 337bc440f12f00548b212eb23bcc0d8b, type: 3}
+  - {fileID: 4309489565412034509, guid: 49f5a877da2de964b9d410dad8cecc8b, type: 3}
+  - {fileID: 4309489565412034509, guid: 9a3a5fad7251e1b459d2bee40fda37f8, type: 3}
   playersOrderChanged: 0
 --- !u!114 &1223933408
 MonoBehaviour:

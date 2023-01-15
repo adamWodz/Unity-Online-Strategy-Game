@@ -126,7 +126,7 @@ namespace Assets.GameplayControl
             {
                 Debug.Log("AI builds path");
                 BuildPath(path);
-                _GameManager.SetInfoTextServerRpc($"Gracz {Name} wybudował połączenie {path.planetFrom} - {path.planetTo}.");
+                _GameManager.SetInfoTextServerRpc($"Gracz {Name} wybudował połączenie {path.planetFrom.name} - {path.planetTo.name}.");
             }
             else if (missionsToDo.Count > 0)
             {
@@ -149,7 +149,7 @@ namespace Assets.GameplayControl
                     {
                         Debug.Log("AI builds path");
                         BuildPath(path);
-                        _GameManager.SetInfoTextServerRpc($"{Name} wybudował(a) połączenie {path.planetFrom} - {path.planetTo}.");
+                        _GameManager.SetInfoTextServerRpc($"{Name} wybudował(a) połączenie {path.planetFrom.name} - {path.planetTo.name}.");
                     }
                     else
                     {

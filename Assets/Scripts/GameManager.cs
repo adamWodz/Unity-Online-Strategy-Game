@@ -37,6 +37,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     GameObject drawCardsButton;
 
     public List<GameObject> spawnedObjects { get; set; } = new List<GameObject>();
+    public List<NetworkObject> spawnedSpaceships { get; set; } = new List<NetworkObject>();
     public GameObject endGamePanel;
 
     // Start is called before the first frame update
@@ -59,14 +60,19 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
         SetInfoTextServerRpc($"Tura gracza {Server.allPlayersInfo.First(p => p.Position == 0).Name}.");
         ShowStartMessageClientRpc();
+        PlayerInfo nextPlayer = Server.allPlayersInfo.Where(p => p.Position == 0).First();
+        if (nextPlayer.IsAI)
+            Communication.StartAiTurn(nextPlayer.Id);
 
-        if(!NetworkManager.IsHost)
+        if (!NetworkManager.IsHost)
         {
             NetworkManager.Singleton.OnClientDisconnectCallback +=
                 (i) =>
                 {
-                    NetworkManager.Singleton.Shutdown();
-                    SceneManager.LoadScene("Scenes/Menu");
+                    //NetworkManager.Singleton.Shutdown();
+                    //SceneManager.LoadScene("Scenes/Menu");
+                    Debug.Log("StopHost");
+                    Application.Quit();
                 };
             
         }
@@ -91,6 +97,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
                 List<PlayerInfo> allClients = Server.allPlayersInfo.Where(p => p.IsAI == false).ToList();
                 PingClientRpc();
                 StartCoroutine(VerifyClientIds(allClients));
+                Server.connectedPlayersCount = NetworkManager.Singleton.ConnectedClients.Count;
             }
     }
 
@@ -145,6 +152,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         {
             playerNumOfCardsInColor.Add((Color)i, playersCards[i]);
         }
+        Debug.Log("GameManager; playerName: " + playerInfo.Name + " isAI " + playerInfo.IsAI);
         playerInfo.IsAI = true;
 
         var newAI = new ArtificialPlayer
@@ -159,6 +167,11 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
             missionsToDo = playerMissions
         };
         Server.artificialPlayers.Add(newAI);
+
+        foreach (var mission in newAI.missions)
+            Debug.Log($"{mission.start.name} - {mission.end.name}");
+
+        SetInfoTextServerRpc($"{playerInfo.Name} rozłączył(a) się i został(a) zastąpiony/a przez komputer.");
         return newAI;
     }
 
@@ -174,7 +187,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
         spawnedShip.goalPosition = position;
         spawnedShip.goalRotation = rotation;
-        spawnedObjects.Add(spawnedShipGameObject);
+        spawnedSpaceships.Add(spawnedShipGameObject.GetComponent<NetworkObject>());
     }
 
     public void SpawnCards(Transform t, int color, string name)
@@ -347,6 +360,8 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
             Mission mission = Server.allMissions.First(m => m.id == missionIds[i]);
             player.missions.Add(mission);
         }
+
+        Debug.Log($"Set data for {playerId}");
     }
 
     [ClientRpc]
@@ -355,9 +370,15 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         ShowFadingPopUpWindow("Koniec gry!");
 
         PlayerGameData.CalculateFinalPoints();
-        SetFinalPointsAndMissionsNumClientRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.GetMissionIds());
+        PropagateClientEndDataServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.GetMissionIds());
 
         StartCoroutine(EndGame());
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void PropagateClientEndDataServerRpc(int id, int finalPoints, int[] missionIds)
+    {
+        SetFinalPointsAndMissionsNumClientRpc(id, finalPoints, missionIds);
     }
 
     IEnumerator EndGame()
@@ -378,6 +399,15 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         {
             if(gameObject != null)
                 gameObject.SetActive(false);
+        }
+
+        if(NetworkManager.IsServer)
+        {
+            foreach (NetworkObject gameSpaceship in spawnedSpaceships)
+            {
+                if (gameSpaceship != null)
+                    gameSpaceship.Despawn();
+            }
         }
     }
 

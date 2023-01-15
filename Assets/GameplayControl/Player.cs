@@ -1,5 +1,4 @@
-﻿using Codice.Client.BaseCommands;
-using Newtonsoft.Json.Serialization;
+﻿using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
