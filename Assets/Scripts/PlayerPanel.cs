@@ -165,7 +165,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     [ClientRpc]
     void LoadPlayersListClientRpc(int position,int points,string name,int id,bool isAI, int spaceshipsLeft, int playerTileId, int colorNum)
     {
-        if(position==0 && isAI)
+        if(position == 0 && isAI)
         {
             Communication.StartAiTurn(id);
         }
@@ -191,18 +191,19 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         playersTiles ??= new();
         var playerTile = Instantiate(playerTilesPrefabs[colorNum], transform);
         SetPlayerTileTransform(playerTile, playerInfo);
-        playerTile.transform.SetSiblingIndex(playerInfo.Position);
+        playerTile.transform.SetSiblingIndex(position);
         
-        var player = players.Where(p => p.Position == playerInfo.Position).First();
+        var player = players.Where(p => p.Position == position).First();
         player.PlayerTileId = playerTile.GetInstanceID();
         playerTilesByIds ??= new();
         playerTilesByIds.Add(player.PlayerTileId, playerTile);
         playersTiles.Enqueue(playerTile);
 
-        if (PlayerGameData.Id == playerInfo.Id)
+        if (PlayerGameData.Name == name)//PlayerGameData.Id == playerInfo.Id)
         {
-            PlayerGameData.spaceshipsLeft = playerInfo.SpaceshipsLeft;
-            PlayerGameData.curentPoints = playerInfo.Points;
+            PlayerGameData.spaceshipsLeft = spaceshipsLeft;
+            PlayerGameData.curentPoints = points;
+            PlayerGameData.Id = id;
         }
     }
 

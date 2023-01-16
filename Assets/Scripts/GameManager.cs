@@ -115,13 +115,13 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     [ClientRpc]
     void PingClientRpc()
     {
-        PingServerRpc();
+        PingServerRpc(PlayerGameData.Id);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void PingServerRpc()
+    void PingServerRpc(int id)
     {
-        connectedClientIds.Add(PlayerGameData.Id);
+        connectedClientIds.Add(id);
     }
 
     IEnumerator VerifyClientIds(List<PlayerInfo> allClients)

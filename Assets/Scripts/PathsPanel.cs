@@ -273,9 +273,12 @@ public class PathsPanel : Panel
             // host wysy³a rpc innym graczom z danymi
             for (int i = 0; i < Server.allPlayersInfo.Count; i++)
             {
+                Debug.Log($"ID: {Server.allPlayersInfo[i].Id}, Name: {Server.allPlayersInfo[i].Name}");
+
                 if (Server.allPlayersInfo[i].Id != PlayerGameData.Id)
                 {
                     // ustawiam rpc na wysy³anie do konkretnego gracza (kazdy gracz musi otrzymac inne dane)
+                    /*
                     ClientRpcParams clientRpcParams = new()
                     {
                         Send = new ClientRpcSendParams
@@ -283,11 +286,12 @@ public class PathsPanel : Panel
                             TargetClientIds = new ulong[] { (ulong)Server.allPlayersInfo[i].Id }
                         }
                     };
+                    */
 
                     missionsData = data.missionsForEachPalyer[Server.allPlayersInfo[i].Id];
                     foreach(var mD in missionsData)
                     {
-                        LoadMissionsChosenClientRpc(mD.startPlanetName,mD.endPlanetName,mD.points, mD.isDone, clientRpcParams);
+                        LoadMissionsChosenClientRpc(mD.startPlanetName, mD.endPlanetName, mD.points, mD.isDone, Server.allPlayersInfo[i].Name, Server.allPlayersInfo[i].Id);//, clientRpcParams);
                     }
                 }
             }
@@ -353,18 +357,22 @@ public class PathsPanel : Panel
     }
 
     [ClientRpc]
-    void LoadMissionsChosenClientRpc(string startPlanetName, string endPlanetName, int points,bool isDone, ClientRpcParams clientRpcParams = default)
+    void LoadMissionsChosenClientRpc(string startPlanetName, string endPlanetName, int points,bool isDone,string name,int id, ClientRpcParams clientRpcParams = default)
     {
-        map = GameObject.Find("Space").GetComponent<Map>();
-        Debug.Log(map);
-        Mission mission = map.Missions.Single(m => m.start.name == startPlanetName && m.end.name == endPlanetName && m.points == points);
-        mission.isDone = isDone;
-        Debug.Log(mission);
-        List<Mission> missions = new()
+        if (PlayerGameData.Name == name)
         {
+            PlayerGameData.Id = id;
+            map = GameObject.Find("Space").GetComponent<Map>();
+            Debug.Log(map);
+            Mission mission = map.Missions.Single(m => m.start.name == startPlanetName && m.end.name == endPlanetName && m.points == points);
+            mission.isDone = isDone;
+            Debug.Log($"{PlayerGameData.Id} has {mission}");
+            List<Mission> missions = new()
+            {
             mission
-        };
-        missionsChosen ??= new();
-        MissionsChosen = missions;
+            };
+            missionsChosen ??= new();
+            MissionsChosen = missions;
+        }
     }
 }
