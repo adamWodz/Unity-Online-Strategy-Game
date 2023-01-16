@@ -291,7 +291,7 @@ public class PathsPanel : Panel
                     missionsData = data.missionsForEachPalyer[Server.allPlayersInfo[i].Id];
                     foreach(var mD in missionsData)
                     {
-                        LoadMissionsChosenClientRpc(mD.startPlanetName, mD.endPlanetName, mD.points, mD.isDone, Server.allPlayersInfo[i].Name, Server.allPlayersInfo[i].Id);//, clientRpcParams);
+                        LoadMissionsChosenClientRpc(mD.startPlanetName, mD.endPlanetName, mD.points, mD.isDone, Server.allPlayersInfo[i].Name, Server.allPlayersInfo[i].Id, Server.allPlayersInfo[i].UnityId);//, clientRpcParams);
                     }
                 }
             }
@@ -357,9 +357,9 @@ public class PathsPanel : Panel
     }
 
     [ClientRpc]
-    void LoadMissionsChosenClientRpc(string startPlanetName, string endPlanetName, int points,bool isDone,string name,int id, ClientRpcParams clientRpcParams = default)
+    void LoadMissionsChosenClientRpc(string startPlanetName, string endPlanetName, int points,bool isDone,string name,int id,string UnityId, ClientRpcParams clientRpcParams = default)
     {
-        if (PlayerGameData.Name == name)
+        if (PlayerGameData.UnityId == UnityId)
         {
             PlayerGameData.Id = id;
             map = GameObject.Find("Space").GetComponent<Map>();

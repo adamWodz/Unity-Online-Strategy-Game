@@ -25,6 +25,8 @@ namespace Assets.GameplayControl
         public static int Id { set;  get; }
         public static string Name { set; get; } = "Gracz";
 
+        public static string UnityId { set; get; }
+
         public static List<string> AINames = new List<string> 
         {
             "Hans Olo",
