@@ -290,7 +290,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     public void SetPopUpWindow(string message)
     {
         var popUp = GameObject.Find("Canvas").transform.Find("PopUpPanel");//transform.parent.GetChild(0);
-        popUp.transform.Find("InfoText").GetComponent<TMP_Text>().text = message;
+        popUp.transform.Find("InfoText").GetComponent<TextMeshProUGUI>().text = message;
         popUp.gameObject.SetActive(true);
     }
 

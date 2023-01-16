@@ -153,7 +153,7 @@ public class MissionsPanel : Panel
         }
         else
         {
-            gameManager.SetPopUpWindow("Musisz wybra� co najmniej jedn� kart� misji!");
+            gameManager.SetPopUpWindow("Musisz wybrać co najmniej jednć kartę misji!");
         }
     }
 
