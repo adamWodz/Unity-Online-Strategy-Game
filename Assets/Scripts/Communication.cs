@@ -227,4 +227,10 @@ public static class Communication
             }
         }
     }
+
+    public static void Reset()
+    {
+        isLastTurn = false;
+        loadOnStart = false;
+    }
 }

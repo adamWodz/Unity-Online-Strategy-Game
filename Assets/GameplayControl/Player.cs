@@ -289,5 +289,28 @@ namespace Assets.GameplayControl
 
             return areDone;
         }
+
+        public static void Reset()
+        {
+            curentPoints = 0;
+            spaceshipsLeft = Board.startSpaceshipsNumber;
+            satellitesSent = 0;
+            lastTurn = false;
+            missions = new List<Mission>();
+            completedMissions = new List<Mission>();
+            numOfCardsInColor = new Dictionary<Color, int>()
+            {
+                { Color.pink, 1 },
+                { Color.red, 1 },
+                { Color.blue, 1 },
+                { Color.yellow, 1 },
+                { Color.green, 1 },
+                { Color.special, 1 },
+            };
+            isNowPlaying = false;
+            isDrawingMission = false;
+            cardsDrewInTurn = 0;
+            groupsOfConnectedPlanets = new List<ConnectedPlanets>();
+    }
     }
 }

@@ -49,9 +49,24 @@ public class EndGame : MonoBehaviour
     {
         NetworkManager.Singleton.Shutdown();
         
-        Application.Quit();
+        foreach(Mission mission in Map.mapData.missions)
+        {
+            mission.isDone = false;
+        }
 
-        /*string name = "Scenes/Menu";
-        SceneManager.LoadScene(name, LoadSceneMode.Single);*/
+        foreach(Path path in Map.mapData.paths)
+        {
+            path.isBuilt = false;
+            path.builtById = -1;
+        }
+
+        PlayerGameData.Reset();
+        Server.Reset();
+        Communication.Reset();
+
+        //Application.Quit();
+
+        string name = "Scenes/Menu";
+        SceneManager.LoadScene(name, LoadSceneMode.Single);
     }
 }
