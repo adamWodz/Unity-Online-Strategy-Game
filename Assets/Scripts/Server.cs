@@ -15,4 +15,10 @@ public static class Server
     public static int connectedPlayersCount;
 
     public static List<GameObject> playerTilePrefabs;
+
+    public static void Reset()
+    {
+        buildPaths = new List<BuildPath>();
+        missionsByPlayerId = new Dictionary<int, List<Mission>>();
+    }
 }
