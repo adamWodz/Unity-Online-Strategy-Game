@@ -63,6 +63,7 @@ public class MissionsPanel : Panel
     [ClientRpc]
     void SyncMissionsToChooseClientRpc(string startPlanetName, string endPlanetName)
     {
+        Debug.Log(startPlanetName+endPlanetName);
         missionsToChoose.RemoveAll(m => m.start.name == startPlanetName && m.end.name == endPlanetName);
     }
 
@@ -164,20 +165,25 @@ public class MissionsPanel : Panel
     {
         if (IsHost)
         {
-            map = GameObject.Find("Space").GetComponent<Map>();
-            Debug.Log($"Mapa: {map}");
-            Debug.Log(missionsToChoose);
-            missionsToChoose ??= new();
-            Debug.Log(map.Missions);
-            Debug.Log(Map.mapData.missions);
+            //map = GameObject.Find("Space").GetComponent<Map>();
+            //Debug.Log($"Mapa: {map}");
+            //Debug.Log(missionsToChoose);
+            //missionsToChoose ??= new();
+            //Debug.Log(map.Missions);
+            //Debug.Log(Map.mapData.missions);
             //missionsToChoose.AddRange(map.Missions);
             //missionsToChoose = data.missionsToChoose;
-            
-            foreach (PlayerInfo playerInfo in Server.allPlayersInfo)
+            //Debug.Log(Server.allPlayersInfo.Count);
+            //Debug.Log(data.players.Count);
+            foreach (PlayerInfo playerInfo in data.players)
             {
-                var missionsChoosed = data.missionsForEachPalyer[playerInfo.Id];
+                //Debug.Log("Name:" + playerInfo.Name);
+                List<MissionData> missionsChoosed = data.missionsForEachPalyer[playerInfo.Id];
+                //Debug.Log(missionsChoosed.Count);
                 foreach (MissionData m in missionsChoosed)
+                {
                     SyncMissionsToChooseClientRpc(m.startPlanetName, m.endPlanetName);
+                }
             }
             
         }
