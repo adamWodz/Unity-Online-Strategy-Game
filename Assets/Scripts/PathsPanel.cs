@@ -246,9 +246,14 @@ public class PathsPanel : Panel
                 return false;
             });
             MissionsChosen = missions.ToList();
+            
+            PlayerGameData.missions ??= new();
+            PlayerGameData.completedMissions ??= new();
+            PlayerGameData.completedMissions = missions.Where(m => m.isDone).ToList();
+            PlayerGameData.missions = missions.ToList();
 
             //AI
-            foreach(var artificialPlayer in Server.artificialPlayers)
+            foreach (var artificialPlayer in Server.artificialPlayers)
             {
                 missionsData = data.missionsForEachPalyer[artificialPlayer.Id];
                 missions = map.Missions.Where(mission =>
@@ -266,9 +271,11 @@ public class PathsPanel : Panel
                     if (mission.isDone)
                         artificialPlayer.missionsDone.Add(mission);
                     else
-                        artificialPlayer.missionsToDo = missions.ToList();
+                        artificialPlayer.missionsToDo.Add(mission);
                 }
             }
+
+            // wczytywanie misji do PlayerGameData
 
             // host wysy³a rpc innym graczom z danymi
             for (int i = 0; i < Server.allPlayersInfo.Count; i++)
@@ -338,7 +345,7 @@ public class PathsPanel : Panel
     void SendMissionsChosenServerRpc(string startPlanetName, string endPlanetName, int points,int id,bool isDone)//ServerRpcParams serverRpcParams = default)
     {
         Debug.Log($"gracz {id} dobra³ misjê");
-        
+        Debug.Log($"Done? {isDone}");
         //int id = (int)serverRpcParams.Receive.SenderClientId;
         receivedMissions[id].Add(new MissionData()
         {
@@ -371,8 +378,15 @@ public class PathsPanel : Panel
             {
             mission
             };
+            PlayerGameData.missions ??= new();
+            PlayerGameData.completedMissions??= new();
+            if (isDone)
+                PlayerGameData.completedMissions.Add(mission);
+            PlayerGameData.missions.Add(mission);
             missionsChosen ??= new();
             MissionsChosen = missions;
+            Debug.Log("Misje: " + PlayerGameData.missions.Count);
+            Debug.Log("Misje zrobione: "+PlayerGameData.completedMissions.Count);
         }
     }
 }

@@ -40,7 +40,7 @@ namespace Assets.GameplayControl
         public static int satellitesSent { get; set; } = 0;
         public static bool lastTurn = false;
         public static List<Mission> missions = new List<Mission>();
-        static List<Mission> completedMissions = new List<Mission>();
+        public static List<Mission> completedMissions = new List<Mission>();
         public static Dictionary<Color, int> numOfCardsInColor = new Dictionary<Color, int>()
         {
             { Color.pink, 1 },
