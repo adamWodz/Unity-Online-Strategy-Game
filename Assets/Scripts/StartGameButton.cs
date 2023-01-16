@@ -94,6 +94,7 @@ public class StartGameButton : NetworkBehaviour
                     position = int.Parse(pos.ToString());
                     clientID = (int)clients[iRe].ClientId;
                     nick = "Gracz";
+
                     if (lobbyplayers[iRe].Data != null)
                     {
                         nick = lobbyplayers[iRe].Data["UserName"].Value;
@@ -302,7 +303,7 @@ public class StartGameButton : NetworkBehaviour
         {
             PlayerInfo nextPlayer = Server.allPlayersInfo.Where(p => p.Position == 0).First();
             if (nextPlayer.IsAI)
-            { } // gameManager zaczyna turê gracza AI
+            { } // gameManager zaczyna turÃª gracza AI
             else
                 FirstTurnClientRpc(nextPlayer.Id);
         }
