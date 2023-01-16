@@ -42,8 +42,7 @@ public class StartGameButton : NetworkBehaviour
         Debug.Log($"[ChooseMapMenu.StartGame] {NetworkManager != null} {NetworkManager.SceneManager != null}");
         var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
 
-        if(!Communication.loadOnStart)
-            SetClientIdClientRpc();
+        SetClientIdClientRpc();
 
         LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
         PlayerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
@@ -72,6 +71,7 @@ public class StartGameButton : NetworkBehaviour
             var clients = NetworkManager.Singleton.ConnectedClientsList;
 
             int clientID;
+            string UnityId="";
             int iAI = 5, iRe = 0;
             int n = IndexesReg.Length + IndexesAI.Length;
             string nick = "";
@@ -94,8 +94,12 @@ public class StartGameButton : NetworkBehaviour
                     position = int.Parse(pos.ToString());
                     clientID = (int)clients[iRe].ClientId;
                     nick = "Gracz";
-                    if (lobbyplayers[iRe].Data != null) nick = lobbyplayers[iRe++].Data["UserName"].Value;
-                    AddRealPlayerClientRpc(nick, position, clientID);
+                    if (lobbyplayers[iRe].Data != null)
+                    {
+                        nick = lobbyplayers[iRe].Data["UserName"].Value;
+                        UnityId = lobbyplayers[iRe++].Id;
+                    }
+                    AddRealPlayerClientRpc(nick, position, clientID, UnityId);
                 }
             }
 
@@ -106,7 +110,7 @@ public class StartGameButton : NetworkBehaviour
                     Debug.Log(player.Id);
                 Debug.Log("end PlayerIDs");
             }
-            SetClientNamesClientRpc();
+            //SetClientNamesClientRpc();
 
             FirstTurn();
         }
@@ -180,7 +184,7 @@ public class StartGameButton : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void AddRealPlayerClientRpc(string name, int position, int id)
+    public void AddRealPlayerClientRpc(string name, int position, int id, string UnityId)
     {
         PlayerInfo playerState = new PlayerInfo
         {
@@ -191,8 +195,9 @@ public class StartGameButton : NetworkBehaviour
             IsAI = false,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
             ColorNum = position,
-            UnityId = AuthenticationService.Instance.PlayerId
+            UnityId = UnityId
         };
+        //PlayerGameData.UnityId = UnityId;
         Server.allPlayersInfo.Add(playerState);
     }
 
@@ -235,38 +240,40 @@ public class StartGameButton : NetworkBehaviour
             Id = id,
         });
     }
-
+    
     [ClientRpc]
     public void SetClientIdClientRpc()
     {
         PlayerGameData.Id = (int)NetworkManager.Singleton.LocalClientId;
-        Debug.Log("SetClientId: "+AuthenticationService.Instance.PlayerId);
         PlayerGameData.UnityId = AuthenticationService.Instance.PlayerId;
     }
-
+    /*
     [ClientRpc]
     public void SetClientNamesClientRpc()
     {
-        Debug.Log("SetClientNamesClientRpc: " + PlayerGameData.UnityId);
+        //Debug.Log("SetClientNamesClientRpc UnityId: " + PlayerGameData.UnityId);
+        //Debug.Log("SetClientNamesClientRpc Name: " + PlayerGameData.Name);
         SetNameServerRpc(PlayerGameData.Id, PlayerGameData.Name, PlayerGameData.UnityId);
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void SetNameServerRpc(int playerId, string name, string UnityId)
     {
-        Debug.Log("SetNameServerRpc: "+UnityId);
+        //Debug.Log("SetNameServerRpc UnityId: "+UnityId);
+        //Debug.Log("SetNameServerRpc Name: " + name);
         SetNameClientRpc(playerId, name, UnityId);
     }
 
     [ClientRpc]
     public void SetNameClientRpc(int playerId, string name, string UnityId)
     {
-        Debug.Log("SetNameClientRpc: " + UnityId);
+        //Debug.Log("SetNameClientRpc UnityId: " + UnityId);
+        //Debug.Log("SetNameClientRpc Name: " + name);
         var player = Server.allPlayersInfo.Where(p => p.Id == playerId).First();
         player.Name = name;
-        player.UnityId = UnityId;
+        //player.UnityId = UnityId;
     }
-
+    */
     [ClientRpc]
     public void SetMapDataClientRpc(int mapNumber,bool loadOnStart)
     {

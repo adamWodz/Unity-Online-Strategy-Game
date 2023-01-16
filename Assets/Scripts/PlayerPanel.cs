@@ -180,7 +180,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             IsAI = isAI,
             SpaceshipsLeft = spaceshipsLeft,
             PlayerTileId = playerTileId,
-            ColorNum = colorNum
+            ColorNum = colorNum,
+            UnityId = UnityId
         };
         players ??= new();
         Server.allPlayersInfo ??= new();
