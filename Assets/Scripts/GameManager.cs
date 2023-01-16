@@ -55,8 +55,8 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         if(index != -1)
             spaceshipCounter.text = Server.allPlayersInfo[index].SpaceshipsLeft.ToString();
 
-        satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
-        satelliteCounter.text = "3";
+        //satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
+        //satelliteCounter.text = "3";
 
         index = Server.allPlayersInfo.FindIndex(p => p.Position == 0);
         if(index != -1)
@@ -82,7 +82,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
                 };
         }
 
-        if(NetworkManager.IsClient)
+        if(!NetworkManager.IsHost)
         {
             GameObject.Find("Canvas").transform.Find("OptionsMenu").transform.Find("SaveButton").GetComponent<Button>().interactable = false;
         }
@@ -161,18 +161,19 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         var playerMissionData = receivedMissions[playerIndInAllPlayers];
         List<Mission> playerMissions = new List<Mission>(), playerMissionsToDo = new List<Mission>();
 
-        foreach (var missionData in playerMissionData)
-        {
-            foreach (var mission in Server.allMissions)
+        if(playerMissionData != null)
+            foreach (var missionData in playerMissionData)
             {
-                if (mission.start.name == missionData.startPlanetName && mission.end.name == missionData.endPlanetName)
+                foreach (var mission in Server.allMissions)
                 {
-                    playerMissions.Add(mission);
-                    playerMissionsToDo.Add(mission);
-                    //Debug.Log($"newAI mission: {mission}");
+                    if (mission.start.name == missionData.startPlanetName && mission.end.name == missionData.endPlanetName)
+                    {
+                        playerMissions.Add(mission);
+                        playerMissionsToDo.Add(mission);
+                        //Debug.Log($"newAI mission: {mission}");
+                    }
                 }
             }
-        }
 
         Dictionary<Color, int> playerNumOfCardsInColor = new Dictionary<Color, int>();
         for(int i = 0; i < playersCards.Length; i++)

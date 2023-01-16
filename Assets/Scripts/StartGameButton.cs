@@ -235,11 +235,13 @@ public class StartGameButton : NetworkBehaviour
             ColorNum = position,
         };
         Server.allPlayersInfo.Add(playerState);
-        Server.artificialPlayers.Add(new ArtificialPlayer
+        ArtificialPlayer newAI = new ArtificialPlayer
         {
             Name = nick,
             Id = id,
-        });
+        };
+        //newAI.LoadConnectedPlanets();
+        Server.artificialPlayers.Add(newAI);
     }
     
     [ClientRpc]

@@ -78,7 +78,7 @@ namespace Assets.GameplayControl
             LoadConnectedPlanets();
         }
 
-        void LoadConnectedPlanets()
+        public void LoadConnectedPlanets()
         {
             foreach(Path path in Map.mapData.paths)
             {
@@ -95,6 +95,7 @@ namespace Assets.GameplayControl
 
         public void BestMove()
         {
+            LoadConnectedPlanets();
             SetQuickestPathForEveryPairOfPlantes();
             UpdateMissions();
             SetPathsToBuild();

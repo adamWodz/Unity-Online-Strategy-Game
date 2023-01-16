@@ -136,6 +136,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
                     curentPoints = artificialPlayer.Points,
                     spaceshipsLeft = artificialPlayer.SpaceshipsLeft,
                 };
+                //AI.LoadConnectedPlanets();
 
                 for(int i = 0;i< data.cardsForEachPalyer[artificialPlayer.Id].Length;i++)
                 {
