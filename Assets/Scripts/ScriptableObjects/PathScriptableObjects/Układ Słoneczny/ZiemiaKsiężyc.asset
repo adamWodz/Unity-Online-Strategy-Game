@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: "ZiemiaKsi\u0119\u017Cyc"
   m_EditorClassIdentifier: 
-  Id: 33
+  Id: 44
   planetFrom: {fileID: 11400000, guid: caf05907f71cd244ea4973478fe4f5a3, type: 2}
   planetTo: {fileID: 11400000, guid: 37d8bc3800dd8dd4aac8aa317dfede23, type: 2}
   color: 1
   length: 1
-  builtById: 0
+  isBuilt: 0
+  builtById: 7

@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: JowiszEuropa
   m_EditorClassIdentifier: 
-  Id: 11
+  Id: 15
   planetFrom: {fileID: 11400000, guid: 11d67f13b22c67f43b5b5904e65a4859, type: 2}
   planetTo: {fileID: 11400000, guid: 953dfc1f0fdb7914ea31e5d1a701747e, type: 2}
   color: 3
   length: 1
+  isBuilt: 0
   builtById: 0

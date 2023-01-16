@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: "DelmosKsi\u0119\u017Cyc"
   m_EditorClassIdentifier: 
-  Id: 41
+  Id: 6
   planetFrom: {fileID: 11400000, guid: 8127da86ee5f2444e9143da260065264, type: 2}
   planetTo: {fileID: 11400000, guid: 37d8bc3800dd8dd4aac8aa317dfede23, type: 2}
   color: 0
   length: 2
+  isBuilt: 0
   builtById: 0

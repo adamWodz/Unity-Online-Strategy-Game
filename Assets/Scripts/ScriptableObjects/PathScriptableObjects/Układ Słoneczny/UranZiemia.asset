@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: UranZiemia
   m_EditorClassIdentifier: 
-  Id: 31
+  Id: 41
   planetFrom: {fileID: 11400000, guid: 0d64057ff8e989b448df2b4d46a8074d, type: 2}
   planetTo: {fileID: 11400000, guid: caf05907f71cd244ea4973478fe4f5a3, type: 2}
   color: 3
   length: 5
+  isBuilt: 0
   builtById: 0

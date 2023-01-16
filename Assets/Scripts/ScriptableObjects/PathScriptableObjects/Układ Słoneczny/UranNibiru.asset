@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: UranNibiru
   m_EditorClassIdentifier: 
-  Id: 30
+  Id: 39
   planetFrom: {fileID: 11400000, guid: 0d64057ff8e989b448df2b4d46a8074d, type: 2}
   planetTo: {fileID: 11400000, guid: 91dd8921d6beece42a0c61f6b8e2c99e, type: 2}
   color: 0
   length: 1
-  builtById: 0
+  isBuilt: 0
+  builtById: 6
