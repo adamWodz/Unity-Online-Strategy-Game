@@ -196,10 +196,10 @@ public class DrawCardsPanel : NetworkBehaviour
     {
         gameObject.GetComponent<Image>().color = UnityEngine.Color.yellow;
         //Debug.Log(GameObject.Find("InfoText").GetComponent<TMP_Text>().text);
-        GameObject.Find("InfoText").GetComponent<TMP_Text>().text = "Przetasowano karty";
+        //GameObject.Find("InfoText").GetComponent<TMP_Text>().text = "Przetasowano karty";
+        gameManager.SetInfoTextServerRpc("Przetasowano karty");
         //Debug.Log(GameObject.Find("InfoText").GetComponent<TMP_Text>().text);
         yield return new WaitForSeconds(1);
-        GameObject.Find("InfoText").GetComponent<TMP_Text>().text = "Przetasowano karty";
         gameObject.GetComponent<Image>().color = UnityEngine.Color.white;
     }
 }
