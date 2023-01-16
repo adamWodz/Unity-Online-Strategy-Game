@@ -80,7 +80,11 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
                     Debug.Log("StopHost");
                     Application.Quit();
                 };
-            
+        }
+
+        if(NetworkManager.IsClient)
+        {
+            GameObject.Find("Canvas").transform.Find("OptionsMenu").transform.Find("SaveButton").GetComponent<Button>().interactable = false;
         }
     }
 

@@ -87,7 +87,7 @@ public class StartGameButton : NetworkBehaviour
                     nick = "Gracz";
                     if (lobbyplayers[iRe].Data != null) nick = lobbyplayers[iRe++].Data["UserName"].Value;
                     AddRealPlayerClientRpc(nick, position, clientID);
-                }
+                 }
             }
 
             Debug.Log("PlayerIDs");
