@@ -254,7 +254,7 @@ public class PlayerList : MonoBehaviour
                     var jj = int.Parse(j.ToString());
 
                     seats[jj].playerId = playerId;
-                    seats[jj].DisplayJoined(true);
+                    seats[jj].DisplayJoined(false);
                     //SetPlayerNick(jj, pref, playerId);
                     seats[jj].Nickname.text = username;
                 }

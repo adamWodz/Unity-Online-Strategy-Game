@@ -31,7 +31,7 @@ public class LobbyAndRelay : MonoBehaviour
 
     // do zapisu przy utworzeniu lobby które seats z PlayerList s¹ AI
     public string AISeats;
-
+    public bool showStartGame = false;
 
     public Button quit, cancel;
     public void PrintClicked()
@@ -152,7 +152,8 @@ public class LobbyAndRelay : MonoBehaviour
             Lobby lobby = await LobbyService.Instance.CreateLobbyAsync("mojeLobby", maxPlayers,
                 new CreateLobbyOptions
                 {
-                    IsPrivate = true,
+                    //IsPrivate = true,
+                    IsPrivate = false,
                     Data = new Dictionary<string, DataObject> {
                         {"RelayCode", new DataObject(DataObject.VisibilityOptions.Member,relaycode)},
                         {"IndexesAI", new DataObject(DataObject.VisibilityOptions.Member,AISeats)}
@@ -192,35 +193,45 @@ public class LobbyAndRelay : MonoBehaviour
 
     public void CanStartGame()
     {
-        if (ImLobbyHost())
+        if (!showStartGame)
         {
-            if (!Communication.loadOnStart)
+            if (ImLobbyHost() && joinedLobby.Players.Count>1 || joinedLobby.Data["IndexesAI"].Value.Length > 0)
             {
-                var found = GameObject.Find("PlayerList");
-                if (found != null)
+                var foundButton = GameObject.Find("StartGameButton");
+                if (foundButton != null)
                 {
-                    var playerList = found.GetComponent<PlayerList>();
-
-                    string text = playerList.joined.text;
-                    var foundButton = GameObject.Find("StartGameButton");
-                    if (foundButton != null && int.Parse(text) > 1 && text != "")
-                    {
-                        Button startGameButton = foundButton.GetComponent<Button>();
-                        startGameButton.interactable = true;
-                    }
-                    else Debug.Log("[CanStartGame] Couldnt find startButton/ client");
-                }
-                else Debug.Log("[CanStartGame] PlayerList not found");
-            }
-            else
-            {
-                var savedNum = PlayerPrefs.GetInt("numberOfPlayers");
-                if (joinedLobby.Players.Count + AISeats.Length == savedNum)
-                {
-                    Button startGameButton = GameObject.Find("StartGameButton").GetComponent<Button>();
+                    Button startGameButton = foundButton.GetComponent<Button>();
                     startGameButton.interactable = true;
                 }
+                else Debug.Log("[CanStartGame] Can't find StartButton, but can start game");
+                showStartGame = true;
             }
+            /**
+            var found = GameObject.Find("PlayerList");
+            if (found != null)
+            {
+                var playerList = found.GetComponent<PlayerList>();
+
+                string text = playerList.joined.text;
+                var foundButton = GameObject.Find("StartGameButton");
+                if (foundButton != null && int.Parse(text) > 1 && text != "")
+                {
+                    Button startGameButton = foundButton.GetComponent<Button>();
+                    startGameButton.interactable = true;
+                }
+                else Debug.Log("[CanStartGame] Couldnt find startButton/ client");
+            }
+            else Debug.Log("[CanStartGame] PlayerList not found");
+            */
+
+            /**
+            var savedNum = PlayerPrefs.GetInt("numberOfPlayers");
+            if (joinedLobby.Players.Count + AISeats.Length == savedNum)
+            {
+                Button startGameButton = GameObject.Find("StartGameButton").GetComponent<Button>();
+                startGameButton.interactable = true;
+            }
+            */
         }
     }
 
@@ -235,6 +246,8 @@ public class LobbyAndRelay : MonoBehaviour
 
             //1. by code -//
             Lobby lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(input.text);
+            //Lobby lobby = await Lobbies.Instance.QuickJoinLobbyAsync();
+
             PrintLobbyInfo(lobby);
             PrintPlayers(lobby);
             Debug.Log($"[JoinByCode] 1/4 Joined to a Lobby {lobby.Id}");
@@ -324,6 +337,7 @@ public class LobbyAndRelay : MonoBehaviour
         }
         if (ImLobbyHost())
         {
+            CanStartGame();
             RpcRefreshPlayerList();
         }
     }
@@ -371,20 +385,31 @@ public class LobbyAndRelay : MonoBehaviour
             var playerId = AuthenticationService.Instance.PlayerId;
             var nonhost = !ImLobbyHost() && ImInLobby();
             Debug.Log($"[LeaveLobby] 1/2 As A Host? {!nonhost}");
-
-            await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, playerId);
-            
-            //NetworkManager.Singleton.Shutdown(true);
-
-            //if (!nonhost) await Lobbies.Instance.DeleteLobbyAsync(joinedLobby.Id);
+            if (!nonhost)
+            {
+                RefreshPlayerList();
+                CloseLobby();
+            }
+            else
+            {
+                await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, playerId);
+                //RpcRefreshPlayerList();
+            }
+            NetworkManager.Singleton.Shutdown(true);
             //AuthenticationService.Instance.SignOut();
             Debug.Log($"[LeaveLobby] 2/2 I'm Leaving Lobby");
-            //Application.Quit();
+            Application.Quit();
         }
         catch (LobbyServiceException e)
         {
             Debug.Log($"[LeaveLobby]! {e}");
         }
+    }
+
+    public void KickRecentlyJoined()
+    {
+        var recent = joinedLobby.Players[1].Id;
+        KickPlayer(recent);
     }
 
     public async void KickPlayer(string playerId)
@@ -405,6 +430,8 @@ public class LobbyAndRelay : MonoBehaviour
         try
         {
             Debug.Log($"[CloseLobby] 1/2 Closing Lobby existing ({joinedLobby != null}) {joinedLobby.Id}");
+            foreach (var player in joinedLobby.Players) if(joinedLobby.HostId!=player.Id) KickPlayer(player.Id);
+            //KickPlayer(joinedLobby.HostId);
             await LobbyService.Instance.DeleteLobbyAsync(joinedLobby.Id);
             Debug.Log($"[CloseLobby] 2/2 Closed my Lobby");
         }
@@ -436,6 +463,7 @@ public class LobbyAndRelay : MonoBehaviour
     {
         return joinedLobby != null && joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
     }
+
 
     private bool ImInLobby()
     {
