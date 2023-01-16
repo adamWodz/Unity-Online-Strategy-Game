@@ -148,11 +148,34 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         var playerInfo = Server.allPlayersInfo.First(p => p.Id == id);
         var a = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>();
         Debug.Log(a);
-        var playersCards = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>().cardsQuantityPerPlayerPerColor[playerInfo.Id];
 
-        for (int i = 0; i < playersCards.Length; i++)
-            Debug.Log($"{i}, count {playersCards[i]}");
-        
+        Dictionary<Color, int> playerNumOfCardsInColor;
+
+        if (a.cardsQuantityPerPlayerPerColor.ContainsKey(id))
+        {
+            int[] playersCards;
+            playersCards = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>().cardsQuantityPerPlayerPerColor[playerInfo.Id];
+
+            //for (int i = 0; i < playersCards.Length; i++)
+            //    Debug.Log($"{i}, count {playersCards[i]}");
+
+            playerNumOfCardsInColor = new Dictionary<Color, int>();
+            for (int i = 0; i < playersCards.Length; i++)
+            {
+                playerNumOfCardsInColor.Add((Color)i, playersCards[i]);
+            }
+        }
+        else
+            playerNumOfCardsInColor = new Dictionary<Color, int>()
+            {
+                { Color.pink, 1 },
+                { Color.red, 1 },
+                { Color.blue, 1 },
+                { Color.yellow, 1 },
+                { Color.green, 1 },
+                { Color.special, 1 },
+            };
+
         int playerIndInAllPlayers = -1;
         for (int i = 0; i < Server.allPlayersInfo.Count; i++)
             if (Server.allPlayersInfo[i].Id == playerInfo.Id)
@@ -179,11 +202,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
                 }
             }
 
-        Dictionary<Color, int> playerNumOfCardsInColor = new Dictionary<Color, int>();
-        for(int i = 0; i < playersCards.Length; i++)
-        {
-            playerNumOfCardsInColor.Add((Color)i, playersCards[i]);
-        }
+        
         //Debug.Log("GameManager; playerName: " + playerInfo.Name + " isAI " + playerInfo.IsAI);
         playerInfo.IsAI = true;
 
