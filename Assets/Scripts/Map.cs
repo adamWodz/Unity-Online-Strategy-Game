@@ -49,7 +49,7 @@ public class Map : NetworkBehaviour, IDataPersistence
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-
+        missions = mapData.missions;
         if (!Communication.loadOnStart)
         {
             canvasForPlanetsNames = GameObject.Find("CanvasForPlanetsNames").GetComponent<Canvas>();
@@ -60,7 +60,7 @@ public class Map : NetworkBehaviour, IDataPersistence
             //Debug.Log(mapData);
             paths = mapData.paths;
             planets = mapData.planets;
-            missions = mapData.missions;
+            
             CreateMap();
         }
         else

@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: MarsHydra
   m_EditorClassIdentifier: 
-  Id: 16
+  Id: 21
   planetFrom: {fileID: 11400000, guid: 5f41180be78f17f459c02ce9ab26fe80, type: 2}
   planetTo: {fileID: 11400000, guid: 285ee5bfac1676643a26e32626a33b38, type: 2}
   color: 4
   length: 2
+  isBuilt: 0
   builtById: 0

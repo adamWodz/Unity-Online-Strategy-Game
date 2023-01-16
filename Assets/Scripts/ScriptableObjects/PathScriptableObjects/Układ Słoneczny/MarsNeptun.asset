@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: MarsNeptun
   m_EditorClassIdentifier: 
-  Id: 17
+  Id: 22
   planetFrom: {fileID: 11400000, guid: 5f41180be78f17f459c02ce9ab26fe80, type: 2}
   planetTo: {fileID: 11400000, guid: 0a9318bbd48dbcb4493f377d987a6987, type: 2}
   color: 0
   length: 4
+  isBuilt: 0
   builtById: 0

@@ -21,6 +21,15 @@ public class StartGameButton : NetworkBehaviour
 
     public void StartGame()
     {
+        Debug.Log("Id from start: "+AuthenticationService.Instance.PlayerId);
+        if (Communication.loadOnStart)
+        {
+            string[] playerUnityIds = PlayerPrefs.GetString("players").Split(';');
+            foreach (string id in playerUnityIds)
+            {
+                Debug.Log(id);
+            }
+        }
         Server.playerTilePrefabs = new List<GameObject>();
 
         foreach(var prefab in playerTilePrefabs)
@@ -33,8 +42,7 @@ public class StartGameButton : NetworkBehaviour
         Debug.Log($"[ChooseMapMenu.StartGame] {NetworkManager != null} {NetworkManager.SceneManager != null}");
         var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
 
-        if(!Communication.loadOnStart)
-            SetClientIdClientRpc();
+        SetClientIdClientRpc();
 
         LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
         PlayerList = GameObject.Find("PlayerList").GetComponent<PlayerList>();
@@ -64,6 +72,52 @@ public class StartGameButton : NetworkBehaviour
         {
             var tmp = OnlySavedIDs(lobbyplayers);
             if (tmp.Count > 1) lobbyplayers = tmp;
+            var clients = NetworkManager.Singleton.ConnectedClientsList;
+
+            int clientID;
+            string UnityId="";
+            int iAI = 5, iRe = 0;
+            int n = IndexesReg.Length + IndexesAI.Length;
+            string nick = "";
+            for (int pos = 0; pos<n; pos++)
+            {
+                int position = int.Parse(pos.ToString());
+                if (IndexesAI.Contains(pos.ToString()))
+                {
+                    nick = "AIPlayer" + iAI.ToString();
+                    if (iAI - 5 < PlayerGameData.AINames.Count) nick = PlayerGameData.AINames[iAI - 5];
+                    AddAiPlayerClientRpc(nick, position, iAI++);
+                }
+                else if (IndexesReg.Contains(pos.ToString()))
+                {
+                    if (iRe == clients.Count)
+                    {
+                        Debug.Log($"[StartGame] {pos}th PlayerSeat ({iRe}/{nonAiPlayersNum} Regular), there's {clients.Count} clients. ");
+                        break;
+                    }
+                    position = int.Parse(pos.ToString());
+                    clientID = (int)clients[iRe].ClientId;
+                    nick = "Gracz";
+
+                    if (lobbyplayers[iRe].Data != null)
+                    {
+                        nick = lobbyplayers[iRe].Data["UserName"].Value;
+                        UnityId = lobbyplayers[iRe++].Id;
+                    }
+                    AddRealPlayerClientRpc(nick, position, clientID, UnityId);
+                }
+            }
+
+            Debug.Log("PlayerIDs");
+            if (Server.allPlayersInfo != null)
+            {
+                foreach (var player in Server.allPlayersInfo)
+                    Debug.Log(player.Id);
+                Debug.Log("end PlayerIDs");
+            }
+            //SetClientNamesClientRpc();
+
+            FirstTurn();
         }
         AddPlayersToGame(nonAiPlayersNum, lobbyplayers);
         
@@ -191,7 +245,7 @@ public class StartGameButton : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void AddRealPlayerClientRpc(string name, int position, int id)
+    public void AddRealPlayerClientRpc(string name, int position, int id, string UnityId)
     {
         PlayerInfo playerState = new PlayerInfo
         {
@@ -202,7 +256,9 @@ public class StartGameButton : NetworkBehaviour
             IsAI = false,
             SpaceshipsLeft = Board.startSpaceshipsNumber,
             ColorNum = position,
+            UnityId = UnityId
         };
+        //PlayerGameData.UnityId = UnityId;
         Server.allPlayersInfo.Add(playerState);
     }
 
@@ -239,38 +295,48 @@ public class StartGameButton : NetworkBehaviour
             ColorNum = position,
         };
         Server.allPlayersInfo.Add(playerState);
-        Server.artificialPlayers.Add(new ArtificialPlayer
+        ArtificialPlayer newAI = new ArtificialPlayer
         {
             Name = nick,
             Id = id,
-        });
+        };
+        //newAI.LoadConnectedPlanets();
+        Server.artificialPlayers.Add(newAI);
     }
-
+    
     [ClientRpc]
     public void SetClientIdClientRpc()
     {
         PlayerGameData.Id = (int)NetworkManager.Singleton.LocalClientId;
+        PlayerGameData.UnityId = AuthenticationService.Instance.PlayerId;
     }
-
+    /*
     [ClientRpc]
     public void SetClientNamesClientRpc()
     {
-        SetNameServerRpc(PlayerGameData.Id, PlayerGameData.Name);
+        //Debug.Log("SetClientNamesClientRpc UnityId: " + PlayerGameData.UnityId);
+        //Debug.Log("SetClientNamesClientRpc Name: " + PlayerGameData.Name);
+        SetNameServerRpc(PlayerGameData.Id, PlayerGameData.Name, PlayerGameData.UnityId);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SetNameServerRpc(int playerId, string name)
+    public void SetNameServerRpc(int playerId, string name, string UnityId)
     {
-        SetNameClientRpc(playerId, name);
+        //Debug.Log("SetNameServerRpc UnityId: "+UnityId);
+        //Debug.Log("SetNameServerRpc Name: " + name);
+        SetNameClientRpc(playerId, name, UnityId);
     }
 
     [ClientRpc]
-    public void SetNameClientRpc(int playerId, string name)
+    public void SetNameClientRpc(int playerId, string name, string UnityId)
     {
+        //Debug.Log("SetNameClientRpc UnityId: " + UnityId);
+        //Debug.Log("SetNameClientRpc Name: " + name);
         var player = Server.allPlayersInfo.Where(p => p.Id == playerId).First();
         player.Name = name;
+        //player.UnityId = UnityId;
     }
-
+    */
     [ClientRpc]
     public void SetMapDataClientRpc(int mapNumber,bool loadOnStart)
     {
@@ -299,7 +365,7 @@ public class StartGameButton : NetworkBehaviour
         {
             PlayerInfo nextPlayer = Server.allPlayersInfo.Where(p => p.Position == 0).First();
             if (nextPlayer.IsAI)
-            { } // gameManager zaczyna turê gracza AI
+            { } // gameManager zaczyna turÃª gracza AI
             else
                 FirstTurnClientRpc(nextPlayer.Id);
         }

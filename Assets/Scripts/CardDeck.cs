@@ -85,7 +85,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
                         }
                     };
                     */
-                    LoadCardsStacksClientRpc(data.cardsForEachPalyer[Server.allPlayersInfo[i].Id], Server.allPlayersInfo[i].Name, Server.allPlayersInfo[i].Id);//, clientRpcParams);
+                    LoadCardsStacksClientRpc(data.cardsForEachPalyer[Server.allPlayersInfo[i].Id], Server.allPlayersInfo[i].UnityId, Server.allPlayersInfo[i].Id);//, clientRpcParams);
                 }
             }
         }
@@ -97,6 +97,9 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
         {
             for(int i=0;i<Server.allPlayersInfo.Count;i++)
             {
+                if (!cardsQuantityPerPlayerPerColor.ContainsKey(Server.allPlayersInfo[i].Id))
+                            cardsQuantityPerPlayerPerColor.Add(Server.allPlayersInfo[i].Id, startHand);
+
                 if (!Server.allPlayersInfo[i].IsAI)
                 {
                     if (!data.cardsForEachPalyer.ContainsKey(Server.allPlayersInfo[i].Id))
@@ -133,9 +136,9 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     }
 
     [ClientRpc]
-    void LoadCardsStacksClientRpc(int[] cardStack,string name,int id ,ClientRpcParams clientRpcParams = default)
+    void LoadCardsStacksClientRpc(int[] cardStack,string UnityId,int id ,ClientRpcParams clientRpcParams = default)
     {
-        if (PlayerGameData.Name == name)
+        if (PlayerGameData.UnityId == UnityId)
         {
             PlayerGameData.Id = id;
             for (int i = 0; i < cardStack.Length; i++)

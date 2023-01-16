@@ -85,6 +85,11 @@ namespace Assets.GameplayControl
             {
                 connectedPlanets.Add(new ConnectedPlanets(new List<Planet> { path.planetFrom, path.planetTo }));
             }
+            // z jakiegoś powodu obie planety już należą do tej samej grupy - nic nie robimy
+            else if(groupPlanetFrom == groupPlanetTo)
+            {
+                return;
+            }
             // dodajemy nowo połączoną planetę do grupy
             else if (groupPlanetFrom == null)
             {

@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: PlutonCharon
   m_EditorClassIdentifier: 
-  Id: 25
+  Id: 33
   planetFrom: {fileID: 11400000, guid: 1917a24f443614d4a830c3891a6849ba, type: 2}
   planetTo: {fileID: 11400000, guid: 043c52266ad60214aa53eac416fee24c, type: 2}
   color: 0
   length: 1
-  builtById: 0
+  isBuilt: 0
+  builtById: 7

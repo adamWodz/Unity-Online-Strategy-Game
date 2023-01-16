@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: NibiruTytan
   m_EditorClassIdentifier: 
-  Id: 102
+  Id: 31
   planetFrom: {fileID: 11400000, guid: 91dd8921d6beece42a0c61f6b8e2c99e, type: 2}
   planetTo: {fileID: 11400000, guid: 11f494e3c59492c47b3daf2d26002260, type: 2}
   color: 2
   length: 2
-  builtById: 0
+  isBuilt: 0
+  builtById: 6

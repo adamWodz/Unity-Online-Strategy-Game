@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Net.Security;
+using System.Reflection;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
@@ -40,10 +41,13 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     public List<NetworkObject> spawnedSpaceships { get; set; } = new List<NetworkObject>();
     public GameObject endGamePanel;
 
+    PathsPanel pathsPanel;
+
     // Start is called before the first frame update
     void Start()
     {
         //Debug.Log("GameManager Client ID:"+OwnerClientId);
+        pathsPanel = GameObject.Find("PathsPanel").GetComponent<PathsPanel>();
         drawCardsPanel = GameObject.Find("DrawCardsPanel");
         cardGoal = GameObject.Find("CardGoal");
         drawCardsButton = GameObject.Find("DrawCardsButton");
@@ -62,6 +66,8 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
             satelliteCounter.text = "3";
         }
         else Debug.Log($"[GameManager.Start] Cant find sattelite counter");
+        //satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
+        //satelliteCounter.text = "3";
 
         index = Server.allPlayersInfo.FindIndex(p => p.Position == 0);
         if(index != -1)
@@ -87,7 +93,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
                 };
         }
 
-        if(NetworkManager.IsClient)
+        if(!NetworkManager.IsHost)
         {
             GameObject.Find("Canvas").transform.Find("OptionsMenu").transform.Find("SaveButton").GetComponent<Button>().interactable = false;
         }
@@ -149,11 +155,34 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         var playerInfo = Server.allPlayersInfo.First(p => p.Id == id);
         var a = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>();
         Debug.Log(a);
-        var playersCards = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>().cardsQuantityPerPlayerPerColor[playerInfo.Id];
 
-        for (int i = 0; i < playersCards.Length; i++)
-            Debug.Log($"{i}, count {playersCards[i]}");
-        
+        Dictionary<Color, int> playerNumOfCardsInColor;
+
+        if (a.cardsQuantityPerPlayerPerColor.ContainsKey(id))
+        {
+            int[] playersCards;
+            playersCards = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>().cardsQuantityPerPlayerPerColor[playerInfo.Id];
+
+            //for (int i = 0; i < playersCards.Length; i++)
+            //    Debug.Log($"{i}, count {playersCards[i]}");
+
+            playerNumOfCardsInColor = new Dictionary<Color, int>();
+            for (int i = 0; i < playersCards.Length; i++)
+            {
+                playerNumOfCardsInColor.Add((Color)i, playersCards[i]);
+            }
+        }
+        else
+            playerNumOfCardsInColor = new Dictionary<Color, int>()
+            {
+                { Color.pink, 1 },
+                { Color.red, 1 },
+                { Color.blue, 1 },
+                { Color.yellow, 1 },
+                { Color.green, 1 },
+                { Color.special, 1 },
+            };
+
         int playerIndInAllPlayers = -1;
         for (int i = 0; i < Server.allPlayersInfo.Count; i++)
             if (Server.allPlayersInfo[i].Id == playerInfo.Id)
@@ -166,24 +195,21 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         var playerMissionData = receivedMissions[playerIndInAllPlayers];
         List<Mission> playerMissions = new List<Mission>(), playerMissionsToDo = new List<Mission>();
 
-        foreach (var missionData in playerMissionData)
-        {
-            foreach (var mission in Server.allMissions)
+        if(playerMissionData != null)
+            foreach (var missionData in playerMissionData)
             {
-                if (mission.start.name == missionData.startPlanetName && mission.end.name == missionData.endPlanetName)
+                foreach (var mission in Server.allMissions)
                 {
-                    playerMissions.Add(mission);
-                    playerMissionsToDo.Add(mission);
-                    //Debug.Log($"newAI mission: {mission}");
+                    if (mission.start.name == missionData.startPlanetName && mission.end.name == missionData.endPlanetName)
+                    {
+                        playerMissions.Add(mission);
+                        playerMissionsToDo.Add(mission);
+                        //Debug.Log($"newAI mission: {mission}");
+                    }
                 }
             }
-        }
 
-        Dictionary<Color, int> playerNumOfCardsInColor = new Dictionary<Color, int>();
-        for(int i = 0; i < playersCards.Length; i++)
-        {
-            playerNumOfCardsInColor.Add((Color)i, playersCards[i]);
-        }
+        
         //Debug.Log("GameManager; playerName: " + playerInfo.Name + " isAI " + playerInfo.IsAI);
         playerInfo.IsAI = true;
 
@@ -290,7 +316,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     public void SetPopUpWindow(string message)
     {
         var popUp = GameObject.Find("Canvas").transform.Find("PopUpPanel");//transform.parent.GetChild(0);
-        popUp.transform.Find("InfoText").GetComponent<TMP_Text>().text = message;
+        popUp.transform.Find("InfoText").GetComponent<TextMeshProUGUI>().text = message;
         popUp.gameObject.SetActive(true);
     }
 
@@ -451,11 +477,28 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     {
         GameObject missionButton = GameObject.Find(mission.start.name + "-" + mission.end.name);
         missionButton.transform.GetChild(3).gameObject.SetActive(true);
+        SyncMissionsDoneServerRpc(mission.start.name, mission.end.name, PlayerGameData.Id);
     }
     
     public void ExitGame()
     {
         NetworkManager.Singleton.Shutdown();
         Application.Quit();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void SyncMissionsDoneServerRpc(string missionStartName, string missionEndName, int playerId)
+    {
+       int index = pathsPanel.receivedMissions[playerId].FindIndex(m => m.startPlanetName == missionStartName && m.endPlanetName == missionEndName);
+        if (index != -1)
+        {
+            pathsPanel.receivedMissions[playerId][index] = new()
+            {
+                startPlanetName = pathsPanel.receivedMissions[playerId][index].startPlanetName,
+                endPlanetName = pathsPanel.receivedMissions[playerId][index].endPlanetName,
+                points = pathsPanel.receivedMissions[playerId][index].points,
+                isDone = true
+            };
+        }
     }
 }

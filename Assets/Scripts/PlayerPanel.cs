@@ -31,6 +31,7 @@ public class PlayerInfo
     public int SpaceshipsLeft;
     public int PlayerTileId;
     public int ColorNum;
+    public string UnityId;
 }
 
 public class PlayerInfoComparer: IComparer<PlayerInfo>
@@ -135,6 +136,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
                     curentPoints = artificialPlayer.Points,
                     spaceshipsLeft = artificialPlayer.SpaceshipsLeft,
                 };
+                //AI.LoadConnectedPlanets();
 
                 for(int i = 0;i< data.cardsForEachPalyer[artificialPlayer.Id].Length;i++)
                 {
@@ -145,7 +147,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             
             foreach(var player in data.players) 
             {
-                LoadPlayersListClientRpc(player.Position, player.Points, player.Name, player.Id, player.IsAI, player.SpaceshipsLeft, player.PlayerTileId,player.ColorNum);
+                LoadPlayersListClientRpc(player.Position, player.Points, player.Name, player.Id, player.IsAI, player.SpaceshipsLeft, player.PlayerTileId,player.ColorNum,player.UnityId);
             }
             
             int id = data.players.Single(player => player.Position == 0).Id;
@@ -163,7 +165,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     }
 
     [ClientRpc]
-    void LoadPlayersListClientRpc(int position,int points,string name,int id,bool isAI, int spaceshipsLeft, int playerTileId, int colorNum)
+    void LoadPlayersListClientRpc(int position,int points,string name,int id,bool isAI, int spaceshipsLeft, int playerTileId, int colorNum, string UnityId)
     {
         if(position == 0 && isAI)
         {
@@ -179,7 +181,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             IsAI = isAI,
             SpaceshipsLeft = spaceshipsLeft,
             PlayerTileId = playerTileId,
-            ColorNum = colorNum
+            ColorNum = colorNum,
+            UnityId = UnityId
         };
         players ??= new();
         Server.allPlayersInfo ??= new();
@@ -199,7 +202,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         playerTilesByIds.Add(player.PlayerTileId, playerTile);
         playersTiles.Enqueue(playerTile);
 
-        if (PlayerGameData.Name == name)//PlayerGameData.Id == playerInfo.Id)
+        if (PlayerGameData.UnityId == UnityId)//PlayerGameData.Id == playerInfo.Id)
         {
             PlayerGameData.spaceshipsLeft = spaceshipsLeft;
             PlayerGameData.curentPoints = points;
@@ -214,6 +217,19 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             data.players = Server.allPlayersInfo;
             data.players.Sort(new PlayerInfoComparer());
             data.curPlayerId = Server.curPlayerId;
+            
+            string playersUnityIds = "";
+            foreach(var player in Server.allPlayersInfo)
+            {
+                playersUnityIds += player.UnityId+";";
+            }
+            PlayerPrefs.SetString("players", playersUnityIds);
+
+            int numberOfPlayers = Server.allPlayersInfo.Count;
+            PlayerPrefs.SetInt("numberOfPlayers", numberOfPlayers);
+            
+            PlayerPrefs.GetString("players").Split(';');
+            PlayerPrefs.GetInt("numberOfPlayers");
         } 
     }
 
