@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: MakemakeEris
   m_EditorClassIdentifier: 
-  Id: 14
+  Id: 19
   planetFrom: {fileID: 11400000, guid: ae57841b4b4173d4e8d8ddcb1ec1b167, type: 2}
   planetTo: {fileID: 11400000, guid: c83d2fcc93cee3946b467eeaa65e5efa, type: 2}
   color: 1
   length: 3
-  builtById: 0
+  isBuilt: 0
+  builtById: 7

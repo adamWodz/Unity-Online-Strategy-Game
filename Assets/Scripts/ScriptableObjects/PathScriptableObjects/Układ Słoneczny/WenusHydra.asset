@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13adb8c7da477574a98597b322a4c700, type: 3}
   m_Name: WenusHydra
   m_EditorClassIdentifier: 
-  Id: 32
+  Id: 42
   planetFrom: {fileID: 11400000, guid: 6d8c31ca984ee544bb85080570b5181c, type: 2}
   planetTo: {fileID: 11400000, guid: 285ee5bfac1676643a26e32626a33b38, type: 2}
   color: 2
   length: 3
+  isBuilt: 0
   builtById: 0
