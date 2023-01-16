@@ -55,8 +55,8 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         if(index != -1)
             spaceshipCounter.text = Server.allPlayersInfo[index].SpaceshipsLeft.ToString();
 
-        satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
-        satelliteCounter.text = "3";
+        //satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
+        //satelliteCounter.text = "3";
 
         index = Server.allPlayersInfo.FindIndex(p => p.Position == 0);
         if(index != -1)
