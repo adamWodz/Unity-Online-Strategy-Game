@@ -59,6 +59,13 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         if(index != -1)
             spaceshipCounter.text = Server.allPlayersInfo[index].SpaceshipsLeft.ToString();
 
+        var foundCounter = GameObject.Find("SatelliteCounter");
+        if (foundCounter != null)
+        {
+            satelliteCounter = foundCounter.GetComponent<TMP_Text>();
+            satelliteCounter.text = "3";
+        }
+        else Debug.Log($"[GameManager.Start] Cant find sattelite counter");
         //satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
         //satelliteCounter.text = "3";
 
