@@ -17,4 +17,4 @@ MonoBehaviour:
   planetTo: {fileID: 11400000, guid: 11d67f13b22c67f43b5b5904e65a4859, type: 2}
   color: 2
   length: 4
-  builtById: 2
+  builtById: 0
