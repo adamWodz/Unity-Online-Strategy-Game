@@ -13,7 +13,10 @@ public class PlayerList : MonoBehaviour
     //public List<bool> RegularPlayers;
     public LobbyAndRelay lobbyData;
     public Text joined, remaining;
+    
     private int joinedNum;
+    public bool pauseRefresh = false;
+
 
     private void Start()
     {
@@ -37,6 +40,15 @@ public class PlayerList : MonoBehaviour
         remaining.text = (5 - joinedNum).ToString();
         */
         ShowCurrentNums();
+    }
+
+    public void PauseRefresh()
+    {
+        pauseRefresh = true;
+    }
+    public void ContinueRefresh()
+    {
+        pauseRefresh = false;
     }
 
     public void RefreshList()
@@ -80,14 +92,16 @@ public class PlayerList : MonoBehaviour
                 Debug.Log($"[PlayerList.RefreshList] 2/2 joinedLobby code: {code}");
             }
             */
+
+
             ShowCurrentPlayers();
+            
         }
         catch (LobbyServiceException e)
         {
             Debug.Log(e);
         }
     }
-
 
     private void SetPlayerNick(int j, string pref, string playerId)
     {
@@ -240,7 +254,7 @@ public class PlayerList : MonoBehaviour
                     var jj = int.Parse(j.ToString());
 
                     seats[jj].playerId = playerId;
-                    seats[jj].DisplayJoined(false);
+                    seats[jj].DisplayJoined(true);
                     //SetPlayerNick(jj, pref, playerId);
                     seats[jj].Nickname.text = username;
                 }

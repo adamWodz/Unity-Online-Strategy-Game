@@ -57,51 +57,71 @@ public class StartGameButton : NetworkBehaviour
             
         Debug.Log("[StartGame] Print players from host");
         lobby.PrintPlayers(lobby.joinedLobby);
+
         var lobbyplayers = lobby.joinedLobby.Players;
-        if (!Communication.loadOnStart)
+
+        if (Communication.loadOnStart)
         {
-            var clients = NetworkManager.Singleton.ConnectedClientsList;
-
-            int clientID;
-            int iAI = 5, iRe = 0;
-            int n = IndexesReg.Length + IndexesAI.Length;
-            string nick = "";
-            for (int pos = 0; pos<n; pos++)
-            {
-                int position = int.Parse(pos.ToString());
-                if (IndexesAI.Contains(pos.ToString()))
-                {
-                    nick = "AIPlayer" + iAI.ToString();
-                    if (iAI - 5 < PlayerGameData.AINames.Count) nick = PlayerGameData.AINames[iAI - 5];
-                    AddAiPlayerClientRpc(nick, position, iAI++);
-                }
-                else if (IndexesReg.Contains(pos.ToString()))
-                {
-                    if (iRe == clients.Count)
-                    {
-                        Debug.Log($"[StartGame] {pos}th PlayerSeat ({iRe}/{nonAiPlayersNum} Regular), there's {clients.Count} clients. ");
-                        break;
-                    }
-                    position = int.Parse(pos.ToString());
-                    clientID = (int)clients[iRe].ClientId;
-                    nick = "Gracz";
-                    if (lobbyplayers[iRe].Data != null) nick = lobbyplayers[iRe++].Data["UserName"].Value;
-                    AddRealPlayerClientRpc(nick, position, clientID);
-                 }
-            }
-
-            Debug.Log("PlayerIDs");
-            if (Server.allPlayersInfo != null)
-            {
-                foreach (var player in Server.allPlayersInfo)
-                    Debug.Log(player.Id);
-                Debug.Log("end PlayerIDs");
-            }
-            SetClientNamesClientRpc();
-
-            FirstTurn();
+            var tmp = OnlySavedIDs(lobbyplayers);
+            if (tmp.Count > 1) lobbyplayers = tmp;
         }
+        AddPlayersToGame(nonAiPlayersNum, lobbyplayers);
         
+    }
+
+    public List<Unity.Services.Lobbies.Models.Player> OnlySavedIDs(List<Unity.Services.Lobbies.Models.Player> newLobbyPlayers)
+    {
+        LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
+        List<Unity.Services.Lobbies.Models.Player> res = new List<Unity.Services.Lobbies.Models.Player>();
+        foreach (var p in newLobbyPlayers)
+        {
+            if (lobby.CheckSavedPlayer(p.Id)) res.Add(p);
+        }
+        return res;
+    }
+
+    public void AddPlayersToGame(int nonAiPlayersNum, List<Unity.Services.Lobbies.Models.Player> lobbyplayers)
+    {
+        var clients = NetworkManager.Singleton.ConnectedClientsList;
+
+        int clientID;
+        int iAI = 5, iRe = 0;
+        int n = IndexesReg.Length + IndexesAI.Length;
+        string nick = "";
+        for (int pos = 0; pos < n; pos++)
+        {
+            int position = int.Parse(pos.ToString());
+            if (IndexesAI.Contains(pos.ToString()))
+            {
+                nick = "AIPlayer" + iAI.ToString();
+                if (iAI - 5 < PlayerGameData.AINames.Count) nick = PlayerGameData.AINames[iAI - 5];
+                AddAiPlayerClientRpc(nick, position, iAI++);
+            }
+            else if (IndexesReg.Contains(pos.ToString()))
+            {
+                if (iRe == clients.Count)
+                {
+                    Debug.Log($"[StartGame] {pos}th PlayerSeat ({iRe}/{nonAiPlayersNum} Regular), there's {clients.Count} clients. ");
+                    break;
+                }
+                position = int.Parse(pos.ToString());
+                clientID = (int)clients[iRe].ClientId;
+                nick = "Gracz";
+                if (lobbyplayers[iRe].Data != null) nick = lobbyplayers[iRe++].Data["UserName"].Value;
+                AddRealPlayerClientRpc(nick, position, clientID);
+            }
+        }
+
+        Debug.Log("PlayerIDs");
+        if (Server.allPlayersInfo != null)
+        {
+            foreach (var player in Server.allPlayersInfo)
+                Debug.Log(player.Id);
+            Debug.Log("end PlayerIDs");
+        }
+        SetClientNamesClientRpc();
+
+        FirstTurn();
     }
     
 
