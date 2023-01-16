@@ -31,11 +31,18 @@ public class LobbyAndRelay : MonoBehaviour
 
     // do zapisu przy utworzeniu lobby które seats z PlayerList s¹ AI
     public string AISeats;
+    public bool showStartGame = false;
+
+    public Button quit, cancel;
+    public void PrintClicked()
+    {
+        Debug.Log($"Cancel{cancel.IsActive()} Confirm{quit.IsActive()}");
+    }
 
     // Start is called before the first frame update
     private async void Start()
     {
-        
+
         maxPlayers = 5;
         var options = new InitializationOptions();
 #if UNITY_EDITOR
@@ -115,13 +122,22 @@ public class LobbyAndRelay : MonoBehaviour
             NetworkManager.Singleton.StartClient();
             Debug.Log($"[JoinRelay] 3/3 Started as a CLIENT");
         }
-        catch (RelayServiceException e) {
-            Debug.Log($"[JoinRelay]! {e}"); }
+        catch (RelayServiceException e)
+        {
+            Debug.Log($"[JoinRelay]! {e}");
+        }
     }
 
     // Lobby
 
-
+    public bool CheckSavedPlayer(string signedin)
+    {
+        //var signedin = AuthenticationService.Instance.PlayerId;
+        string pstring = PlayerPrefs.GetString("players");
+        List<string> playerIDs = new List<string>(pstring.Split(';'));
+        return playerIDs.Contains(signedin);
+        
+    }
 
     public async void CreatePrivateLobby()
     {
@@ -136,8 +152,9 @@ public class LobbyAndRelay : MonoBehaviour
             Lobby lobby = await LobbyService.Instance.CreateLobbyAsync("mojeLobby", maxPlayers,
                 new CreateLobbyOptions
                 {
-                    IsPrivate = true,
-                    Data = new Dictionary<string, DataObject> { 
+                    //IsPrivate = true,
+                    IsPrivate = false,
+                    Data = new Dictionary<string, DataObject> {
                         {"RelayCode", new DataObject(DataObject.VisibilityOptions.Member,relaycode)},
                         {"IndexesAI", new DataObject(DataObject.VisibilityOptions.Member,AISeats)}
                     },
@@ -151,7 +168,7 @@ public class LobbyAndRelay : MonoBehaviour
                     }
                 }
             );
-            
+
             //2,3. public//
             //Lobby lobby = await LobbyService.Instance.CreateLobbyAsync("mojeLobby", maxPlayers);
 
@@ -164,16 +181,57 @@ public class LobbyAndRelay : MonoBehaviour
             if (code.text != null) GUIUtility.systemCopyBuffer = code.text;
 
             Debug.Log($"[CreatePrivateLobby] 3/3 PLAYER = {joinedLobby.Players[0].Data["UserName"].Value}");
-
-            Button found = GameObject.Find("StartGameButton").GetComponent<Button>();
-            found.interactable = true;
-
+            CanStartGame();
             //QueryResponse lobbies = await Lobbies.Instance.QueryLobbiesAsync();
             //Debug.Log(lobbies.Results.Count);
         }
         catch (LobbyServiceException e)
         {
-            Debug.Log($"[CreatePrivateLobby]! { e}");
+            Debug.Log($"[CreatePrivateLobby]! {e}");
+        }
+    }
+
+    public void CanStartGame()
+    {
+        if (!showStartGame)
+        {
+            if (ImLobbyHost() && joinedLobby.Players.Count>1 || joinedLobby.Data["IndexesAI"].Value.Length > 0)
+            {
+                var foundButton = GameObject.Find("StartGameButton");
+                if (foundButton != null)
+                {
+                    Button startGameButton = foundButton.GetComponent<Button>();
+                    startGameButton.interactable = true;
+                }
+                else Debug.Log("[CanStartGame] Can't find StartButton, but can start game");
+                showStartGame = true;
+            }
+            /**
+            var found = GameObject.Find("PlayerList");
+            if (found != null)
+            {
+                var playerList = found.GetComponent<PlayerList>();
+
+                string text = playerList.joined.text;
+                var foundButton = GameObject.Find("StartGameButton");
+                if (foundButton != null && int.Parse(text) > 1 && text != "")
+                {
+                    Button startGameButton = foundButton.GetComponent<Button>();
+                    startGameButton.interactable = true;
+                }
+                else Debug.Log("[CanStartGame] Couldnt find startButton/ client");
+            }
+            else Debug.Log("[CanStartGame] PlayerList not found");
+            */
+
+            /**
+            var savedNum = PlayerPrefs.GetInt("numberOfPlayers");
+            if (joinedLobby.Players.Count + AISeats.Length == savedNum)
+            {
+                Button startGameButton = GameObject.Find("StartGameButton").GetComponent<Button>();
+                startGameButton.interactable = true;
+            }
+            */
         }
     }
 
@@ -188,6 +246,8 @@ public class LobbyAndRelay : MonoBehaviour
 
             //1. by code -//
             Lobby lobby = await Lobbies.Instance.JoinLobbyByCodeAsync(input.text);
+            //Lobby lobby = await Lobbies.Instance.QuickJoinLobbyAsync();
+
             PrintLobbyInfo(lobby);
             PrintPlayers(lobby);
             Debug.Log($"[JoinByCode] 1/4 Joined to a Lobby {lobby.Id}");
@@ -239,6 +299,7 @@ public class LobbyAndRelay : MonoBehaviour
             else Debug.Log($"[JoinByCode]! NOT CONNECTED to a Relay");
 
             RpcRefreshPlayerList();
+            CanStartGame();
         }
         catch (LobbyServiceException e)
         {
@@ -264,11 +325,21 @@ public class LobbyAndRelay : MonoBehaviour
 
             playerList.RefreshList();
         }
+        else Debug.Log("[RpcRefreshPlayerList] Cant find playerlist");
     }
 
     public void RefreshPlayerList()
     {
-        if (ImLobbyHost()) RpcRefreshPlayerList();
+        if (joinedLobby != null)
+        {
+            Debug.Log("[RefreshPlayerList] CHECK PLAYERS IN LOBBY");
+            PrintPlayers(joinedLobby);
+        }
+        if (ImLobbyHost())
+        {
+            CanStartGame();
+            RpcRefreshPlayerList();
+        }
     }
 
     public void PrintLobbyInfo(Lobby lobby)
@@ -305,18 +376,40 @@ public class LobbyAndRelay : MonoBehaviour
         }
     }
 
+
+
     public async void LeaveLobby()
     {
         try
         {
-            Debug.Log($"[LeaveLobby] 1/2 As A Host? {ImLobbyHost()}");
-            await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId);
+            var playerId = AuthenticationService.Instance.PlayerId;
+            var nonhost = !ImLobbyHost() && ImInLobby();
+            Debug.Log($"[LeaveLobby] 1/2 As A Host? {!nonhost}");
+            if (!nonhost)
+            {
+                RefreshPlayerList();
+                CloseLobby();
+            }
+            else
+            {
+                await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, playerId);
+                //RpcRefreshPlayerList();
+            }
+            NetworkManager.Singleton.Shutdown(true);
+            //AuthenticationService.Instance.SignOut();
             Debug.Log($"[LeaveLobby] 2/2 I'm Leaving Lobby");
+            Application.Quit();
         }
         catch (LobbyServiceException e)
         {
             Debug.Log($"[LeaveLobby]! {e}");
         }
+    }
+
+    public void KickRecentlyJoined()
+    {
+        var recent = joinedLobby.Players[1].Id;
+        KickPlayer(recent);
     }
 
     public async void KickPlayer(string playerId)
@@ -336,7 +429,9 @@ public class LobbyAndRelay : MonoBehaviour
     {
         try
         {
-            Debug.Log($"[CloseLobby] 1/2 Closing Lobby existing ({joinedLobby!=null}) {joinedLobby.Id}");
+            Debug.Log($"[CloseLobby] 1/2 Closing Lobby existing ({joinedLobby != null}) {joinedLobby.Id}");
+            foreach (var player in joinedLobby.Players) if(joinedLobby.HostId!=player.Id) KickPlayer(player.Id);
+            //KickPlayer(joinedLobby.HostId);
             await LobbyService.Instance.DeleteLobbyAsync(joinedLobby.Id);
             Debug.Log($"[CloseLobby] 2/2 Closed my Lobby");
         }
@@ -368,6 +463,7 @@ public class LobbyAndRelay : MonoBehaviour
     {
         return joinedLobby != null && joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
     }
+
 
     private bool ImInLobby()
     {
