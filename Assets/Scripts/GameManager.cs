@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Net.Security;
+using System.Reflection;
 using TMPro;
 using Unity.Netcode;
 using Unity.VisualScripting;
@@ -40,10 +41,13 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     public List<NetworkObject> spawnedSpaceships { get; set; } = new List<NetworkObject>();
     public GameObject endGamePanel;
 
+    PathsPanel pathsPanel;
+
     // Start is called before the first frame update
     void Start()
     {
         //Debug.Log("GameManager Client ID:"+OwnerClientId);
+        pathsPanel = GameObject.Find("PathsPanel").GetComponent<PathsPanel>();
         drawCardsPanel = GameObject.Find("DrawCardsPanel");
         cardGoal = GameObject.Find("CardGoal");
         drawCardsButton = GameObject.Find("DrawCardsButton");
@@ -442,11 +446,28 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     {
         GameObject missionButton = GameObject.Find(mission.start.name + "-" + mission.end.name);
         missionButton.transform.GetChild(3).gameObject.SetActive(true);
+        SyncMissionsDoneServerRpc(mission.start.name, mission.end.name, PlayerGameData.Id);
     }
     
     public void ExitGame()
     {
         NetworkManager.Singleton.Shutdown();
         Application.Quit();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void SyncMissionsDoneServerRpc(string missionStartName, string missionEndName, int playerId)
+    {
+       int index = pathsPanel.receivedMissions[playerId].FindIndex(m => m.startPlanetName == missionStartName && m.endPlanetName == missionEndName);
+        if (index != -1)
+        {
+            pathsPanel.receivedMissions[playerId][index] = new()
+            {
+                startPlanetName = pathsPanel.receivedMissions[playerId][index].startPlanetName,
+                endPlanetName = pathsPanel.receivedMissions[playerId][index].endPlanetName,
+                points = pathsPanel.receivedMissions[playerId][index].points,
+                isDone = true
+            };
+        }
     }
 }
