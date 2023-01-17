@@ -8,23 +8,26 @@ using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class EndGame : MonoBehaviour
 {
-    UnityEngine.UI.Toggle toggle;
+    GameObject mapViewButton;
     public List<GameObject> otherThanToggle;
+    bool mapView = false;
     List<GameObject> mapObjects;
 
     private void Start()
     {
-        toggle = gameObject.transform.Find("Toggle").GetComponent<UnityEngine.UI.Toggle>();
+        mapView = false;
+        mapViewButton = gameObject.transform.Find("MapViewButton").transform.Find("ButtonLabel").gameObject;
         mapObjects = GameObject.Find("GameManager").GetComponent<GameManager>().spawnedObjects;
     }
 
-    public void ToggleValueChanged()
+    public void MapViewButtonClicked()
     {
-        if(toggle.isOn)
+        if(!mapView)
         {
             foreach(GameObject obj in otherThanToggle)
                 obj.SetActive(false);
@@ -32,6 +35,8 @@ public class EndGame : MonoBehaviour
             foreach (GameObject obj in mapObjects)
                 if (obj != null)
                     obj.SetActive(true);
+            mapViewButton.GetComponent<TextMeshProUGUI>().text = "Zamknij widok mapy";
+            mapView = true;
         }
 
         else
@@ -42,6 +47,8 @@ public class EndGame : MonoBehaviour
             foreach (GameObject obj in mapObjects)
                 if (obj != null)
                     obj.SetActive(false);
+            mapViewButton.GetComponent<TextMeshProUGUI>().text = "Widok mapy";
+            mapView = false;
         }
     }
 

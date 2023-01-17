@@ -44,7 +44,9 @@ public static class Communication
 
     public static void ChoosePath(BuildPath buildPath)
     {
-        chosenPath = (buildPath);
+        if (buildPath == chosenPath)
+            chosenPath = null;
+        else chosenPath = (buildPath);
     }
 
     public static void ChooseCard(Color color)
@@ -128,6 +130,8 @@ public static class Communication
         Color color = drawCardsPanel.MoveCard(index);
         PlayerGameData.DrawCard(color, DrawCardsPanel.IsCardRandom(index));
 
+        chosenPath = null;
+
         _GameManager.SetInfoTextServerRpc($"{PlayerGameData.Name} dobrał(a) kartę statku.");
 
         if (PlayerGameData.cardsDrewInTurn == 2)
@@ -136,8 +140,9 @@ public static class Communication
 
     public static bool TryStartDrawingMission()
     {
-        string errorMessage;
+        chosenPath = null;
         
+        string errorMessage;
         if(!PlayerGameData.CanDrawMission(out errorMessage))
         {
             _GameManager.SetPopUpWindow(errorMessage);
@@ -172,6 +177,7 @@ public static class Communication
     public static void EndTurn()
     {
         PlayerGameData.EndTurn();
+        chosenPath = null;
         NextTurnActions();
         //Debug.Log("EndTurn");
 
