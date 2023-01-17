@@ -401,7 +401,7 @@ namespace Assets.GameplayControl
         }
 
         // wybieranie najlepszych misji
-        List<Mission> PickBestMissions(List<Mission> missionsToDraw)
+        public List<Mission> PickBestMissions(List<Mission> missionsToDraw)
         {
             
             List<Mission> pickedMissions = new List<Mission>();
