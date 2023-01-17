@@ -6,7 +6,11 @@
         "UnityEditor.TestRunner",
         "ScriptsAssembly",
         "Assembly",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.Netcode.RuntimeTests",
+        "Unity.Netcode.EditorTests",
+        "Unity.Netcode.TestHelpers.Runtime",
+        "Unity.Netcode.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
