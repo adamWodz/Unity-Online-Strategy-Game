@@ -1,6 +1,7 @@
 using Assets.GameplayControl;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -22,6 +23,8 @@ public class PlayModeTests
         };
 
         PlayerGameData.Id = 0;
+
+        NetworkManager.Singleton.StartHost();
 
         SceneManager.LoadScene("Scenes/Main Game");
 
