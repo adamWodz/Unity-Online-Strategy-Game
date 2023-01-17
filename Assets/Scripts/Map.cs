@@ -10,6 +10,7 @@ using static UnityEngine.GraphicsBuffer;
 public class Map : NetworkBehaviour, IDataPersistence
 {
     public static MapData mapData;
+    public MapData m_mapData;
 
     private float mapZparam = -1;
     private List<Path> paths;
@@ -48,6 +49,8 @@ public class Map : NetworkBehaviour, IDataPersistence
     // Start is called before the first frame update
     void Start()
     {
+        mapData = m_mapData;
+
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         missions = mapData.missions;
         if (!Communication.loadOnStart)

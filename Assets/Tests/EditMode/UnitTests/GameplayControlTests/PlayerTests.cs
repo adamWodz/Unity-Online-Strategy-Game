@@ -6,8 +6,6 @@ using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace UnitTests
-{
     public class PlayerTests
     {
         [TestCase(Color.red, 2, Color.red, 2, false)]
@@ -78,22 +76,6 @@ namespace UnitTests
             Assert.AreEqual(expected, PlayerGameData.CanSendSatellite(planet, path, color));
         }
 
-        /*
-        [TestCase(Color.green, 3, 3, false)]
-        [TestCase(Color.green, 0, 0, false)]
-        [TestCase(Color.green, 3, 2, false)]
-        public void CanSendSatellitePathWithSatelliteTests(Color color, int cardsquantity, int satellietesSent, bool expected)
-        {
-            PlayerGameData.numOfCardsInColor[color] = cardsquantity;
-            PlayerGameData.satellitesSent = satellietesSent;
-            PlayerGameData.StartTurn();
-            Planet planet = new Planet();
-            Path path = new Path();
-            path.withSatellie = true;
-            Assert.AreEqual(PlayerGameData.CanSendSatellite(planet, path, color), expected);
-        }
-        */
-
         [TestCase(Color.red, 1, 2, Color.blue, 2, 3)]
         [TestCase(Color.special, 0, 2, Color.special, 0, 2)]
         public void DrawCardsTests(Color color1, int enterQuantity1, int finalQuantity1, Color color2, int enterQuantity2, int finalQuantity2)
@@ -137,5 +119,74 @@ namespace UnitTests
 
             Assert.IsTrue(mission.IsCompletedByClientPlayer());
         }
+    }
+
+public class ConnectedPlanetsTests
+{
+    Planet[] planets =
+    {
+        new Planet(), // 0
+        new Planet(), // 1
+        new Planet(), // 2
+        new Planet(), // 3
+        new Planet(), // 4
+        new Planet(), // 5
+        new Planet(), // 6, nie nale¿y do ¿adnej grupy
+    };
+    ConnectedPlanets group1, group2, group3;
+    List<ConnectedPlanets> groups;
+
+    void ResetGroups()
+    {
+        group1 = new ConnectedPlanets(); // 0
+        group2 = new ConnectedPlanets(); // 1
+        group3 = new ConnectedPlanets(); // 2
+
+        group1.planets.Add(planets[0]);
+        group1.planets.Add(planets[1]);
+
+        group2.planets.Add(planets[2]);
+
+        group3.planets.Add(planets[3]);
+        group3.planets.Add(planets[4]);
+        group3.planets.Add(planets[5]);
+
+        groups = new List<ConnectedPlanets>();
+        groups.Add(group1);
+        groups.Add(group2);
+        groups.Add(group3);
+    }
+
+    [TestCase(0, 1, true)]
+    [TestCase(4, 5, true)]
+    [TestCase(1, 2, false)]
+    [TestCase(6, 1, false)]
+    public void ArePlanetsInOneGroupTests(int ind1, int ind2, bool expected)
+    {
+        ResetGroups();
+        Assert.AreEqual(expected, ConnectedPlanets.ArePlanetsInOneGroup(groups, planets[ind1], planets[ind2]));
+    }
+
+    [TestCase(1, 2, 0, 2, true)]
+    [TestCase(6, 1, 0, 6, true)]
+    [TestCase(6, 2, 6, 2, true)]
+    [TestCase(6, 2, 6, 1, false)]
+    [TestCase(5, 4, 5, 4, true)]
+    public void AddPlanetsFromPathToPlanetsGroups(int planetToInd, int planetFromInd, int planet1ind, int planet2ind, bool expected)
+    {
+        ResetGroups();
+        Path path = ScriptableObject.CreateInstance<Path>();
+        path.planetFrom = planets[planetFromInd];
+        path.planetTo = planets[planetToInd];
+        ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, groups);
+        Assert.AreEqual(expected, ConnectedPlanets.ArePlanetsInOneGroup(groups, planets[planet1ind], planets[planet2ind]));
+    }
+
+    [TestCase(0, 1, 3)]
+    [TestCase(0, 2, 5)]
+    public void MergeGroupsTest(int groupInd1, int groupInd2, int expectedCount)
+    {
+        ResetGroups();
+        Assert.AreEqual(expectedCount, ConnectedPlanets.MergeGroups(groups[groupInd1], groups[groupInd2]).planets.Count);
     }
 }

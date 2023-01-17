@@ -81,7 +81,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
                 Communication.StartAiTurn(nextPlayer.Id);
         }
 
-        if (!NetworkManager.IsHost)
+        if (NetworkManager != null && !NetworkManager.IsHost)
         {
             NetworkManager.Singleton.OnClientDisconnectCallback +=
                 (i) =>
@@ -93,7 +93,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
                 };
         }
 
-        if(!NetworkManager.IsHost)
+        if(NetworkManager != null &&  !NetworkManager.IsHost)
         {
             GameObject.Find("Canvas").transform.Find("OptionsMenu").transform.Find("SaveButton").GetComponent<Button>().interactable = false;
         }
@@ -112,6 +112,8 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     // Update is called once per frame
     void Update()
     {
+        if (NetworkManager == null) return;
+
         if(NetworkManager.IsServer)
             if(Server.connectedPlayersCount != NetworkManager.Singleton.ConnectedClients.Count)
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using JetBrains.Annotations;
+using System.Collections.Generic;
 using System.Linq;
 //using UnityEditor.MemoryProfiler;
 using UnityEngine;
@@ -39,6 +40,8 @@ namespace Assets.GameplayControl
                 return _playersPanel;
             }
         }
+
+        public static int missionLengthLimit = 7;
 
         public int Id { set; get; }
         public string Name { set; get; }
@@ -432,7 +435,7 @@ namespace Assets.GameplayControl
                 }
             }*/
 
-            int limit = 7;
+            int limit = missionLengthLimit;
 
             foreach (Mission mission in missionsToDraw)
                 if (DistanceBetweenPlanetGroups(mission.start, mission.end) < limit)
