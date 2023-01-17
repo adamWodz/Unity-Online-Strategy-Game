@@ -6,7 +6,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Assets.GameplayControl;
 using NUnit.Framework;
 using TMPro;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
