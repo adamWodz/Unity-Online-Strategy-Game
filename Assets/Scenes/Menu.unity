@@ -9055,8 +9055,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.4, y: 20.8}
-  m_SizeDelta: {x: 22.5671, y: 15.8266}
+  m_AnchoredPosition: {x: 3.4, y: 20.4}
+  m_SizeDelta: {x: 25.3519, y: 17.9152}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &904133287
 MonoBehaviour:
@@ -12748,30 +12748,6 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 813754353}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 813754354}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
-        m_MethodName: set_interactable
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 164232770}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
@@ -16783,8 +16759,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.4, y: 39.8}
-  m_SizeDelta: {x: 22.5671, y: 16.0733}
+  m_AnchoredPosition: {x: 4.0962, y: 40.882}
+  m_SizeDelta: {x: 23.959, y: 18.237}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1791256362
 MonoBehaviour:

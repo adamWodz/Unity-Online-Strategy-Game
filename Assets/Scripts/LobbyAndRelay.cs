@@ -210,43 +210,7 @@ public class LobbyAndRelay : MonoBehaviour
                 else Debug.Log("[CanStartGame] Can't find StartButton, but can start game");
                 showStartGame = true;
             }
-            /**
-            var found = GameObject.Find("PlayerList");
-            if (found != null)
-            {
-                var playerList = found.GetComponent<PlayerList>();
-
-                string text = playerList.joined.text;
-                var foundButton = GameObject.Find("StartGameButton");
-                if (foundButton != null && int.Parse(text) > 1 && text != "")
-                {
-                    Button startGameButton = foundButton.GetComponent<Button>();
-                    startGameButton.interactable = true;
-                }
-                else Debug.Log("[CanStartGame] Couldnt find startButton/ client");
-            }
-            else Debug.Log("[CanStartGame] PlayerList not found");
-            */
-
-            /**
-            var savedNum = PlayerPrefs.GetInt("numberOfPlayers");
-            if (joinedLobby.Players.Count + AISeats.Length == savedNum)
-            {
-                Button startGameButton = GameObject.Find("StartGameButton").GetComponent<Button>();
-                startGameButton.interactable = true;
-            }
-            */
         }
-        //else if (joinedLobby.Players.Count==1)
-        //{
-        //    var foundButton = GameObject.Find("StartGameButton");
-        //    if (foundButton != null)
-        //    {
-        //        Button startGameButton = foundButton.GetComponent<Button>();
-        //        startGameButton.interactable = false;
-        //    }
-        //    else Debug.Log("[CanStartGame] Can't find StartButton, but can start game");
-        //}
     }
 
     public async void JoinByCode()
@@ -266,6 +230,12 @@ public class LobbyAndRelay : MonoBehaviour
                 Debug.Log("WRONG CODE");
                 joinedLobby = lobby;
                 WrongCodeHandle();
+            }
+            else if (!SeatsLeft(lobby))
+            {
+                Debug.Log("TOO MANY PLAYERS");
+                joinedLobby = lobby;
+                TooManyPlayersInList();
             }
             else if (Communication.loadOnStart && !CheckSavedPlayer(AuthenticationService.Instance.PlayerId))
             {
@@ -438,6 +408,7 @@ public class LobbyAndRelay : MonoBehaviour
                 joinedLobby = lobby;
 
                 RefreshPlayerList();
+                if(!ImLobbyHost()) RpcRefreshPlayerList();
             }
         }
     }
@@ -467,6 +438,49 @@ public class LobbyAndRelay : MonoBehaviour
         {
             Debug.Log(e);
         }
+    }
+
+    public async void TooManyPlayersInList()
+    {
+        try
+        {
+            var playerId = AuthenticationService.Instance.PlayerId;
+            Debug.Log($"[WrongCodeHandle] 1/2 Leaving {joinedLobby != null && ImInLobby()}");
+            if (joinedLobby != null && ImInLobby())
+            {
+                await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, playerId);
+                Debug.Log($"After removing {playerId}, he is in lobby? {ImInLobby()}");
+                Debug.Log($"[WrongCodeHandle] 2/2 I'm Leaving Lobby");
+            }
+            else
+            {
+                Debug.Log($"[WrongCodeHandle] 2/2 No joined lobby to leave");
+            }
+
+            joinMenu.SetActive(true);
+            onjoin.text = "Nie ma teraz wolnego miejsca w lobby!";
+            onjoin.gameObject.SetActive(true);
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
+    }
+
+    public bool SeatsLeft(Lobby lobby)
+    {
+        if (lobby.Data == null) Debug.Log(" cant see lobby data");
+        else if (!lobby.Data.ContainsKey("IndexesAI")) Debug.Log(" cant see lobby data key");
+        else
+        {
+            var playersai = lobby.Data["IndexesAI"].Value.Length;
+            var playersreg = lobby.Players.Count;
+            var playersmax = lobby.MaxPlayers;
+
+            Debug.Log($" {playersai}+{playersreg}<={playersmax}");
+            return (playersai + playersreg <= playersmax);
+        }
+        return false;
     }
 
     public async void WrongCodeHandle()
@@ -515,12 +529,35 @@ public class LobbyAndRelay : MonoBehaviour
             Debug.Log($"[LeaveLobby] 1/2 Leaving {joinedLobby!=null && ImInLobby()}");
             if (joinedLobby != null && ImInLobby())
             {
-                await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, playerId);
-                Debug.Log($"After removing {playerId}, he is in lobby? {ImInLobby()}");
-                NetworkManager.Singleton.Shutdown(true);
-                Debug.Log($"[LeaveLobby] 2/2 I'm Leaving Lobby");
-
-                //mainMenu.gameObject.SetActive(true);
+                if (!ImLobbyHost())
+                {
+                    await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, playerId);
+                    Debug.Log($"After removing {playerId}, he is in lobby? {ImInLobby()}");
+                    NetworkManager.Singleton.Shutdown(true);
+                    Debug.Log($"[LeaveLobby] 2/2 I'm Leaving Lobby");
+                }
+                else
+                {
+                    Debug.Log("Host leaving with X - deleting all other players");
+                    int i = 0;
+                    var clientIDs = NetworkManager.Singleton.ConnectedClientsIds;
+                    foreach(var p in joinedLobby.Players)
+                    {
+                        if (clientIDs==null || clientIDs.Count == 0 || i == clientIDs.Count) break;
+                        if (p.Id!=joinedLobby.HostId && i < clientIDs.Count)
+                        {
+                            var clientId = clientIDs[i++];
+                            await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, p.Id);
+                            Debug.Log($"After removing {p.Id}, he is in lobby? {IsInLobby(p.Id, joinedLobby)}");
+                            NetworkManager.Singleton.DisconnectClient(clientId);
+                            Debug.Log($"[LeaveLobby] 2/2 I'm Leaving Lobby");
+                        }
+                    }
+                    //await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, joinedLobby.HostId);
+                    NetworkManager.Singleton.Shutdown(true);
+                    AuthenticationService.Instance.SignOut();
+                    NetworkManager.Singleton.SceneManager.LoadScene("Menu", UnityEngine.SceneManagement.LoadSceneMode.Additive);
+                }
             }
             else
             {
@@ -594,6 +631,21 @@ public class LobbyAndRelay : MonoBehaviour
         return joinedLobby != null && joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
     }
 
+    public bool IsInLobby(string playerId, Lobby chosen)
+    {
+        if (chosen != null && chosen.Players != null)
+        {
+            foreach (Player player in chosen.Players)
+            {
+                if (player.Id == playerId)
+                {
+                    // This player is in this lobby
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public bool ImInLobby()
     {
