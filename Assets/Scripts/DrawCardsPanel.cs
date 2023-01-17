@@ -1,4 +1,5 @@
 using Assets.GameplayControl;
+using Codice.Client.BaseCommands.BranchExplorer;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -39,6 +40,9 @@ public class DrawCardsPanel : NetworkBehaviour
                 RandomSprite(ref color);
                 if ((Color)color == Color.special)
                     numberOfRainbowCards++;
+                actualCardColor[copy] = color;
+                child.GetComponent<Image>().sprite = sprites[color];
+                child.name = names[color];
                 child.gameObject.GetComponent<Button>().onClick.AddListener(() => Communication.DrawCard(this, copy));
                 i++;
                 cards.Add(child.gameObject);
