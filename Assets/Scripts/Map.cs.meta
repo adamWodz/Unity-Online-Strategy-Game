@@ -3,7 +3,10 @@ guid: 3f2cd47ba47dfb64899876b1cb1b5bca
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - m_mapData: {fileID: 11400000, guid: 21781038664f19c4b9341911804df08d, type: 2}
+  - planetNameText: {instanceID: 0}
+  - circlePrefab: {instanceID: 0}
   executionOrder: 100
   icon: {instanceID: 0}
   userData: 

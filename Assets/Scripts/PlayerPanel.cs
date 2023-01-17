@@ -68,7 +68,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     [SerializeField] public List<PlayerInfo> players;
     [SerializeField] private GameObject playerTilePrefab;
     public List<GameObject> playerTilesPrefabs;
-    Queue<GameObject> playersTiles;
+    public Queue<GameObject> playersTiles;
     Dictionary<int, GameObject> playerTilesByIds = new Dictionary<int, GameObject>();
     public bool playersOrderChanged = false;
     GameManager gameManager;

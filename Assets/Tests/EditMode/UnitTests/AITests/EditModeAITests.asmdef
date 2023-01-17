@@ -1,14 +1,15 @@
 {
-    "name": "PlayMode",
+    "name": "EditModeAITests",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "ScriptsAssembly",
-        "Assembly",
-        "Unity.TextMeshPro"
+        "Assembly"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
