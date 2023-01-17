@@ -28,10 +28,10 @@ using UnityEngine.UIElements;
         public void CanBuildPathTests(Color pathColor, int pathLength, Color cardsColor, int cardsQuantity, bool expected)
         {
             PlayerGameData.numOfCardsInColor[cardsColor] = cardsQuantity;
-            PlayerGameData.StartTurn();
             Path path = ScriptableObject.CreateInstance<Path>();
             path.color = pathColor;
             path.length = pathLength;
+            PlayerGameData.StartTurn();
             string errorMessage;
             Assert.AreEqual(expected, PlayerGameData.CanBuildPath(path, out errorMessage));
         }
