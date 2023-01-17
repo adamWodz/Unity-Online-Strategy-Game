@@ -556,7 +556,7 @@ public class LobbyAndRelay : MonoBehaviour
                     //await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, joinedLobby.HostId);
                     NetworkManager.Singleton.Shutdown(true);
                     AuthenticationService.Instance.SignOut();
-                    NetworkManager.Singleton.SceneManager.LoadScene("Menu", UnityEngine.SceneManagement.LoadSceneMode.Single);
+                    NetworkManager.Singleton.SceneManager.LoadScene("Menu", UnityEngine.SceneManagement.LoadSceneMode.Additive);
                 }
             }
             else
