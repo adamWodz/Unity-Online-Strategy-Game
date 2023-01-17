@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Assets.GameplayControl;
 using NUnit.Framework;
 using TMPro;
+using UnityEditorInternal;
 //using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -28,16 +29,7 @@ public class SimplePlayTests
             });
         }
     }
-    /*
-    [UnityTest]
-    public IEnumerator PlayGame()
-    {
-        NetworkManager networkManager = new();
-        networkManager.SceneManager.LoadScene("Menu", LoadSceneMode.Single);
-        yield return null;
-
-    }
-    */
+    
     [UnityTest]
     public IEnumerator DrawCardsTest()
     {
@@ -134,4 +126,112 @@ public class SimplePlayTests
 
         //Assert.AreEqual(numberOfMissionsToChoose - 1, missionsPanel.GetComponent<MissionsPanel>().missionsToChoose.Count);
     }
+
+    [UnityTest]
+    public IEnumerator PlanetsHighlighTest()
+    {
+        int playersNum = 2;
+
+        AddPlayers(playersNum);
+
+        PlayerGameData.Id = 0;
+        PlayerGameData.StartTurn();
+
+        SceneManager.LoadScene("Scenes/Main Game");
+        yield return new WaitForFixedUpdate();
+
+        Button drawMissionsCardsButton = GameObject.Find("DrawMissionsCardsButton").GetComponent<Button>();
+        Assert.IsNotNull(drawMissionsCardsButton);
+        yield return new WaitForFixedUpdate();
+
+        drawMissionsCardsButton.onClick.Invoke();
+        yield return new WaitForSeconds(1);
+
+        var popUp = GameObject.Find("PopUpMissionsDrawing");
+        Assert.IsNotNull(popUp);
+
+        Button yesButton = popUp.transform.GetChild(1).GetComponent<Button>();
+        Assert.IsNotNull(yesButton);
+
+        yesButton.onClick.Invoke();
+        yield return new WaitForSeconds(1);
+
+        GameObject missionsPanel = GameObject.Find("MissionsPanel");
+        Assert.IsNotNull(missionsPanel);
+
+        Button missionCard = missionsPanel.transform.GetChild(0).GetComponent<Button>();
+        Assert.IsNotNull(missionCard);
+
+        string firstPlanet = missionCard.transform.GetChild(0).GetComponent<TMP_Text>().text;
+        string secondPlanet = missionCard.transform.GetChild(1).GetComponent<TMP_Text>().text;
+
+        missionCard.onClick.Invoke();
+
+        yield return new WaitForFixedUpdate();
+
+        var planet1 = GameObject.Find(firstPlanet);
+        Assert.IsNotNull(planet1);
+
+        var planet2 = GameObject.Find(secondPlanet);
+        Assert.IsNotNull(planet2);
+
+        bool isHighlighted = planet1.transform.GetChild(0).gameObject.activeSelf && planet1.GetComponent<Renderer>().material.color == UnityEngine.Color.green;
+        Assert.IsTrue(isHighlighted);
+
+        bool isHighlighted2 = planet2.transform.GetChild(0).gameObject.activeSelf && planet2.GetComponent<Renderer>().material.color == UnityEngine.Color.green;
+        Assert.IsTrue(isHighlighted2);
+    }
+
+    [UnityTest]
+    public IEnumerator BuildPathDataTest()
+    {
+        int playersNum = 2;
+
+        AddPlayers(playersNum);
+
+        PlayerGameData.Id = 0;
+        PlayerGameData.StartTurn();
+
+        SceneManager.LoadScene("Scenes/Main Game");
+        yield return new WaitForFixedUpdate();
+
+        GameObject oneTilePath = GameObject.Find("OneTilePath(Clone)");
+        Color color = oneTilePath.GetComponent<BuildPath>().path.color;
+        string c = "";
+        switch(color)
+        {
+            case Color.red:
+                c = "RedCards";
+                break;
+            case Color.green:
+                c = "GreenCards";
+                break; 
+            case Color.blue:
+                c = "BlueCards";
+                break;
+            case Color.yellow:
+                c = "YellowCards";
+                break;
+            case Color.pink:
+                c = "PinkCards";
+                break;
+            case Color.special:
+                c = "RainbowCards";
+                break;
+        }
+        oneTilePath.GetComponent<BuildPath>().OnMouseDown();
+        GameObject cardStack = GameObject.Find(c);
+        int cardsCount = int.Parse(cardStack.transform.GetChild(0).GetComponent<TMP_Text>().text);
+        int spaceshipsCounter = int.Parse(GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>().text);  
+
+        cardStack.GetComponent<Button>().onClick.Invoke();
+
+        yield return new WaitForFixedUpdate();
+
+        Assert.AreEqual(cardsCount - 1,int.Parse(cardStack.transform.GetChild(0).GetComponent<TMP_Text>().text));
+        Assert.AreEqual(spaceshipsCounter - 1, int.Parse(GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>().text));
+        Assert.IsTrue(oneTilePath.GetComponent<BuildPath>().path.isBuilt);
+        Assert.IsFalse(PlayerGameData.isNowPlaying);
+    }
+
 }

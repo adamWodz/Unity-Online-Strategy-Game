@@ -31,7 +31,7 @@ public class BuildPath : MonoBehaviour
         
     }
 
-    private void OnMouseDown()
+    public void OnMouseDown()
     {
         Debug.Log("OnMouseDown");
         Communication.ChoosePath(this);
