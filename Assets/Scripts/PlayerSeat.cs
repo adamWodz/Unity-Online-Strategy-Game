@@ -43,6 +43,12 @@ public class PlayerSeat : MonoBehaviour
         joinedBackground.gameObject.SetActive(true);
         if (cankick) KickPlayer.gameObject.SetActive(true);
     }
+    public void FreeSeat()
+    {
+        joinedBackground.gameObject.SetActive(false);
+        KickPlayer.gameObject.SetActive(false);
+        Nickname.text = "";
+    }
 
     public void ChangePlayerType()
     {
@@ -62,7 +68,13 @@ public class PlayerSeat : MonoBehaviour
     }
     public void TryLeave()
     {
-        lobby.KickPlayer(playerId);
-        Debug.Log($"[PlayerSeat.TryLeave] Player {playerId} getting kicked");
+        var found = GameObject.Find("LobbyAndRelay");
+        if (found != null) lobby = found.GetComponent<LobbyAndRelay>();
+        if (lobby!=null) lobby.KickRecentlyJoined();
+
+        //var list = GameObject.Find("PlayerList").GetComponent<PlayerList>();
+        ////list.RefreshAIPlayers();
+        //list.RefreshList();
+        lobby.RefreshPlayerList();
     }
 }
