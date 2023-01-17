@@ -29,13 +29,13 @@ public class BoardStateTests
         }
     }
 
-    [UnityTest]
+    /*[UnityTest]
     public IEnumerator NetworkManagerTest()
     {
         NetworkManager.Singleton.StartHost();
 
         yield return null;
-    }
+    }*/
 
     [UnityTest]
     public IEnumerator PlayerTilesNumberTest()

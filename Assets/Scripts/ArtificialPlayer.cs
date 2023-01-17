@@ -156,7 +156,7 @@ namespace Assets.GameplayControl
 
 
         // sprawdzamy czy możemy wybudować jakąkiekolwiek połączenie
-        Path BestPathToBuild()
+        public Path BestPathToBuild()
         {
             pathsToBuild = pathsToBuild.OrderByDescending(p1 => p1.length).ToList();
 
@@ -174,7 +174,7 @@ namespace Assets.GameplayControl
             return pathsNotBuilt.FirstOrDefault();
         }
 
-        bool CanBeBuild(Path path)
+        public bool CanBeBuild(Path path)
         {
             if (path.length > spaceshipsLeft) return false;
             if (numOfCardsInColor[path.color] < path.length
@@ -189,7 +189,7 @@ namespace Assets.GameplayControl
         Dictionary<(Planet, Planet), List<Planet>> pathBetweenPlanets = new Dictionary<(Planet, Planet), List<Planet>>();
         int[,] kay = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
 
-        private void SetQuickestPathForEveryPairOfPlantes()
+        public void SetQuickestPathForEveryPairOfPlantes()
         {
             for (int i = 0; i < Map.mapData.planets.Count; i++)
                 for (int j = 0; j < Map.mapData.planets.Count; j++)
@@ -242,7 +242,7 @@ namespace Assets.GameplayControl
             }
         }
 
-        void SetPathsToBuild()
+        public void SetPathsToBuild()
         {
             pathsToBuild = new List<Path>();
 
@@ -440,7 +440,7 @@ namespace Assets.GameplayControl
             foreach (Mission mission in missionsToDraw)
                 if (DistanceBetweenPlanetGroups(mission.start, mission.end) < limit)
                 {
-                    Debug.Log($"dist {mission.start} - {mission.end} {DistanceBetweenPlanetGroups(mission.start, mission.end)}");
+                    Debug.Log($"dist {mission.start.name} - {mission.end.name} {DistanceBetweenPlanetGroups(mission.start, mission.end)}");
                     if(!pickedMissions.Contains(mission)) 
                         pickedMissions.Add(mission);
                 }
