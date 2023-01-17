@@ -28,23 +28,20 @@ public class BoardStateTests
         }
     }
 
-    /*[UnityTest]
-    public IEnumerator NetworkManagerTest()
+    void StartMainGameScreen(int playersNum)
     {
-        NetworkManager.Singleton.StartHost();
+        AddPlayers(playersNum);
 
-        yield return null;
-    }*/
+        PlayerGameData.Id = 0;
+        SceneManager.LoadScene("Scenes/Main Game");
+    }
 
     [UnityTest]
     public IEnumerator PlayerTilesNumberTest()
     {
         int playersNum = 2;
+        StartMainGameScreen(playersNum);
 
-        AddPlayers(playersNum);
-
-        PlayerGameData.Id = 0;
-        SceneManager.LoadScene("Scenes/Main Game");
         yield return new WaitForFixedUpdate();
 
         int tilesNum = GameObject.Find("Canvas").transform.Find("PlayersPanel").GetComponent<PlayerPanel>().playersTiles.Count;
@@ -55,12 +52,8 @@ public class BoardStateTests
     [UnityTest]
     public IEnumerator StartPlayerSpaceshipNumberTest()
     {
-        int playersNum = 2;
+        StartMainGameScreen(2);
 
-        AddPlayers(playersNum);
-
-        PlayerGameData.Id = 0;
-        SceneManager.LoadScene("Scenes/Main Game");
         yield return new WaitForFixedUpdate();
 
         GameObject tile = GameObject.Find("Canvas").transform.Find("PlayersPanel").GetComponent<PlayerPanel>().playersTiles.First();
@@ -68,15 +61,46 @@ public class BoardStateTests
         Assert.AreEqual(Board.startSpaceshipsNumber, spaceshipsNum);
     }
 
-    public IEnumerator DifferentPlayerTilesColorTest()
+    [UnityTest]
+    public IEnumerator StartCardsNumTest()
     {
+        StartMainGameScreen(2);
         yield return new WaitForFixedUpdate();
+
+        CardDeck cardsDeck = GameObject.Find("CardDeck").GetComponent<CardDeck>();
+        string[] names = cardsDeck.names;
+
+        foreach(string name in names)
+        {
+            GameObject cardStack = GameObject.Find(name);
+            Assert.IsNotNull(cardStack);
+            TMP_Text counter = cardStack.transform.GetChild(0).GetComponent<TMP_Text>();
+            int counterValue = int.Parse(counter.text);
+
+            Assert.AreEqual(1, counterValue);
+        }
     }
 
+    [UnityTest]
+    public IEnumerator DifferentPlayerColorsTest()
+    {
+        StartMainGameScreen(2);
+        yield return new WaitForFixedUpdate();
 
+        var players = GameObject.Find("Canvas").transform.Find("PlayersPanel").GetComponent<PlayerPanel>().players;
+
+        Assert.AreNotEqual(players[0].ColorNum, players[1].ColorNum);
+    }
+
+    [UnityTest]
     public IEnumerator CardsToDrawNumberTest()
     {
+        StartMainGameScreen(2);
         yield return new WaitForFixedUpdate();
+
+        GameObject cards = GameObject.Find("DrawCardsPanel");
+
+        Assert.AreEqual(5, cards.transform.childCount);
     }
 
     

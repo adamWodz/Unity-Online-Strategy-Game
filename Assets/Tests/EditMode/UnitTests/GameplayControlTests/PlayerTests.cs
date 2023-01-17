@@ -5,6 +5,7 @@ using NUnit.Framework;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.UIElements;
 
     public class PlayerTests
     {
@@ -36,7 +37,8 @@ using UnityEngine.TestTools;
         }
 
         [TestCase(Color.red, 2, 3, 1)]
-        public void BuildPathTests(Color color, int length, int enterQuantity, int finalQuantity)
+        [TestCase(Color.blue, 3, 3, 0)]
+        public void NumOfCardsAfterBuildPathTests(Color color, int length, int enterQuantity, int finalQuantity)
         {
             PlayerGameData.numOfCardsInColor[color] = enterQuantity;
             PlayerGameData.StartTurn();
@@ -46,6 +48,29 @@ using UnityEngine.TestTools;
             PlayerGameData.BuildPath(path);
             Assert.AreEqual(finalQuantity, PlayerGameData.numOfCardsInColor[color]);
         }
+
+    [TestCase(1, 1)]
+    [TestCase(2, 2)]
+    [TestCase(3, 4)]
+    [TestCase(4, 7)]
+    [TestCase(5, 10)]
+    [TestCase(6, 15)]
+    [TestCase(7, 22)]
+    [TestCase(8, 29)]
+    public void NumOfPointsAfterBuildPathTests(int pathLen, int expectedPoints)
+    {
+        Color color = Color.yellow;
+        PlayerGameData.curentPoints = 0;
+        PlayerGameData.StartTurn();
+        PlayerGameData.numOfCardsInColor[color] = pathLen;
+
+        Path path = ScriptableObject.CreateInstance<Path>();
+        path.color = color;
+        path.length = pathLen;
+        PlayerGameData.BuildPath(path);
+
+        Assert.AreEqual(expectedPoints, PlayerGameData.curentPoints);
+    }
 
         [TestCase(Color.green, 3, 0, true)]
         [TestCase(Color.green, 1, 3, false)]
