@@ -66,7 +66,11 @@ public class EndGame : MonoBehaviour
 
         //Application.Quit();
 
+        AuthenticationService.Instance.SignOut();
+
         string name = "Scenes/Menu";
         SceneManager.LoadScene(name, LoadSceneMode.Single);
+
+
     }
 }
