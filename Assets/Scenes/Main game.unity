@@ -299,8 +299,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -296.30017, y: -186.44127}
-  m_SizeDelta: {x: -614.7621, y: -400.4118}
+  m_AnchoredPosition: {x: -334.1456, y: -186.44128}
+  m_SizeDelta: {x: -703.5615, y: -400.4118}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &10144171
 MonoBehaviour:
@@ -322,7 +322,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 19c0ce9ecc8767840b81d2ec4a997132, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8e59eb8447d9ed444900b9bde402f489, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1495,8 +1495,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 64.8, y: 0}
-  m_SizeDelta: {x: 58.1607, y: 44.941}
+  m_AnchoredPosition: {x: 23.588985, y: 0}
+  m_SizeDelta: {x: 49.26, y: 44.941}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &426874998
 MonoBehaviour:
@@ -7046,6 +7046,7 @@ MonoBehaviour:
   - {fileID: 3340119059822725561, guid: 4509119869898584e964d42bdfc73ff5, type: 3}
   planetNameText: {fileID: 6340760844309741922, guid: bd708020bf741714a9eead77a55b2df6, type: 3}
   circlePrefab: {fileID: 3751254401362986206, guid: 8f2fcf9fae45ad040b8a3d4c861e4c88, type: 3}
+  squarePrefab: {fileID: 7438650028898310238, guid: 7908ac6098f8bfc4abd87df5e2d32528, type: 3}
 --- !u!114 &1934100728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7649,6 +7650,10 @@ PrefabInstance:
       propertyPath: cardBackButton
       value: 
       objectReference: {fileID: 4963611423944183591, guid: a2d051bf988eb6949bafd1552ee032c3, type: 3}
+    - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
+      propertyPath: missionDoneSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6e2678df8f73a034d8ba370fa581367e, type: 3}
     - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
       propertyPath: cardButtonWithSync
       value: 

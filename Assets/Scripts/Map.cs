@@ -29,6 +29,7 @@ public class Map : NetworkBehaviour, IDataPersistence
     public GameObject[] pathsPrefabs;
     public GameObject planetNameText;
     public GameObject circlePrefab;
+    public GameObject squarePrefab;
 
     // kolory sciezek
     private UnityEngine.Color[] colors = new UnityEngine.Color[] {
@@ -172,7 +173,7 @@ public class Map : NetworkBehaviour, IDataPersistence
                     new Vector2(paths[i].planetFrom.positionX, paths[i].planetFrom.positionY), 0.5f);
 
                 // szukam indeks drugiej ścieżki, która ma te same planety (w przypadku podwójnych ścieżek)
-                int k = paths.FindIndex(path3 => path3.IsEqual(path) && path3.Id != path.Id);
+                int k = paths.FindIndex(path3 => path3.IsEqualByName(path) && path3.Id != path.Id);
                 //Debug.Log("Double path:" +k);
                 
                 if (k != -1 && !pathWasSpawned[k])
@@ -198,7 +199,14 @@ public class Map : NetworkBehaviour, IDataPersistence
     }
     void SpawnPath(Path path, Vector2 position, float angle)
     {
+        // ścieżka
         var pathGameObject = Instantiate(pathsPrefabs[path.length - 1], position, Quaternion.Euler(new Vector3(0, 0, -angle)));
+        
+        // podświetlenie ścieżki
+        var highlight = Instantiate(squarePrefab, pathGameObject.transform);
+        highlight.transform.localScale = new(0.2f,path.length*0.5f,1);
+        highlight.transform.localPosition = new(0, 0, -0.069f);
+        highlight.SetActive(false);
 
         // przypisanie do build path
         var buildPath = pathGameObject.GetComponent<BuildPath>();

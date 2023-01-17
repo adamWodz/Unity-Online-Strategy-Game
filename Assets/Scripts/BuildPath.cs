@@ -28,7 +28,14 @@ public class BuildPath : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(PlayerGameData.isNowPlaying && Communication.chosenPath != null && Communication.chosenPath.path.IsEqualById(path))
+        {
+            transform.GetChild(transform.childCount - 1).gameObject.SetActive(true);
+        }
+        else
+        {
+            transform.GetChild(transform.childCount - 1).gameObject.SetActive(false);
+        }
     }
 
     public void OnMouseDown()

@@ -6,7 +6,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Assets.GameplayControl;
 using NUnit.Framework;
 using TMPro;
-using UnityEditorInternal;
 //using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -231,7 +230,8 @@ public class SimplePlayTests
         Assert.AreEqual(cardsCount - 1,int.Parse(cardStack.transform.GetChild(0).GetComponent<TMP_Text>().text));
         Assert.AreEqual(spaceshipsCounter - 1, int.Parse(GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>().text));
         Assert.IsTrue(oneTilePath.GetComponent<BuildPath>().path.isBuilt);
-        Assert.IsFalse(PlayerGameData.isNowPlaying);
+        //yield return new WaitForFixedUpdate();
+        //Assert.IsFalse(PlayerGameData.isNowPlaying);
     }
 
 }

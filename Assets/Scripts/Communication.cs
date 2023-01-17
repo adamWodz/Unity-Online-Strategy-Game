@@ -38,7 +38,7 @@ public static class Communication
     public static int mapDataNumber;
     public static List<MapData> availableMapsData;
 
-    private static BuildPath chosenPath;
+    public static BuildPath chosenPath;
 
     public static bool isLastTurn = false;
 
@@ -61,6 +61,7 @@ public static class Communication
                     _GameManager.SetPopUpWindow(errorMessage);
             }
         }
+        chosenPath = null;
     }
 
     public static void BuildPath(BuildPath buildPath, Path path)

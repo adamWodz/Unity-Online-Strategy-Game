@@ -18,9 +18,14 @@ public class Path : ScriptableObject
     //public bool withSatellie { get; set; } = false;
     //public PlayerState playerOfSatellite;
 
-    public bool IsEqual(Path other)
+    public bool IsEqualByName(Path other)
     {
         return planetFrom.name == other.planetFrom.name && planetTo.name == other.planetTo.name;
+    }
+
+    public bool IsEqualById(Path other)
+    {
+        return Id == other.Id;
     }
 
     public Path()

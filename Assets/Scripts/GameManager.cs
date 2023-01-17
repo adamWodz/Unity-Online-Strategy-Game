@@ -20,6 +20,7 @@ using UnityEngine.UI;
 public class GameManager : NetworkBehaviour//, IDataPersistence
 {
     public List<Sprite> cardSprites;
+    public Sprite missionDoneSprite;
     //public GameObject shipGameObject;
     public GameObject cardButton;
     public GameObject cardBackButton;
@@ -479,6 +480,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     {
         GameObject missionButton = GameObject.Find(mission.start.name + "-" + mission.end.name);
         missionButton.transform.GetChild(3).gameObject.SetActive(true);
+        missionButton.GetComponent<Image>().sprite = missionDoneSprite;
         SyncMissionsDoneServerRpc(mission.start.name, mission.end.name, PlayerGameData.Id);
     }
     
