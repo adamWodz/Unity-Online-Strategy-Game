@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Assets.GameplayControl;
 using NUnit.Framework;
 using TMPro;
+using UnityEditorInternal;
 //using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -180,4 +181,57 @@ public class SimplePlayTests
         bool isHighlighted2 = planet2.transform.GetChild(0).gameObject.activeSelf && planet2.GetComponent<Renderer>().material.color == UnityEngine.Color.green;
         Assert.IsTrue(isHighlighted2);
     }
+
+    [UnityTest]
+    public IEnumerator BuildPathDataTest()
+    {
+        int playersNum = 2;
+
+        AddPlayers(playersNum);
+
+        PlayerGameData.Id = 0;
+        PlayerGameData.StartTurn();
+
+        SceneManager.LoadScene("Scenes/Main Game");
+        yield return new WaitForFixedUpdate();
+
+        GameObject oneTilePath = GameObject.Find("OneTilePath(Clone)");
+        Color color = oneTilePath.GetComponent<BuildPath>().path.color;
+        string c = "";
+        switch(color)
+        {
+            case Color.red:
+                c = "RedCards";
+                break;
+            case Color.green:
+                c = "GreenCards";
+                break; 
+            case Color.blue:
+                c = "BlueCards";
+                break;
+            case Color.yellow:
+                c = "YellowCards";
+                break;
+            case Color.pink:
+                c = "PinkCards";
+                break;
+            case Color.special:
+                c = "RainbowCards";
+                break;
+        }
+        oneTilePath.GetComponent<BuildPath>().OnMouseDown();
+        GameObject cardStack = GameObject.Find(c);
+        int cardsCount = int.Parse(cardStack.transform.GetChild(0).GetComponent<TMP_Text>().text);
+        int spaceshipsCounter = int.Parse(GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>().text);  
+
+        cardStack.GetComponent<Button>().onClick.Invoke();
+
+        yield return new WaitForFixedUpdate();
+
+        Assert.AreEqual(cardsCount - 1,int.Parse(cardStack.transform.GetChild(0).GetComponent<TMP_Text>().text));
+        Assert.AreEqual(spaceshipsCounter - 1, int.Parse(GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>().text));
+        Assert.IsTrue(oneTilePath.GetComponent<BuildPath>().path.isBuilt);
+        Assert.IsFalse(PlayerGameData.isNowPlaying);
+    }
+
 }
