@@ -263,13 +263,19 @@ public class LobbyAndRelay : MonoBehaviour
             Lobby lobby = await Lobbies.Instance.QuickJoinLobbyAsync();
             if (input.text != lobby.LobbyCode)
             {
-                onjoin.gameObject.SetActive(false);
                 Debug.Log("WRONG CODE");
                 joinedLobby = lobby;
                 WrongCodeHandle();
             }
+            else if (Communication.loadOnStart && !CheckSavedPlayer(AuthenticationService.Instance.PlayerId))
+            {
+                Debug.Log("PLAYER NOT SAVED");
+                joinedLobby = lobby;
+                WrongPlayerHandle();
+            }
             else
             {
+                if (Communication.loadOnStart) Debug.Log("LOADING GAME");
 
                 PrintLobbyInfo(lobby);
                 PrintPlayers(lobby);
@@ -436,6 +442,33 @@ public class LobbyAndRelay : MonoBehaviour
         }
     }
 
+    public async void WrongPlayerHandle()
+    {
+        try
+        {
+            var playerId = AuthenticationService.Instance.PlayerId;
+            Debug.Log($"[WrongPlayerHandle] 1/2 Leaving {joinedLobby != null && ImInLobby()}");
+            if (joinedLobby != null && ImInLobby())
+            {
+                await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, playerId);
+                Debug.Log($"After removing {playerId}, he is in lobby? {ImInLobby()}");
+                Debug.Log($"[WrongPlayerHandle] 2/2 I'm Leaving Lobby");
+            }
+            else
+            {
+                Debug.Log($"[WrongPlayerHandle] 2/2 No joined lobby to leave");
+            }
+
+            joinMenu.SetActive(true);
+            onjoin.text = "Nie uczestniczy³eœ we wczytanej grze!";
+            onjoin.gameObject.SetActive(true);
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.Log(e);
+        }
+    }
+
     public async void WrongCodeHandle()
     {
         try
@@ -454,6 +487,7 @@ public class LobbyAndRelay : MonoBehaviour
             }
 
             joinMenu.SetActive(true);
+            onjoin.text = "Wpisa³eœ z³e has³o!";
             onjoin.gameObject.SetActive(true);
         }
         catch (LobbyServiceException e)
