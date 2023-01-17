@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Assets.GameplayControl;
 using NUnit.Framework;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -27,7 +28,15 @@ public class BoardStateTests
             });
         }
     }
-    
+
+    /*[UnityTest]
+    public IEnumerator NetworkManagerTest()
+    {
+        NetworkManager.Singleton.StartHost();
+
+        yield return null;
+    }*/
+
     [UnityTest]
     public IEnumerator PlayerTilesNumberTest()
     {
