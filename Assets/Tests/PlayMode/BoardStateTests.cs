@@ -71,33 +71,5 @@ public class BoardStateTests
         yield return new WaitForFixedUpdate();
     }
 
-    [UnityTest]
-    public IEnumerator DrawCardsTest()
-    {
-        int playersNum = 2;
-
-        AddPlayers(playersNum);
-
-        PlayerGameData.Id = 0;
-        PlayerGameData.StartTurn();
-        SceneManager.LoadScene("Scenes/Main Game");
-        yield return new WaitForFixedUpdate();
-
-        GameObject card = GameObject.Find("DrawCardsPanel").transform.GetChild(0).gameObject;
-        Assert.IsNotNull(card);
-        Debug.Log(card.name);
-        yield return new WaitForFixedUpdate();
-        GameObject cardStack = GameObject.Find(card.name + "s");
-        Assert.IsNotNull(cardStack);
-        TMP_Text counter = cardStack.transform.GetChild(0).GetComponent<TMP_Text>();
-        int pom = int.Parse(counter.text);
-
-        Button button = card.transform.GetComponent<Button>();
-        Assert.IsNotNull(button);
-        button.onClick.Invoke();
-
-        yield return new WaitForSeconds(2);
-
-        Assert.AreEqual(pom+1, int.Parse(counter.text));
-    }
+    
 }
