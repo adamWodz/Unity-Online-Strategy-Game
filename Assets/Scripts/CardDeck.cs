@@ -48,7 +48,10 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
 
         Destroy(cardTempalte);
         Debug.Log("Ładuję card deck");
-        SendCardsStacksServerRpc(startHand,PlayerGameData.Id);
+        if (!Communication.loadOnStart)
+        {
+            SendCardsStacksServerRpc(startHand, PlayerGameData.Id);
+        }
     }
 
     public void LoadData(GameData data)
@@ -67,14 +70,14 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
             else
                cardsQuantityPerPlayerPerColor[PlayerGameData.Id] = data.cardsForEachPalyer[PlayerGameData.Id];
 
-            for (int i = 1; i < Server.allPlayersInfo.Count; i++)
+            for (int i = 1; i < data.players.Count; i++)
             {
-                if (!cardsQuantityPerPlayerPerColor.ContainsKey(Server.allPlayersInfo[i].Id))
-                   cardsQuantityPerPlayerPerColor.Add(Server.allPlayersInfo[i].Id, data.cardsForEachPalyer[Server.allPlayersInfo[i].Id]);
+                if (!cardsQuantityPerPlayerPerColor.ContainsKey(data.players[i].Id))
+                   cardsQuantityPerPlayerPerColor.Add(data.players[i].Id, data.cardsForEachPalyer[data.players[i].Id]);
                 else
-                   cardsQuantityPerPlayerPerColor[Server.allPlayersInfo[i].Id] = data.cardsForEachPalyer[Server.allPlayersInfo[i].Id];
-                if (!Server.allPlayersInfo[i].IsAI)
-                {
+                   cardsQuantityPerPlayerPerColor[data.players[i].Id] = data.cardsForEachPalyer[data.players[i].Id];
+                //if (!Server.allPlayersInfo[i].IsAI)
+                //{
                     // ustawiam rpc na wysyłanie do konkretnego gracza (kazdy gracz musi otrzymac inne dane)
                     /*
                     ClientRpcParams clientRpcParams = new()
@@ -85,8 +88,8 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
                         }
                     };
                     */
-                    LoadCardsStacksClientRpc(data.cardsForEachPalyer[Server.allPlayersInfo[i].Id], Server.allPlayersInfo[i].UnityId, Server.allPlayersInfo[i].Id);//, clientRpcParams);
-                }
+                    LoadCardsStacksClientRpc(data.cardsForEachPalyer[data.players[i].Id], data.players[i].UnityId, data.players[i].Id);//, clientRpcParams);
+                //}
             }
         }
     }
@@ -136,7 +139,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
     }
 
     [ClientRpc]
-    void LoadCardsStacksClientRpc(int[] cardStack,string UnityId,int id ,ClientRpcParams clientRpcParams = default)
+    void LoadCardsStacksClientRpc(int[] cardStack,string UnityId,int id)
     {
         if (PlayerGameData.UnityId == UnityId)
         {
@@ -147,7 +150,6 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
                 gameManager.cardStackCounterList[i].text = cardStack[i].ToString();
                 PlayerGameData.numOfCardsInColor[(Color)i] = cardStack[i];
                 Debug.Log($"Cards in this color: {PlayerGameData.numOfCardsInColor[(Color)i]}");
-
             }
         }
     }

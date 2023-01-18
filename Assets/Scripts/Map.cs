@@ -225,6 +225,8 @@ public class Map : NetworkBehaviour, IDataPersistence
                 //Debug.Log(pom);
                 pom.GetComponent<Move>().speed = 0;
                 pom.GetComponent<NetworkObject>().Spawn(true);
+                gameManager.spawnedSpaceships ??= new();
+                gameManager.spawnedSpaceships.Add(pom.GetComponent<NetworkObject>());
             }
         }
 

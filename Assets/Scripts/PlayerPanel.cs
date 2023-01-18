@@ -228,8 +228,8 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             int numberOfPlayers = Server.allPlayersInfo.Count;
             PlayerPrefs.SetInt("numberOfPlayers", numberOfPlayers);
             
-            PlayerPrefs.GetString("players").Split(';');
-            PlayerPrefs.GetInt("numberOfPlayers");
+            //PlayerPrefs.GetString("players").Split(';');
+            //PlayerPrefs.GetInt("numberOfPlayers");
         } 
     }
 

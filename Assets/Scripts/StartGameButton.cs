@@ -22,6 +22,7 @@ public class StartGameButton : NetworkBehaviour
 
     public void StartGame()
     {
+        ClearAvailableMaps();
         Debug.Log("Id from start: " + AuthenticationService.Instance.PlayerId);
         if (Communication.loadOnStart)
         {
