@@ -250,8 +250,17 @@ public class PathsPanel : Panel
             PlayerGameData.missions ??= new();
             PlayerGameData.completedMissions ??= new();
             PlayerGameData.completedMissions = missions.Where(m => m.isDone).ToList();
+            Debug.Log(PlayerGameData.completedMissions.Count);
             PlayerGameData.missions = missions.ToList();
-
+            Debug.Log(PlayerGameData.missions.Count);
+            PlayerGameData.groupsOfConnectedPlanets ??= new();
+            foreach (Path path in map.Paths)
+            {
+                if(path.builtById == PlayerGameData.Id)
+                    ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, PlayerGameData.groupsOfConnectedPlanets);
+            }
+            Debug.Log(PlayerGameData.groupsOfConnectedPlanets.Count);
+            
             //AI
             foreach (var artificialPlayer in Server.artificialPlayers)
             {
@@ -273,6 +282,13 @@ public class PathsPanel : Panel
                     else
                         artificialPlayer.missionsToDo.Add(mission);
                 }
+                artificialPlayer.groupsOfConnectedPlanets ??= new();
+                foreach (Path path in map.Paths)
+                {
+                    if (path.builtById == artificialPlayer.Id)
+                        ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, artificialPlayer.groupsOfConnectedPlanets);
+                }
+                Debug.Log(artificialPlayer.groupsOfConnectedPlanets.Count);
             }
 
             // wczytywanie misji do PlayerGameData
@@ -379,14 +395,21 @@ public class PathsPanel : Panel
             mission
             };
             PlayerGameData.missions ??= new();
-            PlayerGameData.completedMissions??= new();
+            PlayerGameData.completedMissions ??= new();
             if (isDone)
                 PlayerGameData.completedMissions.Add(mission);
             PlayerGameData.missions.Add(mission);
             missionsChosen ??= new();
             MissionsChosen = missions;
             Debug.Log("Misje: " + PlayerGameData.missions.Count);
-            Debug.Log("Misje zrobione: "+PlayerGameData.completedMissions.Count);
+            Debug.Log("Misje zrobione: " + PlayerGameData.completedMissions.Count);
+            PlayerGameData.groupsOfConnectedPlanets ??= new();
+            foreach (Path path in map.Paths)
+            {
+                if (path.builtById == PlayerGameData.Id)
+                    ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, PlayerGameData.groupsOfConnectedPlanets);
+            }
+            Debug.Log(PlayerGameData.groupsOfConnectedPlanets.Count);
         }
     }
 }
