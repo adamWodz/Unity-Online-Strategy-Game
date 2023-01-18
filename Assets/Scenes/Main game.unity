@@ -7590,7 +7590,7 @@ PrefabInstance:
     - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
       propertyPath: missionDoneSprite
       value: 
-      objectReference: {fileID: 21300000, guid: 6e2678df8f73a034d8ba370fa581367e, type: 3}
+      objectReference: {fileID: 21300000, guid: 1c82ec42a1e8d4663b698e6e831af7b6, type: 3}
     - target: {fileID: 2329796705188009014, guid: efacbd2346d2096449b6e2be308ddeeb, type: 3}
       propertyPath: cardButtonWithSync
       value: 
