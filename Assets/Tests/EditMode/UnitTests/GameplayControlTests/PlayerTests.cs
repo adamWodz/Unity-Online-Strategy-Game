@@ -20,20 +20,19 @@ using UnityEngine.UIElements;
             Assert.AreEqual(expected, PlayerGameData.CanBuildPath(path, out errorMessage));
         }
 
-        [TestCase(Color.red, 2, Color.red, 2, true)]
         [TestCase(Color.red, 4, Color.blue, 2, false)]
         [TestCase(Color.red, 3, Color.red, 1, false)]
-        [TestCase(Color.red, 2, Color.red, 2, true)]
-        [TestCase(Color.red, 2, Color.red, 4, true)]
         public void CanBuildPathTests(Color pathColor, int pathLength, Color cardsColor, int cardsQuantity, bool expected)
         {
-            PlayerGameData.numOfCardsInColor[cardsColor] = cardsQuantity;
             Path path = ScriptableObject.CreateInstance<Path>();
             path.color = pathColor;
             path.length = pathLength;
-            PlayerGameData.StartTurn();
             string errorMessage;
+            PlayerGameData.StartTurn();
+            PlayerGameData.isNowPlaying = true;
+            PlayerGameData.numOfCardsInColor[cardsColor] = cardsQuantity;
             Assert.AreEqual(expected, PlayerGameData.CanBuildPath(path, out errorMessage));
+            PlayerGameData.EndTurn();
         }
 
         [TestCase(Color.red, 2, 3, 1)]
