@@ -1,4 +1,5 @@
 using Assets.GameplayControl;
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -118,6 +119,23 @@ public class StartGameButton : NetworkBehaviour
 
     }
 
+    public void ClearAvailableMaps()
+    {
+        MapData mapData = availableMapsData[0];
+        
+        if (mapData.missions != null)
+            foreach (Mission mission in mapData.missions)
+            {
+                mission.isDone = false;
+            }
+
+        if (mapData.paths != null)
+            foreach (Path path in mapData.paths)
+            {
+                path.isBuilt = false;
+                path.builtById = -1;
+            }
+    }
 
     public string GetPlayeListNick(int charOldIndex, string indexes)
     {
