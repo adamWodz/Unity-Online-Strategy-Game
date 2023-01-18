@@ -16,6 +16,10 @@ public class MainMenu : NetworkBehaviour
         if (name.Length == 0)
             PlayerPrefs.SetString("username", "Gracz");
         PlayerGameData.Name = PlayerPrefs.GetString("username");
+
+        PlayerGameData.Reset();
+        Server.Reset();
+        Communication.Reset();
     }
 
     public void QuitGame()

@@ -56,16 +56,18 @@ public class EndGame : MonoBehaviour
     {
         NetworkManager.Singleton.Shutdown();
         
-        foreach(Mission mission in Map.mapData.missions)
-        {
-            mission.isDone = false;
-        }
+        if(Map.mapData.missions != null)
+            foreach(Mission mission in Map.mapData.missions)
+            {
+                mission.isDone = false;
+            }
 
-        foreach(Path path in Map.mapData.paths)
-        {
-            path.isBuilt = false;
-            path.builtById = -1;
-        }
+        if (Map.mapData.missions != null)
+            foreach (Path path in Map.mapData.paths)
+            {
+                path.isBuilt = false;
+                path.builtById = -1;
+            }
 
         PlayerGameData.Reset();
         Server.Reset();
