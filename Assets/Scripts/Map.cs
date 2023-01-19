@@ -265,7 +265,7 @@ public class Map : NetworkBehaviour, IDataPersistence
         Path path = Path.CreateInstance(id,planetFrom,planetTo, color,length,isBuilt,builtById);
         //Debug.Log($"Path {path.planetFrom.name}-{path.planetTo.name} jest zbudowana? {path.isBuilt}");
         loadBuildPath[id] = isBuilt;
-        Map.mapData.paths.First(p => p.Id == id).isBuilt = isBuilt;
+        //Map.mapData.paths.First(p => p.Id == id).isBuilt = isBuilt;
         paths.Add(path);
     }
 }
