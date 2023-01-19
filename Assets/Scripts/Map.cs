@@ -12,6 +12,8 @@ public class Map : NetworkBehaviour, IDataPersistence
     public static MapData mapData;
     public MapData m_mapData;
 
+    public static bool[] loadBuildPath = new bool[100];
+
     private float mapZparam = -1;
     private List<Path> paths;
     public List<Path> Paths
@@ -88,6 +90,7 @@ public class Map : NetworkBehaviour, IDataPersistence
             foreach(PathData path in data.paths)
             {
                 SetPathsClientRpc(path.id, path.planetFromName, path.planetToName, path.color, path.length, path.isBuilt, path.builtById,data.mapNumber);
+
             }
             SetMapDataClientRpc();
         }
@@ -251,12 +254,18 @@ public class Map : NetworkBehaviour, IDataPersistence
     [ClientRpc]
     public void SetPathsClientRpc(int id,string planetFromName,string planetToName, Color color, int length, bool isBuilt, int builtById,int mapNumber)
     {
-        paths ??= new();
+        if (paths == null)
+        {
+            paths = new();
+            mapData.paths = paths;
+        }
         mapData = mapData != null ? mapData : Communication.availableMapsData[mapNumber];
         Planet planetFrom = mapData.planets.Single(planet => planet.name == planetFromName);
         Planet planetTo = mapData.planets.Single(planet => planet.name == planetToName);
         Path path = Path.CreateInstance(id,planetFrom,planetTo, color,length,isBuilt,builtById);
         //Debug.Log($"Path {path.planetFrom.name}-{path.planetTo.name} jest zbudowana? {path.isBuilt}");
+        loadBuildPath[id] = isBuilt;
+        Map.mapData.paths.First(p => p.Id == id).isBuilt = isBuilt;
         paths.Add(path);
     }
 }

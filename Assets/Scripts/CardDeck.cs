@@ -70,7 +70,7 @@ public class CardDeck : NetworkBehaviour, IDataPersistence
             else
                cardsQuantityPerPlayerPerColor[PlayerGameData.Id] = data.cardsForEachPalyer[PlayerGameData.Id];
 
-            for (int i = 1; i < data.players.Count; i++)
+            for (int i = 0; i < data.players.Count; i++)
             {
                 if (!cardsQuantityPerPlayerPerColor.ContainsKey(data.players[i].Id))
                    cardsQuantityPerPlayerPerColor.Add(data.players[i].Id, data.cardsForEachPalyer[data.players[i].Id]);

@@ -3,6 +3,7 @@ using Newtonsoft.Json.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
@@ -44,6 +45,8 @@ public static class Communication
 
     public static void ChoosePath(BuildPath buildPath)
     {
+        if (Map.loadBuildPath[chosenPath.path.Id]) return;
+
         if (buildPath == chosenPath)
             chosenPath = null;
         else chosenPath = (buildPath);

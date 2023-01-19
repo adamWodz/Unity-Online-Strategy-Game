@@ -176,6 +176,8 @@ namespace Assets.GameplayControl
 
         public bool CanBeBuild(Path path)
         {
+            if (Map.loadBuildPath[path.Id]) return false;
+
             if (path.length > spaceshipsLeft) return false;
             if (numOfCardsInColor[path.color] < path.length
                 && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length) return false;
