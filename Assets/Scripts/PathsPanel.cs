@@ -229,7 +229,7 @@ public class PathsPanel : Panel
         if (IsHost)
         {
             receivedMissions = new List<MissionData>[10];
-            for (int i = 0; i < Server.allPlayersInfo.Count; i++)
+            for (int i = 0; i < data.players.Count; i++)
             {
                 receivedMissions[i] = new();
             }
@@ -294,11 +294,11 @@ public class PathsPanel : Panel
             // wczytywanie misji do PlayerGameData
 
             // host wysy³a rpc innym graczom z danymi
-            for (int i = 0; i < Server.allPlayersInfo.Count; i++)
+            for (int i = 0; i < data.players.Count; i++)
             {
-                Debug.Log($"ID: {Server.allPlayersInfo[i].Id}, Name: {Server.allPlayersInfo[i].Name}");
+                Debug.Log($"ID: {data.players[i].Id}, Name: {data.players[i].Name}");
 
-                if (Server.allPlayersInfo[i].Id != PlayerGameData.Id)
+                if (data.players[i].Id != PlayerGameData.Id)
                 {
                     // ustawiam rpc na wysy³anie do konkretnego gracza (kazdy gracz musi otrzymac inne dane)
                     /*
@@ -311,10 +311,10 @@ public class PathsPanel : Panel
                     };
                     */
 
-                    missionsData = data.missionsForEachPalyer[Server.allPlayersInfo[i].Id];
+                    missionsData = data.missionsForEachPalyer[data.players[i].Id];
                     foreach(var mD in missionsData)
                     {
-                        LoadMissionsChosenClientRpc(mD.startPlanetName, mD.endPlanetName, mD.points, mD.isDone, Server.allPlayersInfo[i].Name, Server.allPlayersInfo[i].Id, Server.allPlayersInfo[i].UnityId);//, clientRpcParams);
+                        LoadMissionsChosenClientRpc(mD.startPlanetName, mD.endPlanetName, mD.points, mD.isDone, data.players[i].Name, data.players[i].Id, data.players[i].UnityId);//, clientRpcParams);
                     }
                 }
             }
@@ -382,6 +382,7 @@ public class PathsPanel : Panel
     [ClientRpc]
     void LoadMissionsChosenClientRpc(string startPlanetName, string endPlanetName, int points,bool isDone,string name,int id,string UnityId, ClientRpcParams clientRpcParams = default)
     {
+        Debug.Log(PlayerGameData.UnityId+"-"+UnityId);
         if (PlayerGameData.UnityId == UnityId)
         {
             PlayerGameData.Id = id;
@@ -407,7 +408,10 @@ public class PathsPanel : Panel
             foreach (Path path in map.Paths)
             {
                 if (path.builtById == PlayerGameData.Id)
+                {
                     ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, PlayerGameData.groupsOfConnectedPlanets);
+                    Debug.Log(path.planetFrom.name + "-"+path.planetTo.name);
+                }
             }
             Debug.Log(PlayerGameData.groupsOfConnectedPlanets.Count);
         }

@@ -64,11 +64,14 @@ public class Map : NetworkBehaviour, IDataPersistence
             //Debug.Log(mapData);
             paths = mapData.paths;
             planets = mapData.planets;
-            
+
             CreateMap();
         }
         else
+        {
             paths = new();
+            mapData.paths = paths;
+        }
 
         Server.allMissions = new List<Mission>();
         foreach (Mission mission in mapData.missions)
@@ -258,5 +261,6 @@ public class Map : NetworkBehaviour, IDataPersistence
         Path path = Path.CreateInstance(id,planetFrom,planetTo, color,length,isBuilt,builtById);
         //Debug.Log($"Path {path.planetFrom.name}-{path.planetTo.name} jest zbudowana? {path.isBuilt}");
         paths.Add(path);
+        
     }
 }
