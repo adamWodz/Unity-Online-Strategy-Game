@@ -45,7 +45,7 @@ public static class Communication
 
     public static void ChoosePath(BuildPath buildPath)
     {
-        if (Map.loadBuildPath[chosenPath.path.Id]) return;
+        if (Map.loadBuildPath[buildPath.path.Id]) return;
 
         if (buildPath == chosenPath)
             chosenPath = null;
