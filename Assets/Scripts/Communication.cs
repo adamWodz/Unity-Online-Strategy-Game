@@ -175,6 +175,8 @@ public static class Communication
 
         _GameManager.SetInfoTextServerRpc($"{PlayerGameData.Name} dobrał(a) karty misji.");
 
+        CheckIfNewMissionIsCompleted();
+
         _GameManager.EndTurn();
     }
 
