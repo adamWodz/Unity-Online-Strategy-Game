@@ -20,6 +20,7 @@ public class MainMenu : NetworkBehaviour
         PlayerGameData.Reset();
         Server.Reset();
         Communication.Reset();
+        Map.loadBuildPath = new bool[100];
     }
 
     public void QuitGame()

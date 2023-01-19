@@ -45,6 +45,7 @@ public static class Communication
 
     public static void ChoosePath(BuildPath buildPath)
     {
+        Debug.Log(Map.loadBuildPath[buildPath.path.Id]);
         if (Map.loadBuildPath[buildPath.path.Id]) return;
 
         if (buildPath == chosenPath)

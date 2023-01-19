@@ -117,23 +117,23 @@ namespace Assets.GameplayControl
             {
                 Debug.Log($"AI builds path {path.planetFrom.name} - {path.planetTo.name}");
                 BuildPath(path);
-                _GameManager.SetInfoTextServerRpc($"Gracz {Name} wybudował połączenie {path.planetFrom.name} - {path.planetTo.name}.");
+                _GameManager.SetInfoTextServerRpc($"{Name} wybudował(a) połączenie {path.planetFrom.name} - {path.planetTo.name}.");
             }
             else if (missionsToDo.Count > 0)
             {
                 Debug.Log("AI draws cards");
                 DrawCards();
-                _GameManager.SetInfoTextServerRpc($"Gracz {Name} dobrał kartę statku.");
+                _GameManager.SetInfoTextServerRpc($"{Name} dobrał(a) kartę statku.");
             }
             else
             {
-                if (GameObject.Find("MissionsPanel").GetComponent<MissionsPanel>().GetRandomMissions().Count > 0)
+                if (GameObject.Find("MissionsPanel").GetComponent<MissionsPanel>().GetRandomMissions().Count > 0 && !Communication.isLastTurn)
                 {
                     Debug.Log("AI draws missions");
                     DrawMissions();
                     _GameManager.SetInfoTextServerRpc($"{Name} dobrał(a) karty misji.");
                 }
-                else // brak już misji od dobrania
+                else // brak już misji od dobrania lub jest ostatnia tura
                 {
                     path = GetLongestPath();
                     if (path != null)

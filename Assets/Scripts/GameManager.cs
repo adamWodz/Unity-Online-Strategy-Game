@@ -314,6 +314,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         Path path = Map.mapData.paths.Where(p => p.Id == pathId).First();
         path.isBuilt = true;
         path.builtById = playerId;
+        Map.loadBuildPath[pathId] = true;
     }
 
     public void SetPopUpWindow(string message)
