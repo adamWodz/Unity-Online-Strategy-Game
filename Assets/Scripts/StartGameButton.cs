@@ -324,7 +324,11 @@ public class StartGameButton : NetworkBehaviour
         {
             PlayerInfo nextPlayer = Server.allPlayersInfo.Where(p => p.Position == 0).First();
             if (nextPlayer.IsAI)
-            { } // gameManager zaczyna turê gracza AI
+            {
+                var ai = Server.artificialPlayers.Where(p => p.Id ==nextPlayer.Id).FirstOrDefault();
+                if(ai != null)
+                    ai.StartAiTurn();
+            } // gameManager zaczyna turê gracza AI
             else
                 FirstTurnClientRpc(nextPlayer.Id);
         }
@@ -334,6 +338,9 @@ public class StartGameButton : NetworkBehaviour
     void FirstTurnClientRpc(int id)
     {
         if (PlayerGameData.Id == id)
+        {
+            Communication.CheckIfNewMissionIsCompleted();
             PlayerGameData.StartTurn();
+        }
     }
 }
