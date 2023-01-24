@@ -95,7 +95,7 @@ public static class Communication
         CheckIfNewMissionIsCompleted();
     }
 
-    static void CheckIfNewMissionIsCompleted()
+    public static void CheckIfNewMissionIsCompleted()
     {
         List<Mission> newCompletedMissions = PlayerGameData.GetNewCompletedMissions();
 
@@ -225,6 +225,8 @@ public static class Communication
 
     public static void StartTurn(int playerId)
     {
+        CheckIfNewMissionIsCompleted();
+        
         if (playerId == PlayerGameData.Id)
         {
             //PlayerGameData.PrintCards();
