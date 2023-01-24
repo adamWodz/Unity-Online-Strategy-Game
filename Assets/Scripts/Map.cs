@@ -90,7 +90,6 @@ public class Map : NetworkBehaviour, IDataPersistence
             foreach(PathData path in data.paths)
             {
                 SetPathsClientRpc(path.id, path.planetFromName, path.planetToName, path.color, path.length, path.isBuilt, path.builtById,data.mapNumber);
-
             }
             SetMapDataClientRpc();
         }
@@ -105,21 +104,47 @@ public class Map : NetworkBehaviour, IDataPersistence
             //Debug.Log("Client?" + IsClient);
             //Debug.Log("Server?" + IsServer);
             //data.paths = paths;
-            data.paths = new();
+            //data.paths = new();
             //Debug.Log("Liczba sciezek "+paths.Count);
-            foreach(Path path in paths)
+            //foreach(Path path in mapData.paths)
+            if (data.paths.Count == 0)
             {
-                PathData pathData = new()
+                for (int i = 0; i < paths.Count; i++)
                 {
-                    id = path.Id,
-                    planetFromName = path.planetFrom.name,
-                    planetToName= path.planetTo.name,
-                    color = path.color,
-                    length = path.length,
-                    isBuilt = path.isBuilt,
-                    builtById = path.builtById,
-                };
-                data.paths.Add(pathData);
+                    PathData pathData = new()
+                    {
+                        id = paths[i].Id,
+                        planetFromName = paths[i].planetFrom.name,
+                        planetToName = paths[i].planetTo.name,
+                        color = paths[i].color,
+                        length = paths[i].length,
+                        isBuilt = paths[i].isBuilt,
+                        builtById = paths[i].builtById == -1 ? mapData.paths[i].builtById : paths[i].builtById,
+                    };
+                    data.paths.Add(pathData);
+                }
+            }
+            else
+            {
+                var donePaths = paths.Where(p => p.isBuilt).ToList();
+                Debug.Log(donePaths.Count());
+                var donePaths2 = mapData.paths.Where(p => p.isBuilt).ToList();
+                Debug.Log(donePaths2.Count());
+                foreach (var p in donePaths2)
+                {
+                    var pom = data.paths.FindIndex(s => s.id == p.Id);
+                    if (pom != -1)
+                        data.paths[pom] = new() 
+                        {
+                            id = p.Id,
+                            planetFromName = p.planetFrom.name,
+                            planetToName= p.planetTo.name,
+                            color = p.color,
+                            length = p.length,
+                            isBuilt = p.isBuilt,
+                            builtById = p.builtById
+                        };
+                }
             }
             //Debug.Log("Liczba sciezek zapisanych" + data.paths.Count);
             data.mapNumber = Communication.mapDataNumber;
@@ -222,14 +247,14 @@ public class Map : NetworkBehaviour, IDataPersistence
         for (int j = 0; j < tilesRenderers.Length; j++)
         {
             tilesRenderers[j].material.color = colors[(int)path.color];
-            if (path.isBuilt && IsHost)
+            if (path.isBuilt && IsHost && path.builtById != -1)
             {
-                var pom = Instantiate(gameManager.shipGameObjectList[Server.allPlayersInfo.Where(p => p.Id == path.builtById).First().ColorNum], tilesTransforms[j + 1].position, tilesTransforms[j + 1].rotation);
-                //Debug.Log(pom);
-                pom.GetComponent<Move>().speed = 0;
-                pom.GetComponent<NetworkObject>().Spawn(true);
-                gameManager.spawnedSpaceships ??= new();
-                gameManager.spawnedSpaceships.Add(pom.GetComponent<NetworkObject>());
+                    var pom = Instantiate(gameManager.shipGameObjectList[Server.allPlayersInfo.Where(p => p.Id == path.builtById).FirstOrDefault().ColorNum], tilesTransforms[j + 1].position, tilesTransforms[j + 1].rotation);
+                    //Debug.Log(pom);
+                    pom.GetComponent<Move>().speed = 0;
+                    pom.GetComponent<NetworkObject>().Spawn(true);
+                    gameManager.spawnedSpaceships ??= new();
+                    gameManager.spawnedSpaceships.Add(pom.GetComponent<NetworkObject>());
             }
         }
 
@@ -254,11 +279,7 @@ public class Map : NetworkBehaviour, IDataPersistence
     [ClientRpc]
     public void SetPathsClientRpc(int id,string planetFromName,string planetToName, Color color, int length, bool isBuilt, int builtById,int mapNumber)
     {
-        if (paths == null)
-        {
-            paths = new();
-            mapData.paths = paths;
-        }
+        paths ??= new();
         mapData = mapData != null ? mapData : Communication.availableMapsData[mapNumber];
         Planet planetFrom = mapData.planets.Single(planet => planet.name == planetFromName);
         Planet planetTo = mapData.planets.Single(planet => planet.name == planetToName);

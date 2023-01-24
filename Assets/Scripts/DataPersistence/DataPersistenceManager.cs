@@ -72,12 +72,12 @@ public class DataPersistenceManager : NetworkBehaviour
         
         dataHandler.Save(gameData);
     }
-    
+    /*
     private void OnApplicationQuit()
     {
         SaveGame();
     }
-    
+    */
     private List<IDataPersistence> FindAllDataPersistenceObjects()
     {
         IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<NetworkBehaviour>().OfType<IDataPersistence>();
