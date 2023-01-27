@@ -66,6 +66,7 @@ public class LobbyAndRelay : MonoBehaviour
     {
         HandleHeartbeat();
         HandlePolling();
+        CanStartGame();
     }
     private async void HandleHeartbeat()
     {
@@ -147,7 +148,7 @@ public class LobbyAndRelay : MonoBehaviour
     {
         try
         {
-            maxPlayers = 5; // remove after creating the player list
+            maxPlayers = 5;
             //1. by code (private) + Relay//
 
             string relaycode = await CreateRelay(maxPlayers);
@@ -197,18 +198,40 @@ public class LobbyAndRelay : MonoBehaviour
 
     public void CanStartGame()
     {
-        if (!showStartGame)
+        //if (!showStartGame)
+        //{
+        //    if (ImLobbyHost() && joinedLobby.Players.Count>1 || joinedLobby.Data["IndexesAI"].Value.Length > 0)
+        //    {
+        //        var foundButton = GameObject.Find("StartGameButton");
+        //        if (foundButton != null)
+        //        {
+        //            Button startGameButton = foundButton.GetComponent<Button>();
+        //            startGameButton.interactable = true;
+        //        }
+        //        else Debug.Log("[CanStartGame] Can't find StartButton, but can start game");
+        //        showStartGame = true;
+        //    }
+        //}
+
+        if (joinedLobby != null)
         {
-            if (ImLobbyHost() && joinedLobby.Players.Count>1 || joinedLobby.Data["IndexesAI"].Value.Length > 0)
+            var foundPlayerList = GameObject.Find("PlayerList");
+            int taken = 0;
+            if (foundPlayerList != null)
             {
-                var foundButton = GameObject.Find("StartGameButton");
-                if (foundButton != null)
+                var players = foundPlayerList.GetComponent<PlayerList>().seats;
+
+                for (int i = 0; i < players.Count; i++)
                 {
-                    Button startGameButton = foundButton.GetComponent<Button>();
-                    startGameButton.interactable = true;
+                    if (players[i].Nickname.text == "" && i == 0) return;
+                    else if (players[i].Nickname.text != "") taken++;
                 }
-                else Debug.Log("[CanStartGame] Can't find StartButton, but can start game");
-                showStartGame = true;
+            }
+            var foundButton = GameObject.Find("StartGameButton");
+            if (foundButton != null)
+            {
+                Button startGameButton = foundButton.GetComponent<Button>();
+                startGameButton.interactable = (taken >= 2);
             }
         }
     }
@@ -341,6 +364,7 @@ public class LobbyAndRelay : MonoBehaviour
     [ClientRpc]
     public void RpcRefreshPlayerList()
     {
+        CanStartGame();
         Debug.Log($"##{ImInLobby()} {AuthenticationService.Instance.PlayerId}");
         var found = GameObject.Find("PlayerList");
         if (found != null)
@@ -521,6 +545,11 @@ public class LobbyAndRelay : MonoBehaviour
         quitButton.GetComponent<Button>().interactable = true;
     }
 
+    public void OnApplicationQuit()
+    {
+        LeaveLobby();
+    }
+
     public async void LeaveLobby()
     {
         try
@@ -555,7 +584,7 @@ public class LobbyAndRelay : MonoBehaviour
                     }
                     //await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, joinedLobby.HostId);
                     NetworkManager.Singleton.Shutdown(true);
-                    AuthenticationService.Instance.SignOut();
+                    //AuthenticationService.Instance.SignOut();
                     NetworkManager.Singleton.SceneManager.LoadScene("Menu", UnityEngine.SceneManagement.LoadSceneMode.Additive);
                 }
             }
