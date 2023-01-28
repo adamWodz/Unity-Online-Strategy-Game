@@ -328,35 +328,7 @@ public class LobbyAndRelay : MonoBehaviour
         catch (LobbyServiceException e) //when (e.ErrorCode == 16001)
         {
             Debug.Log(e);
-            /**
-            Debug.Log($"WrongCode! {e.ErrorCode == 16001 && e.Message.Contains("err fetching lobby id by code: ResultCode: KEY_NOT_FOUND_ERROR")}");
-            try { Debug.Log("Catch other error"); }
-            catch (LobbyServiceException e2) //when (e2.ErrorCode == 16001)
-            {
-                Debug.Log($"{e2.ErrorCode}");
-                //GameObject.Find("")
-                NetworkManager.Singleton.Shutdown(true);
-                try
-                {
-                    Debug.Log($"{e2.ErrorCode}");
-                }
-                catch (LobbyServiceException e3) //when (e3.ErrorCode == 16000)
-                {
-                    Debug.Log($"{e3.ErrorCode}");
-                    //GameObject.Find("")
-                    try
-                    {
-                        Debug.Log($"{e3.ErrorCode}");
-                    }
-                    catch (LobbyServiceException e4) //when (e4.ErrorCode == 16000)
-                    {
-                        Debug.Log($"{e4.ErrorCode}");
-                        //GameObject.Find("")
-                        NetworkManager.Singleton.Shutdown(true);
-                    }
-                }
-            }
-            */
+            if (e.ErrorCode == 16006) NoOpenLobbies();
         }
         
     }
@@ -454,9 +426,7 @@ public class LobbyAndRelay : MonoBehaviour
                 Debug.Log($"[WrongPlayerHandle] 2/2 No joined lobby to leave");
             }
 
-            joinMenu.SetActive(true);
-            onjoin.text = "Nie uczestniczy³eœ we wczytanej grze!";
-            onjoin.gameObject.SetActive(true);
+            LobbyMessage("Nie uczestniczy³eœ we wczytanej grze!");
         }
         catch (LobbyServiceException e)
         {
@@ -481,9 +451,8 @@ public class LobbyAndRelay : MonoBehaviour
                 Debug.Log($"[WrongCodeHandle] 2/2 No joined lobby to leave");
             }
 
-            joinMenu.SetActive(true);
-            onjoin.text = "Nie ma teraz wolnego miejsca w lobby!";
-            onjoin.gameObject.SetActive(true);
+            LobbyMessage("Nie ma teraz wolnego miejsca w lobby!");
+            
         }
         catch (LobbyServiceException e)
         {
@@ -523,15 +492,31 @@ public class LobbyAndRelay : MonoBehaviour
             {
                 Debug.Log($"[WrongCodeHandle] 2/2 No joined lobby to leave");
             }
-
-            joinMenu.SetActive(true);
-            onjoin.text = "Wpisa³eœ z³e has³o!";
-            onjoin.gameObject.SetActive(true);
+            LobbyMessage("Wpisa³eœ z³e has³o!");
         }
         catch (LobbyServiceException e)
         {
             Debug.Log(e);
         }
+    }
+
+    public void NoOpenLobbies()
+    {
+        LobbyMessage("Nie ma otwartej poczekalni!"); 
+    }
+
+    IEnumerator ShowLobbyMessage(string message)
+    {
+        joinMenu.SetActive(true);
+        onjoin.text = message;
+        onjoin.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2);
+        onjoin.gameObject.SetActive(false);
+    }
+
+    public void LobbyMessage(string message)
+    {
+        StartCoroutine(ShowLobbyMessage(message));
     }
 
     public void RedirectToCreateGameMenu()
@@ -625,8 +610,8 @@ public class LobbyAndRelay : MonoBehaviour
     {
         try
         {
-            Debug.Log($"[CloseLobby] 1/2 Closing Lobby existing ({joinedLobby != null}) {joinedLobby.Id}");
-            foreach (var player in joinedLobby.Players) if(joinedLobby.HostId!=player.Id) KickPlayer(player.Id);
+            //Debug.Log($"[CloseLobby] 1/2 Closing Lobby existing ({joinedLobby != null}) {joinedLobby.Id}");
+            //foreach (var player in joinedLobby.Players) if(joinedLobby.HostId!=player.Id) KickPlayer(player.Id);
             //KickPlayer(joinedLobby.HostId);
             await LobbyService.Instance.DeleteLobbyAsync(joinedLobby.Id);
             Debug.Log($"[CloseLobby] 2/2 Closed my Lobby");
