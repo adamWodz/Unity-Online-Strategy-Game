@@ -66,6 +66,7 @@ public class LobbyAndRelay : MonoBehaviour
     {
         HandleHeartbeat();
         HandlePolling();
+        CanStartGame();
     }
     private async void HandleHeartbeat()
     {
@@ -147,7 +148,7 @@ public class LobbyAndRelay : MonoBehaviour
     {
         try
         {
-            maxPlayers = 5; // remove after creating the player list
+            maxPlayers = 5;
             //1. by code (private) + Relay//
 
             string relaycode = await CreateRelay(maxPlayers);
@@ -197,18 +198,40 @@ public class LobbyAndRelay : MonoBehaviour
 
     public void CanStartGame()
     {
-        if (!showStartGame)
+        //if (!showStartGame)
+        //{
+        //    if (ImLobbyHost() && joinedLobby.Players.Count>1 || joinedLobby.Data["IndexesAI"].Value.Length > 0)
+        //    {
+        //        var foundButton = GameObject.Find("StartGameButton");
+        //        if (foundButton != null)
+        //        {
+        //            Button startGameButton = foundButton.GetComponent<Button>();
+        //            startGameButton.interactable = true;
+        //        }
+        //        else Debug.Log("[CanStartGame] Can't find StartButton, but can start game");
+        //        showStartGame = true;
+        //    }
+        //}
+
+        if (joinedLobby != null)
         {
-            if (ImLobbyHost() && joinedLobby.Players.Count>1 || joinedLobby.Data["IndexesAI"].Value.Length > 0)
+            var foundPlayerList = GameObject.Find("PlayerList");
+            int taken = 0;
+            if (foundPlayerList != null)
             {
-                var foundButton = GameObject.Find("StartGameButton");
-                if (foundButton != null)
+                var players = foundPlayerList.GetComponent<PlayerList>().seats;
+
+                for (int i = 0; i < players.Count; i++)
                 {
-                    Button startGameButton = foundButton.GetComponent<Button>();
-                    startGameButton.interactable = true;
+                    if (players[i].Nickname.text == "" && i == 0) return;
+                    else if (players[i].Nickname.text != "") taken++;
                 }
-                else Debug.Log("[CanStartGame] Can't find StartButton, but can start game");
-                showStartGame = true;
+            }
+            var foundButton = GameObject.Find("StartGameButton");
+            if (foundButton != null)
+            {
+                Button startGameButton = foundButton.GetComponent<Button>();
+                startGameButton.interactable = (taken >= 2);
             }
         }
     }
@@ -305,35 +328,7 @@ public class LobbyAndRelay : MonoBehaviour
         catch (LobbyServiceException e) //when (e.ErrorCode == 16001)
         {
             Debug.Log(e);
-            /**
-            Debug.Log($"WrongCode! {e.ErrorCode == 16001 && e.Message.Contains("err fetching lobby id by code: ResultCode: KEY_NOT_FOUND_ERROR")}");
-            try { Debug.Log("Catch other error"); }
-            catch (LobbyServiceException e2) //when (e2.ErrorCode == 16001)
-            {
-                Debug.Log($"{e2.ErrorCode}");
-                //GameObject.Find("")
-                NetworkManager.Singleton.Shutdown(true);
-                try
-                {
-                    Debug.Log($"{e2.ErrorCode}");
-                }
-                catch (LobbyServiceException e3) //when (e3.ErrorCode == 16000)
-                {
-                    Debug.Log($"{e3.ErrorCode}");
-                    //GameObject.Find("")
-                    try
-                    {
-                        Debug.Log($"{e3.ErrorCode}");
-                    }
-                    catch (LobbyServiceException e4) //when (e4.ErrorCode == 16000)
-                    {
-                        Debug.Log($"{e4.ErrorCode}");
-                        //GameObject.Find("")
-                        NetworkManager.Singleton.Shutdown(true);
-                    }
-                }
-            }
-            */
+            if (e.ErrorCode == 16006) NoOpenLobbies();
         }
         
     }
@@ -341,6 +336,7 @@ public class LobbyAndRelay : MonoBehaviour
     [ClientRpc]
     public void RpcRefreshPlayerList()
     {
+        CanStartGame();
         Debug.Log($"##{ImInLobby()} {AuthenticationService.Instance.PlayerId}");
         var found = GameObject.Find("PlayerList");
         if (found != null)
@@ -430,9 +426,7 @@ public class LobbyAndRelay : MonoBehaviour
                 Debug.Log($"[WrongPlayerHandle] 2/2 No joined lobby to leave");
             }
 
-            joinMenu.SetActive(true);
-            onjoin.text = "Nie uczestniczy³eœ we wczytanej grze!";
-            onjoin.gameObject.SetActive(true);
+            LobbyMessage("Nie uczestniczy³eœ we wczytanej grze!");
         }
         catch (LobbyServiceException e)
         {
@@ -457,9 +451,8 @@ public class LobbyAndRelay : MonoBehaviour
                 Debug.Log($"[WrongCodeHandle] 2/2 No joined lobby to leave");
             }
 
-            joinMenu.SetActive(true);
-            onjoin.text = "Nie ma teraz wolnego miejsca w lobby!";
-            onjoin.gameObject.SetActive(true);
+            LobbyMessage("Nie ma teraz wolnego miejsca w lobby!");
+            
         }
         catch (LobbyServiceException e)
         {
@@ -499,15 +492,31 @@ public class LobbyAndRelay : MonoBehaviour
             {
                 Debug.Log($"[WrongCodeHandle] 2/2 No joined lobby to leave");
             }
-
-            joinMenu.SetActive(true);
-            onjoin.text = "Wpisa³eœ z³e has³o!";
-            onjoin.gameObject.SetActive(true);
+            LobbyMessage("Wpisa³eœ z³e has³o!");
         }
         catch (LobbyServiceException e)
         {
             Debug.Log(e);
         }
+    }
+
+    public void NoOpenLobbies()
+    {
+        LobbyMessage("Nie ma otwartej poczekalni!"); 
+    }
+
+    IEnumerator ShowLobbyMessage(string message)
+    {
+        joinMenu.SetActive(true);
+        onjoin.text = message;
+        onjoin.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2);
+        onjoin.gameObject.SetActive(false);
+    }
+
+    public void LobbyMessage(string message)
+    {
+        StartCoroutine(ShowLobbyMessage(message));
     }
 
     public void RedirectToCreateGameMenu()
@@ -519,6 +528,11 @@ public class LobbyAndRelay : MonoBehaviour
         createGameBack.SetActive(false);
         quitButton.SetActive(true);
         quitButton.GetComponent<Button>().interactable = true;
+    }
+
+    public void OnApplicationQuit()
+    {
+        LeaveLobby();
     }
 
     public async void LeaveLobby()
@@ -555,7 +569,7 @@ public class LobbyAndRelay : MonoBehaviour
                     }
                     //await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, joinedLobby.HostId);
                     NetworkManager.Singleton.Shutdown(true);
-                    AuthenticationService.Instance.SignOut();
+                    //AuthenticationService.Instance.SignOut();
                     NetworkManager.Singleton.SceneManager.LoadScene("Menu", UnityEngine.SceneManagement.LoadSceneMode.Additive);
                 }
             }
@@ -596,8 +610,8 @@ public class LobbyAndRelay : MonoBehaviour
     {
         try
         {
-            Debug.Log($"[CloseLobby] 1/2 Closing Lobby existing ({joinedLobby != null}) {joinedLobby.Id}");
-            foreach (var player in joinedLobby.Players) if(joinedLobby.HostId!=player.Id) KickPlayer(player.Id);
+            //Debug.Log($"[CloseLobby] 1/2 Closing Lobby existing ({joinedLobby != null}) {joinedLobby.Id}");
+            //foreach (var player in joinedLobby.Players) if(joinedLobby.HostId!=player.Id) KickPlayer(player.Id);
             //KickPlayer(joinedLobby.HostId);
             await LobbyService.Instance.DeleteLobbyAsync(joinedLobby.Id);
             Debug.Log($"[CloseLobby] 2/2 Closed my Lobby");

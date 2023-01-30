@@ -116,6 +116,7 @@ public class StartGameButton : NetworkBehaviour
             //SetClientNamesClientRpc();
 
             FirstTurn();
+            lobby.CloseLobby();
         }
 
     }
