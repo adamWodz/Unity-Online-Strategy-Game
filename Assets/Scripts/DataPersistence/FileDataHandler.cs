@@ -42,12 +42,10 @@ public class FileDataHandler
                     dataToLoad = EncryptDecrypt(dataToLoad);
                 }
 
-                // deserialize the data from Json
                 loadedData = JsonConvert.DeserializeObject<GameData>(dataToLoad);
             }
             catch (Exception e)
             {
-                Debug.LogError("Error occured when trying to load data from file: " + fullPath + "\n" + e);
             }
         }
         return loadedData;
@@ -58,21 +56,15 @@ public class FileDataHandler
         string fullPath = System.IO.Path.Combine(dataDirPath,dataFileName);
         try
         {
-            // create the directory the file will be written to if it does not already exist
             Directory.CreateDirectory(System.IO.Path.GetDirectoryName(fullPath));
 
-            // serialize the game data object into Json 
-
-            //string dataToStore = JsonUtility.ToJson(data,true);
-
-            string dataToStore = JsonConvert.SerializeObject(data); // lepsza funkcja: potrafi zserializowaæ s³owniki, listy list itp.
+            string dataToStore = JsonConvert.SerializeObject(data);         
 
             if(useEncryption)
             {
                 dataToStore = EncryptDecrypt(dataToStore);
             }
 
-            // write the serialized data to the file
             using(FileStream stream = new(fullPath,FileMode.Create))
             {
                 using(StreamWriter writer = new(stream))
@@ -83,11 +75,9 @@ public class FileDataHandler
         }
         catch(Exception e)
         {
-            Debug.LogError("Error occured when trying to save data to file: " + fullPath + "\n" + e);
         }
     }
 
-    // XOR encryption/decryption of data
     private string EncryptDecrypt(string data)
     {
         string modifiedData = "";

@@ -10,8 +10,6 @@ public class MainMenu : NetworkBehaviour
 {
     private void Start()
     {
-        Debug.Log("Start GAME");
-        
         string name = PlayerPrefs.GetString("username");
         if (name.Length == 0)
             PlayerPrefs.SetString("username", "Gracz");
@@ -25,7 +23,6 @@ public class MainMenu : NetworkBehaviour
 
     public void QuitGame()
     {
-        Debug.Log("QUIT!");
         Application.Quit();
     }
 }

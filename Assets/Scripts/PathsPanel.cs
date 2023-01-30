@@ -26,7 +26,6 @@ public class PathsPanel : Panel
         {
             missionsChosen.AddRange(value);
             
-            // zapis posiadanych misji przez gracza na bie¿¹co
             foreach(Mission m in value)
             {
                 SendMissionsChosenServerRpc(m.start.name, m.end.name, m.points, PlayerGameData.Id, m.isDone);
@@ -42,7 +41,6 @@ public class PathsPanel : Panel
     private UnityEngine.Color highlightColor = UnityEngine.Color.green;
     private UnityEngine.Color extinguishColor = UnityEngine.Color.white;
 
-    // Start is called before the first frame update
     void Start()
     {
         map = GameObject.Find("Space").GetComponent<Map>();
@@ -62,18 +60,12 @@ public class PathsPanel : Panel
 
         transform.parent.GetComponent<Button>().onClick.AddListener(HighlightPlanets);
 
-        //missionsChoosed = GetRandomElementsFromList(GameObject.Find("Space").GetComponent<Map>().Missions, 3);
-
         missionsChosen = new();
-
-        //Debug.Log($"Missions choosed: {missionsChosen.Count}");
 
         AssignValues(234, 585, PanelState.Maximized, true);
 
-        //SpawnMissionsButtons(missionsChoosed);
     }
 
-    // Update is called once per frame
     void Update()
     {
         ChangeWidth();
@@ -86,7 +78,6 @@ public class PathsPanel : Panel
             ChangePlanetsColor(highlightColor);
             missionsFromClickedMissionsCards.AddRange(missionsChosen.Except(missionsFromClickedMissionsCards, new MissionComparer()).ToList());
 
-            // zmiana koloru przycisków
             for (int i = 0; i < missionsChosen.Count; i++)
                 transform.GetChild(i).GetComponent<Image>().color = UnityEngine.Color.green;
 
@@ -97,7 +88,6 @@ public class PathsPanel : Panel
             ChangePlanetsColor(extinguishColor);
             missionsFromClickedMissionsCards = missionsFromClickedMissionsCards.Except(missionsChosen, new MissionComparer()).ToList();
 
-            // zmiana koloru przycisków
             for (int i = 0; i < missionsChosen.Count; i++)
                 transform.GetChild(i).GetComponent<Image>().color = UnityEngine.Color.white;
 
@@ -110,12 +100,7 @@ public class PathsPanel : Panel
 
         string firstPlanetName = mission.start.name;
         string secondPlanetName = mission.end.name;
-        //Debug.Log(firstPlanetName + "-" + secondPlanetName);
-
-        // podswietlenie przycisku danej sciezki
         var pom = GameObject.Find(firstPlanetName + "-" + secondPlanetName).GetComponent<Image>();
-        //Debug.Log(pom.name);
-
         if (pom.color == extinguishColor)
         {
             pom.color = highlightColor;
@@ -156,7 +141,6 @@ public class PathsPanel : Panel
     {
         for (int i = 0; i < missionsChosen.Count; i++)
         {
-            //Debug.Log($"{paths[i].planetFrom.name} - {paths[i].planetTo.name}");
             if (CheckIfPlanetCanBeExtinguished(missionsChosen[i].start.name, missionsChosen[i].end.name))
                 ChangePlanetColor(color, missionsChosen[i].start.name);
             if (CheckIfPlanetCanBeExtinguished(missionsChosen[i].end.name, missionsChosen[i].start.name))
@@ -234,7 +218,6 @@ public class PathsPanel : Panel
                 receivedMissions[i] = new();
             }
 
-            // host wczytuje dane bez rpc
             var missionsData = data.missionsForEachPalyer[PlayerGameData.Id];
             var missions = map.Missions.Where(mission =>
             {
@@ -250,21 +233,15 @@ public class PathsPanel : Panel
             PlayerGameData.missions ??= new();
             PlayerGameData.completedMissions ??= new();
             PlayerGameData.completedMissions = missions.Where(m => m.isDone).ToList();
-            Debug.Log(PlayerGameData.completedMissions.Count);
             PlayerGameData.missions = missions.ToList();
-            Debug.Log(PlayerGameData.missions.Count);
             PlayerGameData.groupsOfConnectedPlanets ??= new();
             foreach (Path path in map.Paths)
             {
                 if (path.builtById == PlayerGameData.Id)
                 {
-                    Debug.Log($" {path.planetFrom.name} -> {path.planetTo.name}");
                     ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, PlayerGameData.groupsOfConnectedPlanets);
                 }
             }
-            Debug.Log("GROUPS COUNT: " + PlayerGameData.groupsOfConnectedPlanets.Count);
-            
-            //AI
             foreach (var artificialPlayer in Server.artificialPlayers)
             {
                 missionsData = data.missionsForEachPalyer[artificialPlayer.Id];
@@ -290,37 +267,19 @@ public class PathsPanel : Panel
                 {
                     if (path.builtById == artificialPlayer.Id)
                     {
-                        Debug.Log($" {path.planetFrom.name} -> {path.planetTo.name}");
                         ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, artificialPlayer.groupsOfConnectedPlanets);
                     }
                 }
-                Debug.Log("AI GROUPS COUNT " + artificialPlayer.groupsOfConnectedPlanets.Count);
             }
 
-            // wczytywanie misji do PlayerGameData
-
-            // host wysy³a rpc innym graczom z danymi
             for (int i = 0; i < data.players.Count; i++)
             {
-                Debug.Log($"ID: {data.players[i].Id}, Name: {Server.allPlayersInfo[i].Name}");
-
                 if (data.players[i].Id != PlayerGameData.Id)
                 {
-                    // ustawiam rpc na wysy³anie do konkretnego gracza (kazdy gracz musi otrzymac inne dane)
-                    /*
-                    ClientRpcParams clientRpcParams = new()
-                    {
-                        Send = new ClientRpcSendParams
-                        {
-                            TargetClientIds = new ulong[] { (ulong)Server.allPlayersInfo[i].Id }
-                        }
-                    };
-                    */
-
                     missionsData = data.missionsForEachPalyer[data.players[i].Id];
                     foreach(var mD in missionsData)
                     {
-                        LoadMissionsChosenClientRpc(mD.startPlanetName, mD.endPlanetName, mD.points, mD.isDone, data.players[i].Name, data.players[i].Id, data.players[i].UnityId);//, clientRpcParams);
+                        LoadMissionsChosenClientRpc(mD.startPlanetName, mD.endPlanetName, mD.points, mD.isDone, data.players[i].Name, data.players[i].Id, data.players[i].UnityId); 
                     }
                 }
             }
@@ -331,7 +290,6 @@ public class PathsPanel : Panel
     {
         if (IsHost)
         {
-            // AI
             foreach (var artificialPlayer in Server.artificialPlayers)
             {
                 List<MissionData> pom = new();
@@ -353,7 +311,6 @@ public class PathsPanel : Panel
             {
                 if (receivedMissions[i] != null)
                 {
-                    //Debug.Log("Received missions:" + receivedMissions[i].Count);
                     if (!data.missionsForEachPalyer.ContainsKey(i))
                         data.missionsForEachPalyer.Add(i, receivedMissions[i]);
                     else
@@ -364,11 +321,8 @@ public class PathsPanel : Panel
     }
 
     [ServerRpc(RequireOwnership = false)]
-    void SendMissionsChosenServerRpc(string startPlanetName, string endPlanetName, int points,int id,bool isDone)//ServerRpcParams serverRpcParams = default)
+    void SendMissionsChosenServerRpc(string startPlanetName, string endPlanetName, int points,int id,bool isDone)   
     {
-        Debug.Log($"gracz {id} dobra³ misjê");
-        Debug.Log($"Done? {isDone}");
-        //int id = (int)serverRpcParams.Receive.SenderClientId;
         receivedMissions[id].Add(new MissionData()
         {
             startPlanetName = startPlanetName,
@@ -376,13 +330,7 @@ public class PathsPanel : Panel
             points = points,
             isDone = isDone
         });
-        //Debug.Log("Server Rpc received missions: "+ receivedMissions[id].Count);
-        //
 
-
-        //Debug.Log($"receivedMissions {receivedMissions.Length}");
-        //for(int i = 0; i < Server.allPlayersInfo.Count; i++)
-        //    Debug.Log($"data: {i} {receivedMissions[i].Count}");
     }
 
     [ClientRpc]
@@ -392,10 +340,8 @@ public class PathsPanel : Panel
         {
             PlayerGameData.Id = id;
             map = GameObject.Find("Space").GetComponent<Map>();
-            Debug.Log(map);
             Mission mission = map.Missions.Single(m => m.start.name == startPlanetName && m.end.name == endPlanetName && m.points == points);
             mission.isDone = isDone;
-            Debug.Log($"{PlayerGameData.Id} has {mission}");
             List<Mission> missions = new()
             {
             mission
@@ -407,18 +353,14 @@ public class PathsPanel : Panel
             PlayerGameData.missions.Add(mission);
             missionsChosen ??= new();
             MissionsChosen = missions;
-            Debug.Log("Misje: " + PlayerGameData.missions.Count);
-            Debug.Log("Misje zrobione: " + PlayerGameData.completedMissions.Count);
             PlayerGameData.groupsOfConnectedPlanets ??= new();
             foreach (Path path in map.Paths)
             {
                 if (path.builtById == PlayerGameData.Id)
                 {
-                    Debug.Log($" {path.planetFrom.name} -> {path.planetTo.name}");
                     ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, PlayerGameData.groupsOfConnectedPlanets);
                 }
             }
-            Debug.Log(PlayerGameData.groupsOfConnectedPlanets.Count);
         }
     }
 }

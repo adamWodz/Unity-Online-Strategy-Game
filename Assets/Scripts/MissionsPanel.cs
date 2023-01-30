@@ -15,7 +15,7 @@ public class MissionsPanel : Panel
     public List<Mission> missionsToChoose = new();
     public int missionsDrawNumber = 3;
     
-    public Button[] missionButtonsAndConfirmButton; // 3 pierwsze przyciski to karty misji, a ostatni to zatwierdzenie
+    public Button[] missionButtonsAndConfirmButton;           
 
     private PathsPanel pathsPanel;
 
@@ -23,27 +23,14 @@ public class MissionsPanel : Panel
 
     Map map;
 
-    // Start is called before the first frame update
     void Start()
     {
-        //gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        
         pathsPanel = GameObject.Find("PathsPanel").GetComponent<PathsPanel>();
         
         AssignValues(0, 370, PanelState.Minimized, false);
 
-        //missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions.Except(pathsPanel.MissionsChoosed,new MissionComparer()).ToList());
-        //Debug.Log(GameObject.Find("Space").GetComponent<Map>().Missions);
         missionsToChoose = new();
         missionsToChoose.AddRange(Map.mapData.missions);
-        /*
-        if (!Communication.loadOnStart)
-        {
-            missionsToChoose.AddRange(GameObject.Find("Space").GetComponent<Map>().Missions);
-        }
-        */
-        //Debug.Log(missionsToChoose);
-        //Debug.Log($"Missions To Choose: {missionsToChoose.Count}");
         missionButtonsAndConfirmButton = transform.GetComponentsInChildren<Button>();
         
         missionButtonsAndConfirmButton[^1].onClick.AddListener(AddMissions);
@@ -51,10 +38,8 @@ public class MissionsPanel : Panel
 
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        Debug.Log(Map.mapData.missions);
     }
 
-    // Update is called once per frame
     void Update()
     {
         ChangeWidth();
@@ -63,7 +48,6 @@ public class MissionsPanel : Panel
     [ClientRpc]
     void SyncMissionsToChooseClientRpc(string startPlanetName, string endPlanetName)
     {
-        Debug.Log(startPlanetName+endPlanetName);
         missionsToChoose.RemoveAll(m => m.start.name == startPlanetName && m.end.name == endPlanetName);
     }
 
@@ -72,15 +56,6 @@ public class MissionsPanel : Panel
     {
         SyncMissionsToChooseClientRpc(startPlanetName, endPlanetName);
     }
-    /*
-    [ClientRpc]
-    void SyncLoadMissionsToChoose(string startPlanetName, string endPlanetName,int points)
-    {
-        Mission m = ScriptableObject.CreateInstance<Mission>();
-        m.start = Planets;
-        missionsToChoose.Add();
-    }
-    */
     private void DrawMissions()
     {
         if(!Communication.TryStartDrawingMission())
@@ -94,7 +69,6 @@ public class MissionsPanel : Panel
         {
             popUpPanel.SetActive(true);
 
-            // "czy�cimy" przyciski z MissionsPanel
             for (int i = 0; i < missionButtonsAndConfirmButton.Length - 1; i++)
             {
                 missionButtonsAndConfirmButton[i].onClick.RemoveAllListeners();
@@ -103,7 +77,6 @@ public class MissionsPanel : Panel
 
             var randomMissions = GetRandomMissions();
 
-            Debug.Log($"RandomPaths: {randomMissions.Count}");
             for (int i = 0; i < missionButtonsAndConfirmButton.Length - 1; i++)
             {
                 int copy = i;
@@ -118,35 +91,30 @@ public class MissionsPanel : Panel
     }
     void AddMissions()
     {
-        // misje, kt�re dobrali�my
         var missionsChoosed = pathsPanel.missionsFromClickedMissionsCards.Except(pathsPanel.MissionsChosen, new MissionComparer()).ToList();
 
-        if (missionsChoosed.Count > 0) // gracz musi dobra� co najmniej jedn� kart� misji
+        if (missionsChoosed.Count > 0)         
         {
             Communication.DrawMissions(missionsChoosed);
 
             pathsPanel.MissionsChosen = missionsChoosed;
 
-            // wygaszamy planety i przyciski
             foreach (Mission m in missionsChoosed)
             {
                 pathsPanel.HighlightPlanet(m);
             }
 
-            // "czy�cimy" przyciski z MissionsPanel
             for (int i = 0; i < missionButtonsAndConfirmButton.Length - 1; i++)
             {
                 missionButtonsAndConfirmButton[i].onClick.RemoveAllListeners();
                 missionButtonsAndConfirmButton[i].name = "";
             }
 
-            // usuwamy misje z listy misju mo�liwych do wyboru i synchronizujemy t� list� z innymi graczami
             foreach (Mission m in missionsChoosed)
             {
                 SyncMissionsToChooseServerRpc(m.start.name, m.end.name);
             }
 
-            // przywracamy stan paneli sprzed dobierania
             ChangeState();
             pathsPanel.ChangeState();
             drawMissionsCardsButton.enabled = true;
@@ -165,21 +133,9 @@ public class MissionsPanel : Panel
     {
         if (IsHost)
         {
-            //map = GameObject.Find("Space").GetComponent<Map>();
-            //Debug.Log($"Mapa: {map}");
-            //Debug.Log(missionsToChoose);
-            //missionsToChoose ??= new();
-            //Debug.Log(map.Missions);
-            //Debug.Log(Map.mapData.missions);
-            //missionsToChoose.AddRange(map.Missions);
-            //missionsToChoose = data.missionsToChoose;
-            //Debug.Log(Server.allPlayersInfo.Count);
-            //Debug.Log(data.players.Count);
             foreach (PlayerInfo playerInfo in data.players)
             {
-                //Debug.Log("Name:" + playerInfo.Name);
                 List<MissionData> missionsChoosed = data.missionsForEachPalyer[playerInfo.Id];
-                //Debug.Log(missionsChoosed.Count);
                 foreach (MissionData m in missionsChoosed)
                 {
                     SyncMissionsToChooseClientRpc(m.startPlanetName, m.endPlanetName);
@@ -193,8 +149,6 @@ public class MissionsPanel : Panel
     {
         if (IsHost)
         {
-            //data.missionsToChoose = missionsToChoose;
-            //var missionschoosed
         }
     }
 

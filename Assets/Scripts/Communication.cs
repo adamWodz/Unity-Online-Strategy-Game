@@ -45,7 +45,6 @@ public static class Communication
 
     public static void ChoosePath(BuildPath buildPath)
     {
-        Debug.Log(Map.loadBuildPath[buildPath.path.Id]);
         if (Map.loadBuildPath[buildPath.path.Id]) return;
 
         if (buildPath == chosenPath)
@@ -59,7 +58,6 @@ public static class Communication
         {
             if (chosenPath.path.color == color || chosenPath.path.color == Color.any || color == Color.special)
             {
-                //Debug.Log("CanBuildPath" + PlayerGameData.CanBuildPath(chosenPath.path));
                 string errorMessage;
                 if (PlayerGameData.CanBuildPath(chosenPath.path, out errorMessage))
                     BuildPath(chosenPath, chosenPath.path);
@@ -79,9 +77,6 @@ public static class Communication
         }
         
         PlayerGameData.BuildPath(path);
-        Debug.Log("CurrentPoints: " + PlayerGameData.curentPoints);
-
-        //buildPath.StartCoroutine(buildPath.BuildPathAnimation(PlayerGameData.Id));
         buildPath.DoBuildPath(Server.allPlayersInfo.Where(p => p.Id == PlayerGameData.Id).First().ColorNum);
         var playerPanel = GameObject.Find("PlayersPanel").GetComponent<PlayerPanel>();
         playerPanel.UpdatePointsAndSpeceshipsNumServerRpc(PlayerGameData.Id, PlayerGameData.curentPoints, PlayerGameData.spaceshipsLeft);
@@ -169,10 +164,7 @@ public static class Communication
         PlayerGameData.DrawMissions(missions);
         PlayerGameData.isDrawingMission = false;
 
-        Debug.Log("DrawMissions");
         foreach (var mission in missions)
-            Debug.Log("missions: " + mission.start + " - " + mission.end);
-
         _GameManager.SetInfoTextServerRpc($"{PlayerGameData.Name} dobrał(a) karty misji.");
 
         CheckIfNewMissionIsCompleted();
@@ -185,8 +177,6 @@ public static class Communication
         PlayerGameData.EndTurn();
         chosenPath = null;
         NextTurnActions();
-        //Debug.Log("EndTurn");
-
         if (PlayerGameData.spaceshipsLeft < Board.minSpaceshipsLeft && !isLastTurn)
         {
             PlayerGameData.lastTurn = true;
@@ -203,12 +193,10 @@ public static class Communication
         }
         
         NextTurnActions();
-        Debug.Log("EndAiTurn");
     }
 
     static void NextTurnActions()
     {
-        //Debug.Log("NextTurn actions");
         _PlayerPanel.playersOrderChanged = false;
         _PlayerPanel.UpdatePlayersOrderServerRpc();
         _playerPanel.StartNextPlayerTurnServerRpc();
@@ -229,8 +217,6 @@ public static class Communication
         
         if (playerId == PlayerGameData.Id)
         {
-            //PlayerGameData.PrintCards();
-
             if (PlayerGameData.lastTurn)
             {
                 PlayerGameData.PrintMissions();

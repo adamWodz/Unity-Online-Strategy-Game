@@ -17,11 +17,10 @@ using UnityEngine.Networking.Types;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManager : NetworkBehaviour//, IDataPersistence
+public class GameManager : NetworkBehaviour 
 {
     public List<Sprite> cardSprites;
     public Sprite missionDoneSprite;
-    //public GameObject shipGameObject;
     public GameObject cardButton;
     public GameObject cardBackButton;
     public GameObject cardButtonWithSync;
@@ -44,18 +43,14 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
     PathsPanel pathsPanel;
 
-    // Start is called before the first frame update
     void Start()
     {
-        //Debug.Log("GameManager Client ID:"+OwnerClientId);
         pathsPanel = GameObject.Find("PathsPanel").GetComponent<PathsPanel>();
         drawCardsPanel = GameObject.Find("DrawCardsPanel");
         cardGoal = GameObject.Find("CardGoal");
         drawCardsButton = GameObject.Find("DrawCardsButton");
 
         spaceshipCounter = GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>();
-        //spaceshipCounter.text = Server.allPlayersInfo.Single(p => p.Id == PlayerGameData.Id).SpaceshipsLeft.ToString();
-
         int index = Server.allPlayersInfo.FindIndex(p => p.Id == PlayerGameData.Id);
         if(index != -1)
             spaceshipCounter.text = Server.allPlayersInfo[index].SpaceshipsLeft.ToString();
@@ -66,10 +61,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
             satelliteCounter = foundCounter.GetComponent<TMP_Text>();
             satelliteCounter.text = "3";
         }
-        else Debug.Log($"[GameManager.Start] Cant find sattelite counter");
-        //satelliteCounter = GameObject.Find("SatelliteCounter").GetComponent<TMP_Text>();
-        //satelliteCounter.text = "3";
-
+        else     
         index = Server.allPlayersInfo.FindIndex(p => p.Position == 0);
         if(index != -1)
             SetInfoTextServerRpc($"Tura gracza {Server.allPlayersInfo[index].Name}.");
@@ -87,9 +79,6 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
             NetworkManager.Singleton.OnClientDisconnectCallback +=
                 (i) =>
                 {
-                    //NetworkManager.Singleton.Shutdown();
-                    //SceneManager.LoadScene("Scenes/Menu");
-                    Debug.Log("StopHost");
                     Application.Quit();
                 };
         }
@@ -110,7 +99,6 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
     List<int> connectedClientIds;
 
-    // Update is called once per frame
     void Update()
     {
         if (NetworkManager == null) return;
@@ -157,17 +145,12 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     {
         var playerInfo = Server.allPlayersInfo.First(p => p.Id == id);
         var a = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>();
-        Debug.Log(a);
-
         Dictionary<Color, int> playerNumOfCardsInColor;
 
         if (a.cardsQuantityPerPlayerPerColor.ContainsKey(id))
         {
             int[] playersCards;
             playersCards = GameObject.Find("Canvas").transform.Find("CardDeck").GetComponent<CardDeck>().cardsQuantityPerPlayerPerColor[playerInfo.Id];
-
-            //for (int i = 0; i < playersCards.Length; i++)
-            //    Debug.Log($"{i}, count {playersCards[i]}");
 
             playerNumOfCardsInColor = new Dictionary<Color, int>();
             for (int i = 0; i < playersCards.Length; i++)
@@ -207,13 +190,11 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
                     {
                         playerMissions.Add(mission);
                         playerMissionsToDo.Add(mission);
-                        //Debug.Log($"newAI mission: {mission}");
                     }
                 }
             }
 
         
-        //Debug.Log("GameManager; playerName: " + playerInfo.Name + " isAI " + playerInfo.IsAI);
         playerInfo.IsAI = true;
 
         var newAI = new ArtificialPlayer
@@ -230,8 +211,6 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
         Server.artificialPlayers.Add(newAI);
 
         foreach (var mission in newAI.missions)
-            Debug.Log($"{mission.start.name} - {mission.end.name}");
-
         SetInfoTextServerRpc($"{playerInfo.Name} rozłączył(a) się i został(a) zastąpiony/a przez komputer.");
         return newAI;
     }
@@ -239,11 +218,8 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     [ServerRpc(RequireOwnership = false)]
     public void SpawnShipsServerRpc(int playerColorNum, Vector3 position, Quaternion rotation,ServerRpcParams serverRpcParams = default)
     {
-        //Debug.Log("playerId: " + playerId);
-        
         float angle = CalculateAngle(position,spaceshipsBase);
         var spawnedShipGameObject = Instantiate(shipGameObjectList[playerColorNum], spaceshipsBase, Quaternion.Euler(new Vector3(0, 0, -angle)));
-        // spawnuje si� dla wszystkich graczy bo network object
         spawnedShipGameObject.GetComponent<NetworkObject>().Spawn(true);
         var spawnedShip = spawnedShipGameObject.GetComponent<Move>();
         spawnedShip.goalPosition = position;
@@ -282,7 +258,6 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
                 spawnedCardGameObject = Instantiate(cardBackButton, drawCardsButton.transform);
             spawnedCardGameObject.name = name;
             spawnedCardGameObject.transform.localScale = new(0.5f, 0.5f);
-            //spawnedCardGameObject.transform.SetParent(canvas.transform);
             var spawnedCard = spawnedCardGameObject.GetComponent<Move>();
 
             spawnedCard.speed = 1000;
@@ -319,7 +294,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
     public void SetPopUpWindow(string message)
     {
-        var popUp = GameObject.Find("Canvas").transform.Find("PopUpPanel");//transform.parent.GetChild(0);
+        var popUp = GameObject.Find("Canvas").transform.Find("PopUpPanel");
         popUp.transform.Find("InfoText").GetComponent<TextMeshProUGUI>().text = message;
         popUp.gameObject.SetActive(true);
     }
@@ -399,7 +374,7 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void EndGameServerRpc() // wyświetlanie ekranu końcowego
+    public void EndGameServerRpc()    
     {
         EndGameWithDelayClientRpc();
 
@@ -426,7 +401,6 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
 
         Server.missionsByPlayerId.Add(playerId, missions);
 
-        Debug.Log($"Set data for {playerId}");
     }
 
     [ClientRpc]
@@ -450,8 +424,6 @@ public class GameManager : NetworkBehaviour//, IDataPersistence
     IEnumerator EndGame()
     {
         yield return new WaitForSeconds(3);
-
-        Debug.Log("Quit");
 
         DeactivateMap();
 

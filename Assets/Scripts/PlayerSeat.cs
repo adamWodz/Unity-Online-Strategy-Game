@@ -16,7 +16,6 @@ public class PlayerSeat : MonoBehaviour
     public bool AI;
     public string playerId;
 
-    // Start is called before the first frame update
     void Start()
     {
         Nickname.text = "";
@@ -24,7 +23,6 @@ public class PlayerSeat : MonoBehaviour
         lobby = GetComponent<LobbyAndRelay>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -59,12 +57,10 @@ public class PlayerSeat : MonoBehaviour
             joinedBackground.gameObject.SetActive(AI);
 
             var list = GameObject.Find("PlayerList").GetComponent<PlayerList>();
-            //list.RefreshAIPlayers();
             list.RefreshList();
             
-            Debug.Log($"[PlayerSeat.SwitchMode] AI:{AI}");
         }
-        else Debug.Log($"[PlayerSeat.SwitchMode] Cannot edit playerType");
+        
     }
     public void TryLeave()
     {
@@ -72,9 +68,6 @@ public class PlayerSeat : MonoBehaviour
         if (found != null) lobby = found.GetComponent<LobbyAndRelay>();
         if (lobby!=null) lobby.KickRecentlyJoined();
 
-        //var list = GameObject.Find("PlayerList").GetComponent<PlayerList>();
-        ////list.RefreshAIPlayers();
-        //list.RefreshList();
         lobby.RefreshPlayerList();
     }
 }

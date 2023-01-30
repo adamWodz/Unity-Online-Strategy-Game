@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 public class DrawCardsPanel : NetworkBehaviour
 {
-    public Sprite[] sprites; // kolory kart
+    public Sprite[] sprites;   
     public string[] names = { "RedCard", "GreenCard", "BlueCard", "YellowCard", "PinkCard", "RainbowCard" };
     public List<GameObject> cards = new();
     public GameObject cardPrefab;
@@ -46,7 +46,6 @@ public class DrawCardsPanel : NetworkBehaviour
                 i++;
                 cards.Add(child.gameObject);
                 
-                // Pocz¹tkowa synchronizacja kolorów kart
                 SyncSpritesServerRpc(color, copy);
             }
         }
@@ -73,10 +72,8 @@ public class DrawCardsPanel : NetworkBehaviour
 
     void ChangeCardColor(int color, int index)
     {
-        //Debug.Log($"Index: {index}");
         actualCardColor[index] = color;
-        //Debug.Log($"Color: {color}");
-        if (cards.Count > index) // klient mo¿e nie utworzyæ listy w tym samym czasie co host
+        if (cards.Count > index)            
         {
             cards[index].GetComponent<Image>().sprite = sprites[color];
             cards[index].name = names[color];
@@ -97,20 +94,17 @@ public class DrawCardsPanel : NetworkBehaviour
     public Color MoveCard(int index)
     {
         Color selectedColor;
-        if (index > cards.Count) //dobierana jest losowa karta z kupki
+        if (index > cards.Count)      
         {
             selectedColor = MoveCard();
         }
-        else // dobierana jest wybrana karta z panelu
+        else       
         {
             selectedColor = (Color)actualCardColor[index];
 
-            // rozpoczyna siê animacja doboru karty danego koloru przez gracza
             gameManager.SpawnCards(cards[index].transform, actualCardColor[index], names[actualCardColor[index]]);
             gameManager.iSendSpawnCardsServerRpc = true;
             
-            // animacja dla pozosta³ych graczy
-
             gameManager.SpawnCardsServerRpc(cards[index].transform.position, actualCardColor[index], names[actualCardColor[index]]+"BelongToOtherPlayer", index);
 
             ChooseRandomColor(index);
@@ -119,7 +113,6 @@ public class DrawCardsPanel : NetworkBehaviour
             
         }
 
-        // zapis stanu kart "na rêce" na bie¿¹co
         int[] cardsStacks = new int[gameManager.cardStackCounterList.Count];
         for (int i = 0; i < gameManager.cardStackCounterList.Count; i++)
         {
@@ -142,19 +135,16 @@ public class DrawCardsPanel : NetworkBehaviour
 
         yield return new WaitForSeconds(3);
 
-        //Communication.EndAITurn(ai);
     }
 
     public void ChooseRandomColor(int index)
     {
-        // wybierany jest nowy kolor i synchronizowany
         int color = 0;
         RandomSprite(ref color);
         if((Color)color == Color.special)
             numberOfRainbowCards++;
         actualCardColor[index] = color;
 
-        // Synchronizacja nowego koloru z innymi graczami
         SyncSpritesServerRpc(color, index);
     }
 
@@ -166,13 +156,10 @@ public class DrawCardsPanel : NetworkBehaviour
 
     private Color MoveCard()
     {
-        // gracz dobiera losow¹ kartê z kupki z kartami (widoczne tylko lokalnie)
         int color = 0;
         RandomSprite(ref color);
         gameManager.SpawnCards(drawCardsButton.transform, color, names[color]);
         gameManager.iSendSpawnCardsServerRpc = true;
-
-        // animacja dla pozosta³ych graczy
 
         gameManager.SpawnCardsServerRpc(drawCardsButton.transform.position, color, names[color] + "BelongToOtherPlayer",-1);
 
@@ -198,10 +185,7 @@ public class DrawCardsPanel : NetworkBehaviour
     IEnumerator HighlightDrawCardsPanel()
     {
         gameObject.GetComponent<Image>().color = UnityEngine.Color.yellow;
-        //Debug.Log(GameObject.Find("InfoText").GetComponent<TMP_Text>().text);
-        //GameObject.Find("InfoText").GetComponent<TMP_Text>().text = "Przetasowano karty";
         gameManager.SetInfoTextServerRpc("Przetasowano karty");
-        //Debug.Log(GameObject.Find("InfoText").GetComponent<TMP_Text>().text);
         yield return new WaitForSeconds(1);
         gameObject.GetComponent<Image>().color = UnityEngine.Color.white;
     }

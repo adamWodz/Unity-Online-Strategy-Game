@@ -11,7 +11,6 @@ public class FinalMissionResults : MonoBehaviour
     List<GameObject> missionTiles = new List<GameObject>();
     public int missionsPlayerId;
 
-    // Start is called before the first frame update
     void Start()
     {
     }
@@ -24,10 +23,7 @@ public class FinalMissionResults : MonoBehaviour
 
     void RefreshList(List<Mission> missions)
     {
-        Debug.Log("RefreshList");
         foreach (Mission m in missions)
-            Debug.Log($"{m.start.name} - {m.end.name}");
-        
         foreach(var tile in missionTiles)
         {
             Destroy(tile);

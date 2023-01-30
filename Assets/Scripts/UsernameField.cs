@@ -23,6 +23,5 @@ public class UsernameField : MonoBehaviour
     {
         PlayerPrefs.SetString("username", inputField.text);
         PlayerGameData.Name = inputField.text;
-        Debug.Log(PlayerPrefs.GetString("username"));
     }
 }

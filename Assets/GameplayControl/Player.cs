@@ -61,38 +61,32 @@ namespace Assets.GameplayControl
             if (!isNowPlaying)
             {
                 errorMessage = "Brak obecnie ruchu.";
-                Debug.Log("Brak obecnie ruchu.");
                 return false;
             }
             if (isDrawingMission)
             {
                 errorMessage = "Nie możesz teraz wybudować połączenia.";
-                Debug.Log(errorMessage);
                 return false;
             }
             if (cardsDrewInTurn > 0)
             {
                 errorMessage = "W tym ruchu juz dobrano kartę.";
-                Debug.Log("W tym ruchu juz dobrano kartę.");
                 return false;
             }
             if (path.isBuilt)
             {
                 errorMessage = "Połączenie jest juz wybudowane.";
-                Debug.Log("Połączenie jest juz wybudowane.");
                 return false;
             }
             if (path.length > spaceshipsLeft)
             {
                 errorMessage = "Za mało statków.";
-                Debug.Log("Za mało statków.");
                 return false;
             }
             if (numOfCardsInColor[path.color] < path.length
                 && numOfCardsInColor[path.color] + numOfCardsInColor[Color.special] < path.length)
             {
                 errorMessage = "Za mało kart w odpowiednim kolorze.";
-                Debug.Log("Za mało kart w odpowiednim kolorze.");
                 return false;
             }
 
@@ -102,8 +96,6 @@ namespace Assets.GameplayControl
 
         public static bool BuildPath(Path path)
         {
-            //if (!CanBuildPath(path)) return false;
-            
             curentPoints += Board.pointsPerLength[path.length];
             if(path.length <= numOfCardsInColor[path.color])
             {
@@ -118,12 +110,9 @@ namespace Assets.GameplayControl
             spaceshipsLeft -= path.length;
             path.isBuilt = true;
 
-            // dodanie planet do grup połączonych planet
             ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, groupsOfConnectedPlanets);
 
             PrintConnectedPlanets();
-            //PrintMissions();
-
             return true;
         }
 
@@ -173,7 +162,6 @@ namespace Assets.GameplayControl
         public static bool CanSendSatellite(Planet planet, Path path, Color color)
         {
             if (planet.withSatellite) return false;
-            //if (path.withSatellie) return false;
             if (satellitesSent >= Board.maxSatellitesSent) return false;
             if (numOfCardsInColor[color] < Board.cardsPerSatelliteSend[satellitesSent + 1]) return false;
             
@@ -201,7 +189,6 @@ namespace Assets.GameplayControl
             if(isDrawingMission)
             {
                 errorMessage = "Nie możesz dobrać karty gdy wybierasz misje.";
-                Debug.Log(errorMessage);
                 return false;
             }
 
@@ -215,8 +202,6 @@ namespace Assets.GameplayControl
             cardsDrewInTurn++;
             if (cardColor == Color.special && !randomDraw)
                 cardsDrewInTurn++;
-            Debug.Log(cardColor + ", " + numOfCardsInColor[cardColor]);
-            //Debug.Log("special cards num: " + numOfCardsInColor[Color.special]);
         }
 
         public static bool CanDrawMission(out string errorMessage)
@@ -224,13 +209,11 @@ namespace Assets.GameplayControl
             if (!isNowPlaying)
             {
                 errorMessage = "Brak obecnie ruchu.";
-                Debug.Log("Brak obecnie ruchu.");
                 return false;
             }
             if (cardsDrewInTurn > 0)
             {
                 errorMessage = "W tym ruchu juz dobrano kartę.";
-                Debug.Log("W tym ruchu juz dobrano kartę.");
                 return false;
             }
 
@@ -241,7 +224,6 @@ namespace Assets.GameplayControl
         public static void DrawMissions(List<Mission> _missions)
         {
             missions.AddRange(_missions.Except(missions));
-            //Debug.Log(missions);
         }
 
         public static void StartTurn()

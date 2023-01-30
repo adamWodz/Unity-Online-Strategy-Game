@@ -23,13 +23,11 @@ public class StartGameButton : NetworkBehaviour
     public void StartGame()
     {
         ClearAvailableMaps();
-        Debug.Log("Id from start: " + AuthenticationService.Instance.PlayerId);
         if (Communication.loadOnStart)
         {
             string[] playerUnityIds = PlayerPrefs.GetString("players").Split(';');
             foreach (string id in playerUnityIds)
             {
-                Debug.Log(id);
             }
         }
         Server.playerTilePrefabs = new List<GameObject>();
@@ -37,11 +35,8 @@ public class StartGameButton : NetworkBehaviour
         foreach (var prefab in playerTilePrefabs)
             Server.playerTilePrefabs.Add(prefab);
 
-        //Communication.loadOnStart = true;
-        //Debug.Log("StartGame; " + NetworkManager.Singleton.IsServer);
         SetMapDataClientRpc(Communication.mapDataNumber, Communication.loadOnStart);
         string name = "Scenes/Main Game";
-        Debug.Log($"[ChooseMapMenu.StartGame] {NetworkManager != null} {NetworkManager.SceneManager != null}");
         var status = NetworkManager.SceneManager.LoadScene(name, LoadSceneMode.Single);
 
         SetClientIdClientRpc();
@@ -53,19 +48,15 @@ public class StartGameButton : NetworkBehaviour
         IndexesReg = PlayerList.IndexesReg;
         AdjustPositions();
 
-        //int aiPlayersNum = allPlayersLimit - lobby.maxPlayers;
         int aiPlayersNum = IndexesAI.Length;
-        //int nonAiPlayersNum = lobby.joinedLobby.Players.Count;
         int nonAiPlayersNum = IndexesReg.Length;
 
         seats = PlayerList.seats;
 
-        Debug.Log($"[StarGame] AI:{aiPlayersNum} Reg:{nonAiPlayersNum}");
         InitializePlayersListsClientRpc(aiPlayersNum, nonAiPlayersNum);
 
         Server.connectedPlayersCount = nonAiPlayersNum;
 
-        Debug.Log("[StartGame] Print players from host");
         lobby.PrintPlayers(lobby.joinedLobby);
         var lobbyplayers = lobby.joinedLobby.Players;
         if (!Communication.loadOnStart)
@@ -90,7 +81,6 @@ public class StartGameButton : NetworkBehaviour
                 {
                     if (iRe == clients.Count)
                     {
-                        Debug.Log($"[StartGame] {pos}th PlayerSeat ({iRe}/{nonAiPlayersNum} Regular), there's {clients.Count} clients. ");
                         break;
                     }
                     position = int.Parse(pos.ToString());
@@ -106,14 +96,11 @@ public class StartGameButton : NetworkBehaviour
                 }
             }
 
-            Debug.Log("PlayerIDs");
             if (Server.allPlayersInfo != null)
             {
                 foreach (var player in Server.allPlayersInfo)
                     Debug.Log(player.Id);
-                Debug.Log("end PlayerIDs");
             }
-            //SetClientNamesClientRpc();
 
             FirstTurn();
         }
@@ -217,32 +204,12 @@ public class StartGameButton : NetworkBehaviour
             ColorNum = position,
             UnityId = UnityId
         };
-        //PlayerGameData.UnityId = UnityId;
         Server.allPlayersInfo.Add(playerState);
     }
 
     [ClientRpc]
     public void AddAiPlayerClientRpc(string nick, int position, int id)
     {
-        /**
-        PlayerInfo playerState = new PlayerInfo
-        {
-            Position = position,
-            Points = 0,
-            Name = "AIplayer" + id.ToString(),
-            Id = id,
-            IsAI = true,
-            SpaceshipsLeft = Board.startSpaceshipsNumber,
-            ColorNum= position,
-        };
-        Server.allPlayersInfo.Add(playerState);
-        Server.artificialPlayers.Add(new ArtificialPlayer
-        {
-            Name = "AIplayer" + position.ToString(),
-            Id = id,
-        });
-        */
-
         PlayerInfo playerState = new PlayerInfo
         {
             Position = position,
@@ -259,7 +226,6 @@ public class StartGameButton : NetworkBehaviour
             Name = nick,
             Id = id,
         };
-        //newAI.LoadConnectedPlanets();
         Server.artificialPlayers.Add(newAI);
     }
 
@@ -269,42 +235,13 @@ public class StartGameButton : NetworkBehaviour
         PlayerGameData.Id = (int)NetworkManager.Singleton.LocalClientId;
         PlayerGameData.UnityId = AuthenticationService.Instance.PlayerId;
     }
-    /*
-    [ClientRpc]
-    public void SetClientNamesClientRpc()
-    {
-        //Debug.Log("SetClientNamesClientRpc UnityId: " + PlayerGameData.UnityId);
-        //Debug.Log("SetClientNamesClientRpc Name: " + PlayerGameData.Name);
-        SetNameServerRpc(PlayerGameData.Id, PlayerGameData.Name, PlayerGameData.UnityId);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void SetNameServerRpc(int playerId, string name, string UnityId)
-    {
-        //Debug.Log("SetNameServerRpc UnityId: "+UnityId);
-        //Debug.Log("SetNameServerRpc Name: " + name);
-        SetNameClientRpc(playerId, name, UnityId);
-    }
-
-    [ClientRpc]
-    public void SetNameClientRpc(int playerId, string name, string UnityId)
-    {
-        //Debug.Log("SetNameClientRpc UnityId: " + UnityId);
-        //Debug.Log("SetNameClientRpc Name: " + name);
-        var player = Server.allPlayersInfo.Where(p => p.Id == playerId).First();
-        player.Name = name;
-        //player.UnityId = UnityId;
-    }
-    */
     [ClientRpc]
     public void SetMapDataClientRpc(int mapNumber, bool loadOnStart)
     {
         LobbyAndRelay lobby = GameObject.Find("LobbyAndRelay").GetComponent<LobbyAndRelay>();
-        Debug.Log("[SetMapDataClientRpc] Print players from host");
         lobby.PrintPlayers(lobby.joinedLobby);
 
         Map.mapData = availableMapsData[mapNumber];
-        Debug.Log(Map.mapData);
         Communication.availableMapsData = new();
         Communication.availableMapsData.AddRange(availableMapsData);
         Communication.loadOnStart = loadOnStart;
@@ -313,9 +250,7 @@ public class StartGameButton : NetworkBehaviour
     [ServerRpc]
     public void SetMapDataServerRpc(int mapNumber)
     {
-        Debug.Log("SetMapDataServerRpc");
         Map.mapData = availableMapsData[mapNumber];
-        Debug.Log(Map.mapData);
     }
 
     void FirstTurn()
@@ -328,7 +263,7 @@ public class StartGameButton : NetworkBehaviour
                 var ai = Server.artificialPlayers.Where(p => p.Id ==nextPlayer.Id).FirstOrDefault();
                 if(ai != null)
                     ai.StartAiTurn();
-            } // gameManager zaczyna turê gracza AI
+            }      
             else
                 FirstTurnClientRpc(nextPlayer.Id);
         }

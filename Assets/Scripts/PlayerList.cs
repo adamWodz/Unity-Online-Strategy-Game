@@ -13,7 +13,6 @@ public class PlayerList : MonoBehaviour
     public GameObject createGameMenu;
 
     public List<PlayerSeat> seats;
-    //public List<bool> RegularPlayers;
     public LobbyAndRelay lobbyData;
     public Text joined, remaining;
     
@@ -28,20 +27,10 @@ public class PlayerList : MonoBehaviour
 
     private void Update()
     {
-        //RefreshNum();        
     }
 
     void RefreshNum()
     {
-        /**
-        joinedNum = 0;
-        foreach (var p in seats)
-        {
-            if (p.AI || p.Nickname.text!="") joinedNum++;
-        }
-        joined.text = joinedNum.ToString();
-        remaining.text = (5 - joinedNum).ToString();
-        */
         ShowCurrentNums();
     }
 
@@ -58,50 +47,11 @@ public class PlayerList : MonoBehaviour
     {
         try
         {
-            /**
-            bool cankick = false;
-            if (lobbyData != null && lobbyData.joinedLobby != null)
-            {
-                if (lobbyData.ImLobbyHost()) lobbyData.printClients();
-                //else if (RegularPlayers.Count == seats.Count)
-                //{
-                //    Debug.Log($"{seats.Count} {RegularPlayers.Count}");
-                //    for (int j = 0; j < seats.Count; j++) seats[j].AI = !RegularPlayers[j];
-                //}
-
-                var players = lobbyData.joinedLobby.Players;
-                
-                int i = 0, a = 0;
-                for (int j = 0; j < seats.Count; j++)
-                {
-                    if (i == players.Count) break;
-                    if (!seats[j].AI && seats[j].player == null)
-                    {
-                        //seats[j].lobby = lobbyData;
-                        string pref = (i == 0) ? "host" : "spaceman";
-                        var playerId = players[i++].Id;
-                        
-                        seats[j].playerId = playerId;
-                        seats[j].DisplayJoined(cankick);
-                        SetPlayerNick(j, pref, playerId);
-                    }
-                }
-            }
-            else
-            {
-                Debug.Log($"[PlayerList.RefreshList] 1/2 Am I the host? {lobbyData.ImLobbyHost()}");
-                var j = lobbyData.joinedLobby != null;
-                var code = lobbyData.joinedLobby != null ? lobbyData.joinedLobby.Id : "not connected";
-                Debug.Log($"[PlayerList.RefreshList] 2/2 joinedLobby code: {code}");
-            }
-            */
-
             ShowCurrentPlayers();
             if (lobbyData.joinedLobby != null)
             {
                 if (!lobbyData.ImInLobby())
                 {
-                    Debug.Log("IM NOT IN LOBBY");
                     mainMenu.gameObject.SetActive(true);
                     createGameMenu.SetActive(false);
                 }
@@ -110,7 +60,6 @@ public class PlayerList : MonoBehaviour
         }
         catch (LobbyServiceException e)
         {
-            Debug.Log(e);
         }
     }
 
@@ -135,38 +84,13 @@ public class PlayerList : MonoBehaviour
     {
         int res = 0, i=0;
 
-        /**
-        //RegularPlayers = new List<bool>();
-        // lobbyData.AISeats = "";
-        // foreach (var s in seats)
-        // {
-        //     if (!s.AI)
-        //     {
-        //         res++;
-        //     }
-        //     else
-        //     {
-        //         lobbyData.AISeats += i.ToString();
-        //         Debug.Log(s);
-        //     }
-        //     //RegularPlayers.Add(!s.AI);
-        //     i++;
-        // }
-        // SetAINicknames(lobbyData.AISeats);
-        // lobbyData.maxPlayers = res;
-        */
-
         RefreshAIPlayers();
         lobbyData.AISeats = IndexesAI;
     
-        Debug.Log($"[PlayerList.NonAI] MaxPlayer = {res}");
         for (int j = 0; j < seats.Count; j++) seats[j].PlayerType.interactable = false;
     }
 
 
-    /*
-     * seats ma elementy PlayerSeat z pustymi nickami i 
-     */
     public enum PlayerListState { EditTypes, CreateLobby, PlayersJoining }
     public string IndexesAI, IndexesReg;
     PlayerListState State;
@@ -175,7 +99,6 @@ public class PlayerList : MonoBehaviour
     {
         if (lobbyData.joinedLobby == null)
         {
-            // nadpisywanie
             IndexesAI = "";
             for (int i = 0; i < seats.Count; i++)
             {
@@ -188,9 +111,6 @@ public class PlayerList : MonoBehaviour
             IndexesAI = lobbyData.joinedLobby.Data["IndexesAI"].Value;
         }
 
-        Debug.Log($"[RefreshAIPlayers] {lobbyData.joinedLobby == null} AI: {IndexesAI}");
-
-        // pokazywanie na scenie (powinno by� przy klikni�ciu dowolnego playera)
         int a = 1;
         foreach (char j in IndexesAI)
         {
@@ -198,7 +118,6 @@ public class PlayerList : MonoBehaviour
             if (jj > 0)
             {
                 if (!seats[jj].AI) seats[jj].ChangePlayerType();
-                //seats[jj].Nickname.text = $"AIplayer{a++}";
                 seats[jj].Nickname.text = $"{Assets.GameplayControl.PlayerGameData.AINames[a - 1]}";
                 a++;
             }
@@ -211,11 +130,6 @@ public class PlayerList : MonoBehaviour
     }
     public void OnCreateLobby()
     {
-        // odświeżenie graczy AI
-        // zablokowanie przycisk�w (modyfikacja PlayerType PlayerSeat's�w na disabled)
-        // przekazanie IndexesAI do lobbyData.AISeats
-        /// przy tworzeniu Lobby ustawi si� .Data["IndexesAI"]
-
         RefreshAIPlayers();
         DisableTypeButtons();
         lobbyData.AISeats = IndexesAI;
@@ -236,19 +150,16 @@ public class PlayerList : MonoBehaviour
             if (data != null)
             {
                 if (data.ContainsKey("IndexesAI")) indexesAI = data["IndexesAI"].Value;
-                else Debug.Log("# no lobby data key");
             }
-            else Debug.Log("# no lobby data");
 
             var foundLobby = GameObject.Find("LobbyAndRelay");
             if (lobby != null && foundLobby != null)
             {
                 var lobby2 = foundLobby.GetComponent<LobbyAndRelay>();
-                Debug.Log($"Found {lobby2.joinedLobby != null}, attached to the one with {lobby.Players.Count}");
-                if (lobby2.joinedLobby != null) Debug.Log($"{lobby.Players.Count}={lobby2.joinedLobby.Players.Count}?");
+                if (lobby2.joinedLobby != null) 
                 players = lobby2.joinedLobby.Players;
             }
-            else Debug.Log($"{lobby != null} {foundLobby != null}");
+            else      
 
             if (players == null || players.Count > 0)
             {
@@ -258,12 +169,9 @@ public class PlayerList : MonoBehaviour
                 {
                     if (players.Count == IndexesReg.Length) break;
                     freeSeat = !indexesAI.Contains(i.ToString()) && !IndexesReg.Contains(i.ToString());
-                    Debug.Log($"[RefreshRegPlayers] Seat{i} is free:{freeSeat} IndReg: {IndexesReg}");
                     if (freeSeat) IndexesReg += i.ToString();
                 }
 
-                Debug.Log($"[RefreshRegPlayers] RegularPlayers indexes {IndexesReg}, {players.Count} in lobby");
-                // pokazywanie na scenie (powinno by� przy do��czaniu dowolnego playera)
                 r = 0;
                 foreach (char j in IndexesReg)
                 {
@@ -279,40 +187,32 @@ public class PlayerList : MonoBehaviour
                         }
                         else
                         {
-                            Debug.Log($"[RefreshRegPlayers] {r}th LobbyMember name not saved");
                             if (!lobbyData.ImLobbyHost()) username = Assets.GameplayControl.PlayerGameData.Name;
                         }
 
                         var jj = int.Parse(j.ToString());
                         if (players[r].Id == Unity.Services.Authentication.AuthenticationService.Instance.PlayerId)
                         {
-                            Debug.Log($"& my client found with {username} {Assets.GameplayControl.PlayerGameData.Name}");
                         }
 
                         seats[jj].playerId = players[r++].Id;
-                        Debug.Log($"[RefreshRegPlayers] {seats[jj].playerId}");
-
                         seats[jj].Nickname.text = username;
                         seats[jj].DisplayJoined(false);
-                        //SetPlayerNick(jj, pref, playerId);
                     }
                 }
 
                 if (oldIndexesReg.Length > IndexesReg.Length)
                 {
-                    //czyszczenie starych graczy
                     foreach (char j in oldIndexesReg)
                     {
                         if (!IndexesReg.Contains(j.ToString()))
                         {
                             var jj = int.Parse(j.ToString());
                             seats[jj].FreeSeat();
-                            Debug.Log($"[RefreshRegPlayers] {jj} Free");
                         }
                     }
                 }
             }
-            else Debug.Log($"[RefreshRegPlayers] No Lobby members to display");
         }
     }
 
@@ -325,7 +225,6 @@ public class PlayerList : MonoBehaviour
         joined.gameObject.SetActive(true);
         remaining.gameObject.SetActive(true);
 
-        Debug.Log($"[ShowCurrentNums] {IndexesAI.Length} {IndexesReg.Length} || {remaining.IsActive()} {remaining.text}");
     }
 
     PlayerListState CheckState()
@@ -338,28 +237,14 @@ public class PlayerList : MonoBehaviour
     public void ShowCurrentPlayers()
     {
         var state = CheckState();
-        Debug.Log($"& {state} {lobbyData!=null}");
         switch (state)
         {
             case PlayerListState.EditTypes:
-                // przej�cie przez seats, kt�re s� AI (zapis u nas w stringu IndexesAI)
-                // pokazanie ponownej numeracji tych AI (modyfikacja Nickname AI PlayerSeat's�w)
                 RefreshAIPlayers();
                 break;
             case PlayerListState.CreateLobby:
-                /// NonAI
-                // zablokowanie przycisk�w (modyfikacja PlayerType PlayerSeat's�w na disabled)
-                // przekazanie IndexesAI do lobbyData.AISeats
-                // przy tworzeniu Lobby ustawi si� .Data["IndexesAI"]
-                // przej�cie r�wnoleg�e przez seats,kt�re nie s� AI oraz .Players (zapis u nas w stringu IndexesReg)
-                // pokazanie nowych graczy-hosta (modyfikacja ca�ego PlayerSeat nowo napotkanych)
-                //RefreshRegPlayers();
                 break;
             case PlayerListState.PlayersJoining:
-                // pobranie .Players z lobbyData.joinedLobby ORAZ .Data["IndexesAI"]
-                // przej�cie r�wnoleg�e przez seats,kt�re nie s� (*)AI oraz .Players (zapis u nas w stringu (*)IndexesReg)
-                // (*)nie ma ich indeksu ani w IndexesAI ani IndexesReg, jak ju� IndexesReg nie jest nullem
-                // pokazanie nowych graczy (modyfikacja ca�ego PlayerSeat nowo napotkanych)
                 if (!lobbyData.ImLobbyHost())
                 {
                     RefreshAIPlayers();
@@ -370,9 +255,6 @@ public class PlayerList : MonoBehaviour
         }
 
 
-        // edycja
-        //RefreshAIPlayers();
-        //RefreshRegPlayers();
-        ShowCurrentNums();// d�ugo�� IndexesAI+IndexesReg to joined
+        ShowCurrentNums();    
     }
 }

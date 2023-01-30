@@ -1,7 +1,6 @@
 ﻿using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
-//using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 namespace Assets.GameplayControl
@@ -46,7 +45,6 @@ namespace Assets.GameplayControl
         public int Id { set; get; }
         public string Name { set; get; }
         public int curentPoints { get; set; } = 0;
-        //public int satellitesSent { get; set; } = 0;
         public int spaceshipsLeft = Board.startSpaceshipsNumber;
         public List<Mission> missions = new List<Mission>();
         public List<Mission> missionsToDo = new List<Mission>();
@@ -64,7 +62,6 @@ namespace Assets.GameplayControl
         public Dictionary<Planet, int> planetIds = new Dictionary<Planet, int>();
         public bool startedLastTurn = false;
 
-        // reserowane co turę
         public int[,] dist = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         public int[,] nextPlanet = new int[Map.mapData.planets.Count, Map.mapData.planets.Count];
         List<Path> pathsToBuild = new List<Path>();
@@ -92,7 +89,6 @@ namespace Assets.GameplayControl
 
         public void StartAiTurn()
         {
-            Debug.Log("Best Move");
             _GameManager.DelayAiMove(this);
         }
 
@@ -103,25 +99,20 @@ namespace Assets.GameplayControl
             UpdateMissions();
             SetPathsToBuild();
 
-            Debug.Log("Groups of connected planets");
             foreach(var planets in groupsOfConnectedPlanets)
             {
                 Debug.Log("group");
                 foreach (Planet planet in planets.planets)
                     Debug.Log(planet.name);
             }
-            Debug.Log("end: Groups of connected planets");
-
             Path path = BestPathToBuild();
             if (path != null)
             {
-                Debug.Log($"AI builds path {path.planetFrom.name} - {path.planetTo.name}");
                 BuildPath(path);
                 _GameManager.SetInfoTextServerRpc($"{Name} wybudował(a) połączenie {path.planetFrom.name} - {path.planetTo.name}.");
             }
             else if (missionsToDo.Count > 0)
             {
-                Debug.Log("AI draws cards");
                 DrawCards();
                 _GameManager.SetInfoTextServerRpc($"{Name} dobrał(a) kartę statku.");
             }
@@ -129,22 +120,19 @@ namespace Assets.GameplayControl
             {
                 if (GameObject.Find("MissionsPanel").GetComponent<MissionsPanel>().GetRandomMissions().Count > 0 && !Communication.isLastTurn)
                 {
-                    Debug.Log("AI draws missions");
                     DrawMissions();
                     _GameManager.SetInfoTextServerRpc($"{Name} dobrał(a) karty misji.");
                 }
-                else // brak już misji od dobrania lub jest ostatnia tura
+                else          
                 {
                     path = GetLongestPath();
                     if (path != null)
                     {
-                        Debug.Log("AI builds path");
                         BuildPath(path);
                         _GameManager.SetInfoTextServerRpc($"{Name} wybudował(a) połączenie {path.planetFrom.name} - {path.planetTo.name}.");
                     }
                     else
                     {
-                        Debug.Log("AI draws cards");
                         DrawCards();
                         _GameManager.SetInfoTextServerRpc($"{Name} dobrał(a) kartę statku.");
                     }
@@ -155,7 +143,6 @@ namespace Assets.GameplayControl
         }
 
 
-        // sprawdzamy czy możemy wybudować jakąkiekolwiek połączenie
         public Path BestPathToBuild()
         {
             pathsToBuild = pathsToBuild.OrderByDescending(p1 => p1.length).ToList();
@@ -250,13 +237,10 @@ namespace Assets.GameplayControl
 
             foreach (Mission mission in missionsToDo)
             {
-                Debug.Log(mission.start.name + " " + mission.end.name);
-
                 List<Path> quickestPath = GetQuickestPathForMission(mission);
 
                 foreach (Path path in quickestPath)
                 {
-                    Debug.Log(path + " " + path.color + " " + path.isBuilt);
                     if (!path.isBuilt)
                         pathsToBuild.Add(path);
                 }
@@ -303,26 +287,15 @@ namespace Assets.GameplayControl
                     }
                 }
 
-            /*if (shortestDist == int.MaxValue)
-            {
-                SetmissionAsIncompletable(mission);
-                return new List<Path>();
-            }*/
-
-            Debug.Log("Mission " + mission.name + ", length: " + resultPath.Count + " " + shortestDist);
-
             return ConvertPath(resultPath);
         }
 
         List<Path> ConvertPath(List<Planet> pathOfPlanets)
         {
-            //Debug.Log(pathOfPlanets.Count);
-
             List<Path> resultPath = new List<Path>();
             
             for(int i = 0; i < pathOfPlanets.Count - 1; i++)
             {
-                //Debug.Log("path: " + pathOfPlanets[i] + " - " + pathOfPlanets[i + 1]);
                 var paths = Map.mapData.paths.Where(p => (p.planetFrom == pathOfPlanets[i] && p.planetTo == pathOfPlanets[i + 1])
                     || (p.planetTo == pathOfPlanets[i] && p.planetFrom == pathOfPlanets[i + 1]));
                 resultPath.AddRange(paths);
@@ -336,7 +309,7 @@ namespace Assets.GameplayControl
             List<Mission> missionsToRemove = new List<Mission>();
             foreach (Mission mission in missionsToDo)
             {
-                if (dist[planetIds[mission.start], planetIds[mission.end]] == int.MaxValue) // misji nie da się wykonać
+                if (dist[planetIds[mission.start], planetIds[mission.end]] == int.MaxValue)      
                 {
                     missionsToRemove.Add(mission);
                     continue;
@@ -344,7 +317,7 @@ namespace Assets.GameplayControl
 
                 List<Path> missionPath = GetQuickestPathForMission(mission);
 
-                if (missionPath.Count == 0) // misja jest już wykonana
+                if (missionPath.Count == 0)     
                 {
                     mission.isDone = true;
                     missionsDone.Add(mission);
@@ -352,7 +325,6 @@ namespace Assets.GameplayControl
                     continue;
                 }
 
-                // misji nie opłaca się wykonać - za duży koszt w stosunku do zysku
                 if (missionPath.Count > 5 && mission.points < 10) 
                     missionsToRemove.Add(mission);
                 else if (missionPath.Count > 7 && mission.points < 16)
@@ -381,7 +353,6 @@ namespace Assets.GameplayControl
             ConnectedPlanets.AddPlanetsFromPathToPlanetsGroups(path, groupsOfConnectedPlanets);
 
             BuildPath buildPath = Server.buildPaths.Where(b => b.path.Id == path.Id).First();
-            //buildPath.StartCoroutine(buildPath.BuildPathAnimation(Id));
             buildPath.DoBuildPathByAI(Server.allPlayersInfo.Where(p => p.Id == Id).First().ColorNum);
 
             _PlayersPanel.UpdatePointsAndSpeceshipsNumServerRpc(Id, curentPoints, spaceshipsLeft);
@@ -402,15 +373,10 @@ namespace Assets.GameplayControl
             }
         }
 
-        // wybieranie najlepszych misji
         public List<Mission> PickBestMissions(List<Mission> missionsToDraw)
         {
             
             List<Mission> pickedMissions = new List<Mission>();
-            //List<Mission> missionsPool = missionsToDraw;
-            //missionsPool.AddRange(missions);
-
-            // podobieństwo do jednej z misji
             Dictionary<Mission, int> similarity = new Dictionary<Mission, int>();
             foreach(Mission mission in missionsToDraw)
             {
@@ -418,45 +384,14 @@ namespace Assets.GameplayControl
                     similarity.Add(mission, 0);
             }
 
-            /*foreach(Mission mission1 in missionsToDraw)
-            {
-                foreach(Mission mission2 in missionsPool)
-                {
-                    if (mission1 == mission2)
-                        continue;
-                    if (dist[planetIds[mission1.start], planetIds[mission1.end]] == int.MaxValue || dist[planetIds[mission2.start], planetIds[mission2.end]] == int.MaxValue)
-                        continue;
-                    if (mission1.start == mission2.start || mission1.start == mission2.end ||
-                        mission1.end == mission2.start || mission1.end == mission2.end)
-                    {
-                        if (!pickedMissions.Contains(mission1))
-                            pickedMissions.Add(mission1);
-                        if (!pickedMissions.Contains(mission1))
-                            pickedMissions.Add(mission2);
-                    }
-                }
-            }*/
-
             int limit = missionLengthLimit;
 
             foreach (Mission mission in missionsToDraw)
                 if (DistanceBetweenPlanetGroups(mission.start, mission.end) < limit)
                 {
-                    Debug.Log($"dist {mission.start.name} - {mission.end.name} {DistanceBetweenPlanetGroups(mission.start, mission.end)}");
                     if(!pickedMissions.Contains(mission)) 
                         pickedMissions.Add(mission);
                 }
-
-            /*
-            var pickedMissionsSimilarity = similarity.OrderByDescending(s => s.Value).ToList();
-
-            int pickedMissionsNum = pickedMissionsSimilarity.Count <= 3 ? pickedMissionsSimilarity.Count : 3;
-
-            for(int i = 0; i < pickedMissionsNum; i++)
-            {
-
-            }
-            */
 
             while (pickedMissions.Count > 3)
                 pickedMissions.RemoveAt(0);
@@ -508,8 +443,6 @@ namespace Assets.GameplayControl
 
         private void DrawCards()
         {
-            Debug.Log("start drawing cards");
-            
             var colors = BestCardColorsToDraw();
             
             if (!DrawCard(colors))
@@ -518,7 +451,6 @@ namespace Assets.GameplayControl
             if (!DrawCard(colors))
                 DrawRandomCard();
 
-            Debug.Log("end drawing cards");
         }
 
         private bool DrawCard(List<Color> colors)
@@ -529,8 +461,6 @@ namespace Assets.GameplayControl
             {
                 if (colors.Contains(availableColors[i]))
                 {
-                    Debug.Log(availableColors[i]);
-                    
                     numOfCardsInColor[availableColors[i]]++;
                     drawCardsPanel.AiDrawCard(i, this);
                     return true;
@@ -545,9 +475,6 @@ namespace Assets.GameplayControl
             Color randomColor = (Color)drawCardsPanel.RandomColorIndex();
             numOfCardsInColor[randomColor]++;
 
-            Debug.Log(randomColor);
-
-            //drawCardsPanel.AiDrawCard(5, this);
         }
 
         private List<Color> BestCardColorsToDraw()

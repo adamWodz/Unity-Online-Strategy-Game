@@ -6,7 +6,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Assets.GameplayControl;
 using NUnit.Framework;
 using TMPro;
-//using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -44,7 +43,6 @@ public class SimplePlayTests
 
         GameObject card = GameObject.Find("DrawCardsPanel").transform.GetChild(0).gameObject;
         Assert.IsNotNull(card);
-        Debug.Log(card.name);
         yield return new WaitForFixedUpdate();
         GameObject cardStack = GameObject.Find(card.name + "s");
         Assert.IsNotNull(cardStack);
@@ -92,8 +90,6 @@ public class SimplePlayTests
         GameObject missionsPanel = GameObject.Find("MissionsPanel");
         Assert.IsNotNull(missionsPanel);
 
-        //int numberOfMissionsToChoose = missionsPanel.GetComponent<MissionsPanel>().missionsToChoose.Count;
-
         Button missionCard = missionsPanel.transform.GetChild(0).GetComponent<Button>();
         Assert.IsNotNull(missionCard);
 
@@ -123,7 +119,6 @@ public class SimplePlayTests
         Assert.AreEqual(secondPlanet, secondPlanetAddedMission);
         Assert.AreEqual(points, pointsAddedMission);
 
-        //Assert.AreEqual(numberOfMissionsToChoose - 1, missionsPanel.GetComponent<MissionsPanel>().missionsToChoose.Count);
     }
 
     [UnityTest]
@@ -230,8 +225,6 @@ public class SimplePlayTests
         Assert.AreEqual(cardsCount - 1,int.Parse(cardStack.transform.GetChild(0).GetComponent<TMP_Text>().text));
         Assert.AreEqual(spaceshipsCounter - 1, int.Parse(GameObject.Find("SpaceshipCounter").GetComponent<TMP_Text>().text));
         Assert.IsTrue(oneTilePath.GetComponent<BuildPath>().path.isBuilt);
-        //yield return new WaitForFixedUpdate();
-        //Assert.IsFalse(PlayerGameData.isNowPlaying);
     }
 
 }

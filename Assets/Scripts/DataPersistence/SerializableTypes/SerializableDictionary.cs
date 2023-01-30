@@ -8,7 +8,6 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
     [SerializeField] private List<TKey> keys = new();
     [SerializeField] private List<TValue> values = new();
     
-    // save the dictionary to lists
     public void OnBeforeSerialize()
     {
         keys.Clear();
@@ -20,14 +19,13 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
         }
     }
 
-    // load the dictionary from lists
     public void OnAfterDeserialize() 
     {
         this.Clear();
 
         if(keys.Count != values.Count)
         {
-            Debug.LogError("Tried to deserialize a SerializableDictionary, but the amount of keys ("+
+            Debug.LogError("Tried to deserialize a SerializableDictionary, but the amount of keys (" +
                 keys.Count+") does not match the number of values ("+values.Count
                 +") which indicates that something went wrong");
         }

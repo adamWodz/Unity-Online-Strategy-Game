@@ -73,14 +73,11 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     public bool playersOrderChanged = false;
     GameManager gameManager;
 
-    // Start is called before the first frame update
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         if (Communication.loadOnStart)
         {
-            //players = new();
-            //Server.allPlayersInfo = new();
         }
         else
         {
@@ -88,7 +85,6 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
 
             playersTiles = new();
 
-            //GameObject playerTextTemplate = transform.GetChild(0).gameObject;
             GameObject playerTile;
 
             int playersCount = players.Count;
@@ -105,7 +101,6 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
                 player.PlayerTileId = playerTile.GetInstanceID();
                 playerTilesByIds.Add(player.PlayerTileId, playerTile);
             }
-            //Destroy(playerTextTemplate);
         }
     }
 
@@ -117,7 +112,6 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         playerTile.transform.GetChild(3).GetComponent<TMP_Text>().text = playerInfo.SpaceshipsLeft.ToString();
     }
 
-    // Update is called once per frame
     void Update()
     {
     }
@@ -136,8 +130,6 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
                     curentPoints = artificialPlayer.Points,
                     spaceshipsLeft = artificialPlayer.SpaceshipsLeft,
                 };
-                //AI.LoadConnectedPlanets();
-
                 for(int i = 0;i< data.cardsForEachPalyer[artificialPlayer.Id].Length;i++)
                 {
                     AI.numOfCardsInColor[(Color)i] = data.cardsForEachPalyer[artificialPlayer.Id][i];
@@ -188,9 +180,6 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         Server.allPlayersInfo ??= new();
         players.Add(playerInfo);
         Server.allPlayersInfo.Add(playerInfo);
-        //Debug.Log($"Players: {players.Count}");
-        //Debug.Log($"ServerPlayers: {Server.allPlayersInfo.Count}");
-        //GameObject playerTextTemplate = transform.GetChild(0).gameObject;
         playersTiles ??= new();
         var playerTile = Instantiate(playerTilesPrefabs[colorNum], transform);
         SetPlayerTileTransform(playerTile, playerInfo);
@@ -202,7 +191,7 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         playerTilesByIds.Add(player.PlayerTileId, playerTile);
         playersTiles.Enqueue(playerTile);
 
-        if (PlayerGameData.UnityId == UnityId)//PlayerGameData.Id == playerInfo.Id)
+        if (PlayerGameData.UnityId == UnityId)  
         {
             PlayerGameData.spaceshipsLeft = spaceshipsLeft;
             PlayerGameData.curentPoints = points;
@@ -228,42 +217,26 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
             int numberOfPlayers = Server.allPlayersInfo.Count;
             PlayerPrefs.SetInt("numberOfPlayers", numberOfPlayers);
             
-            //PlayerPrefs.GetString("players").Split(';');
-            //PlayerPrefs.GetInt("numberOfPlayers");
         } 
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void UpdatePlayersOrderServerRpc()
     {
-        //Debug.Log("UpdatePlayersOrder: "+PlayerGameData.Id);
         UpdatePlayersOrderClientRpc();
     }
 
     [ClientRpc]
     public void UpdatePlayersOrderClientRpc()
     {
-        //Debug.Log("Tiles: " + playersTiles.Count);
-        // pobieram pierwszego gracza z kolejki (tego, ktorego tura sie zakonczyla)
         var firstElement = playersTiles.Dequeue();
-        //Debug.Log("Index tile:" + firstElement.transform.GetSiblingIndex());
-        //Debug.Log("Index tile 2:" + secondElement.transform.GetSiblingIndex());
-        // ustawiam go na koniec w panelu graczy
         firstElement.transform.SetAsLastSibling();
-        //Debug.Log("Index tile:" + firstElement.transform.GetSiblingIndex());
-        // dodaje go na koniec kolejki
         playersTiles.Enqueue(firstElement);
 
-        // poprawiam pozycje wszystkich graczy
         int i = 0;
-        //Debug.Log($"Players: {players.Count}");
-        //Debug.Log($"ServerPlayers: {Server.allPlayersInfo.Count}");
-        //Debug.Log($"playerTiles: {playersTiles.Count}");
         foreach (var playerTile in playersTiles) 
         {
-            //Debug.Log($"i :{i}");
             players[i].Position = (players[i].Position - 1 + players.Count) % players.Count;
-            //Debug.Log(players[i].Name);
             i++;
             playerTile.transform.GetChild(0).GetComponent<TMP_Text>().text = i.ToString();
         }
@@ -277,7 +250,6 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
         while(!playersOrderChanged) { }
         
         PlayerInfo nextPlayer = players.Where(p => p.Position == 0).First();
-        Debug.Log("StartNextPlayerTurnServerRpc; playerName: " + nextPlayer.Name + " isAI " + nextPlayer.IsAI);
         if (nextPlayer.IsAI)
             Communication.StartAiTurn(nextPlayer.Id);
         else
@@ -289,7 +261,6 @@ public class PlayerPanel : NetworkBehaviour, IDataPersistence
     [ClientRpc]
     public void StartNextPlayerTurnClientRpc(int playerId)
     {
-        //Debug.Log("StartNextPlayerTurnClientRpc; playerId: " + playerId + " thisPlayerId: " + PlayerGameData.Id);
         Communication.StartTurn(playerId);
     }
 

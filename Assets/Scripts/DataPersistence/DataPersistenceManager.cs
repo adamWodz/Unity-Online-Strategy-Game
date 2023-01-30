@@ -22,7 +22,6 @@ public class DataPersistenceManager : NetworkBehaviour
     {
         if (Instance != null)
         {
-            Debug.LogError("Found more than one Data Persistence Manager in the scene");
         }
         Instance = this;
     }
@@ -31,14 +30,12 @@ public class DataPersistenceManager : NetworkBehaviour
     {
         dataHandler = new(Application.persistentDataPath, fileName,useEncryption);
         
-        // znajdujemy listê skryptów, które posiadaj¹ dane do zapisu/wczytania
         dataPersistenceObjects = FindAllDataPersistenceObjects();
 
         if (Communication.loadOnStart)
             LoadGame();
         else
             NewGame();
-        //NewGame();
     }
 
     public void NewGame()
@@ -48,12 +45,10 @@ public class DataPersistenceManager : NetworkBehaviour
 
     public void LoadGame()
     {
-        // Load any saved data from file using the data handler
         gameData = dataHandler.Load();
 
         if(gameData == null)
         {
-            Debug.Log("No data was found. Initializing data to defaults");
             NewGame();
         }
         
@@ -72,12 +67,6 @@ public class DataPersistenceManager : NetworkBehaviour
         
         dataHandler.Save(gameData);
     }
-    /*
-    private void OnApplicationQuit()
-    {
-        SaveGame();
-    }
-    */
     private List<IDataPersistence> FindAllDataPersistenceObjects()
     {
         IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<NetworkBehaviour>().OfType<IDataPersistence>();
